@@ -201,13 +201,13 @@ watch(locale, () => void nextTick(measure))
             <article id="phenomenology" data-node="phenomenology" class="node">
               <SchoolBlock school-id="phenomenology" />
             </article>
+            <article id="analytic" data-node="analytic" class="node">
+              <SchoolBlock school-id="analytic" />
+            </article>
           </div>
           <div class="lineage-right">
             <article id="existentialism" data-node="existentialism" class="node">
               <SchoolBlock school-id="existentialism" />
-            </article>
-            <article id="analytic" data-node="analytic" class="node">
-              <SchoolBlock school-id="analytic" />
             </article>
             <article id="deconstruction" data-node="deconstruction" class="node">
               <SchoolBlock school-id="deconstruction" />
