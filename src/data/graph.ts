@@ -26,7 +26,7 @@ export const graphEdges: GraphEdge[] = [
     to: 'political',
     color: 'var(--c-political)',
     fromSide: 'bottom',
-    toSide: 'top',
+    toSide: 'left',
   },
   { from: 'machiavelli', to: 'hobbes', color: 'var(--c-political)', fromSide: 'right', toSide: 'left' },
   { from: 'hobbes', to: 'rousseau', color: 'var(--c-political)', fromSide: 'right', toSide: 'left' },

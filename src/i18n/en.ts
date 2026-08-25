@@ -65,6 +65,7 @@ const en = {
     died: 'd.',
     map: 'Map',
     scroll: 'Scroll the tree',
+    bce: '{n} BCE',
   },
   person: {
     socrates: 'Socrates',

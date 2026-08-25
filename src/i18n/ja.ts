@@ -65,6 +65,7 @@ const ja = {
     died: '没',
     map: '地図',
     scroll: '樹形図をスクロール',
+    bce: '前{n}',
   },
   person: {
     socrates: 'ソクラテス',

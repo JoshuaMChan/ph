@@ -12,7 +12,7 @@ const { t, locale } = useI18n()
 
 const political = schools.political
 const politicalYears = computed(() =>
-  formatEraYears(political.yearStart, political.yearEnd, String(locale.value)),
+  formatEraYears(political.yearStart, political.yearEnd, t('ui.bce')),
 )
 const politicalRegion = computed(() =>
   political.regionKeys.map((key) => t(`region.${key}`)).join(' · '),
@@ -84,6 +84,12 @@ function curve(
   if (fromSide === 'bottom' && toSide === 'top') {
     const midY = y1 + (y2 - y1) * 0.55
     return `M ${x1} ${y1} C ${x1} ${midY}, ${x2} ${midY}, ${x2} ${y2}`
+  }
+
+  // Approach the political box from the left
+  if (fromSide === 'bottom' && toSide === 'left') {
+    const midY = y1 + (y2 - y1) * 0.65
+    return `M ${x1} ${y1} C ${x1} ${midY}, ${x1} ${y2}, ${x2} ${y2}`
   }
 
   const midX = x1 + dx * 0.5
@@ -199,38 +205,83 @@ watch(locale, () => void nextTick(measure))
         </article>
 
         <div id="modern" class="modern">
-          <article id="rationalism" data-node="rationalism" class="node">
-            <SchoolBlock school-id="rationalism" />
-          </article>
-          <article id="empiricism" data-node="empiricism" class="node">
-            <SchoolBlock school-id="empiricism" />
-          </article>
+          <div class="modern-pair">
+            <article
+              id="rationalism"
+              data-node="rationalism"
+              class="node modern-school"
+              :style="{ '--accent': schools.rationalism.accent }"
+            >
+              <header class="school-head">
+                <h2>{{ t('school.rationalism') }}</h2>
+                <p class="school-meta">
+                  <span class="when">{{
+                    formatEraYears(
+                      schools.rationalism.yearStart,
+                      schools.rationalism.yearEnd,
+                      t('ui.bce'),
+                    )
+                  }}</span>
+                  <span class="where">{{
+                    schools.rationalism.regionKeys.map((key) => t(`region.${key}`)).join(' · ')
+                  }}</span>
+                </p>
+              </header>
+              <PhilosopherCard :person="philosophers.descartes" />
+              <PhilosopherCard :person="philosophers.spinoza" />
+              <PhilosopherCard :person="philosophers.leibniz" />
+            </article>
+            <article
+              id="empiricism"
+              data-node="empiricism"
+              class="node modern-school"
+              :style="{ '--accent': schools.empiricism.accent }"
+            >
+              <header class="school-head">
+                <h2>{{ t('school.empiricism') }}</h2>
+                <p class="school-meta">
+                  <span class="when">{{
+                    formatEraYears(
+                      schools.empiricism.yearStart,
+                      schools.empiricism.yearEnd,
+                      t('ui.bce'),
+                    )
+                  }}</span>
+                  <span class="where">{{
+                    schools.empiricism.regionKeys.map((key) => t(`region.${key}`)).join(' · ')
+                  }}</span>
+                </p>
+              </header>
+              <PhilosopherCard :person="philosophers.locke" />
+              <PhilosopherCard :person="philosophers.berkeley" />
+              <PhilosopherCard :person="philosophers.hume" />
+            </article>
+          </div>
         </div>
 
         <article id="classical" data-node="classical" class="node">
           <SchoolBlock school-id="classical" />
         </article>
 
-        <div id="split" class="lineage">
-          <div class="lineage-left">
-            <article id="life" data-node="life" class="node">
-              <SchoolBlock school-id="life" />
-            </article>
-            <article id="phenomenology" data-node="phenomenology" class="node">
-              <SchoolBlock school-id="phenomenology" />
-            </article>
-            <article id="analytic" data-node="analytic" class="node">
-              <SchoolBlock school-id="analytic" />
-            </article>
-          </div>
-          <div class="lineage-right">
-            <article id="existentialism" data-node="existentialism" class="node">
-              <SchoolBlock school-id="existentialism" />
-            </article>
-            <article id="deconstruction" data-node="deconstruction" class="node">
-              <SchoolBlock school-id="deconstruction" />
-            </article>
-          </div>
+        <div id="split" class="life-col">
+          <article id="life" data-node="life" class="node">
+            <SchoolBlock school-id="life" />
+          </article>
+          <article id="phenomenology" data-node="phenomenology" class="node">
+            <SchoolBlock school-id="phenomenology" />
+          </article>
+          <article id="analytic" data-node="analytic" class="node">
+            <SchoolBlock school-id="analytic" />
+          </article>
+        </div>
+
+        <div id="existCol" class="exist-col">
+          <article id="existentialism" data-node="existentialism" class="node">
+            <SchoolBlock school-id="existentialism" />
+          </article>
+          <article id="deconstruction" data-node="deconstruction" class="node">
+            <SchoolBlock school-id="deconstruction" />
+          </article>
         </div>
 
         <section id="political" data-node="political" class="political">
@@ -250,7 +301,7 @@ watch(locale, () => void nextTick(measure))
           <div class="pol-classical">
             <PhilosopherCard :person="philosophers.rousseau" />
           </div>
-          <div class="pol-lineage">
+          <div class="pol-analytic">
             <PhilosopherCard :person="philosophers.marx" />
           </div>
         </section>
@@ -280,12 +331,12 @@ watch(locale, () => void nextTick(measure))
   --info-h: 1.55rem;
   position: relative;
   display: grid;
-  grid-template-columns: max-content max-content max-content max-content max-content max-content;
+  grid-template-columns: max-content max-content max-content max-content max-content max-content max-content;
   grid-template-rows: minmax(0, 1fr) auto;
   grid-template-areas:
-    'greece stoicism scholasticism modern classical lineage'
-    '. . . political political political';
-  gap: 14px var(--gutter-x);
+    'greece stoicism scholasticism modern classical lifeCol existCol'
+    '. . . political political political existCol';
+  gap: 10px var(--gutter-x);
   padding: 14px 40px 16px;
   height: 100%;
   min-height: 0;
@@ -306,7 +357,8 @@ watch(locale, () => void nextTick(measure))
 
 .node,
 .modern,
-.lineage {
+.life-col,
+.exist-col {
   position: relative;
   z-index: 3;
 }
@@ -337,11 +389,61 @@ watch(locale, () => void nextTick(measure))
 
 .modern {
   grid-area: modern;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 16px;
+  align-self: center;
   min-height: 0;
+}
+
+.modern-pair {
+  display: grid;
+  grid-template-columns: max-content max-content;
+  grid-template-rows: auto auto auto auto;
+  column-gap: 16px;
+  row-gap: 8px;
+  align-items: start;
+}
+
+.modern-school {
+  display: grid;
+  grid-template-rows: subgrid;
+  grid-row: 1 / -1;
+  row-gap: 8px;
+  border-top: 3px solid var(--accent);
+}
+
+.school-head {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 10px;
+  white-space: nowrap;
+  padding: 2px 2px 0;
+}
+
+.school-head h2 {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 1.12rem;
+  font-weight: 600;
+  color: var(--cream);
+  letter-spacing: 0.03em;
+  line-height: 1.15;
+}
+
+.school-meta {
+  display: flex;
+  gap: 8px;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.school-meta .when {
+  color: var(--gold-2);
+  font-size: 0.78rem;
+}
+
+.school-meta .where {
+  color: var(--muted);
+  font-size: 0.72rem;
 }
 
 #classical {
@@ -349,39 +451,33 @@ watch(locale, () => void nextTick(measure))
   align-self: center;
 }
 
-.lineage {
-  grid-area: lineage;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 36px;
-}
-
-.lineage-left,
-.lineage-right {
+.life-col,
+.exist-col {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 12px;
 }
 
-.lineage-left {
-  justify-content: center;
+.life-col {
+  grid-area: lifeCol;
 }
 
-.lineage-right {
-  justify-content: center;
+.exist-col {
+  grid-area: existCol;
 }
 
 .political {
   grid-area: political;
   position: relative;
   z-index: 1;
-  display: flex;
-  flex-direction: row;
-  align-items: flex-end;
-  justify-self: start;
-  width: max-content;
-  gap: var(--gutter-x);
+  display: grid;
+  grid-template-columns: subgrid;
+  align-items: end;
+  align-self: start;
+  justify-self: stretch;
+  column-gap: var(--gutter-x);
+  margin-top: -2px;
   padding: 10px 10px 12px;
   border: 1px solid var(--line);
   border-radius: 12px;
@@ -430,17 +526,17 @@ watch(locale, () => void nextTick(measure))
 
 .pol-modern,
 .pol-classical,
-.pol-lineage {
+.pol-analytic {
   position: relative;
   z-index: 3;
   display: flex;
   align-items: flex-end;
   gap: 14px;
   min-width: 0;
-  flex: none;
 }
 
 .pol-modern {
+  grid-column: 1;
   flex-direction: column;
   align-items: flex-start;
   gap: 8px;
@@ -454,11 +550,14 @@ watch(locale, () => void nextTick(measure))
 }
 
 .pol-classical {
+  grid-column: 2;
   justify-content: flex-start;
 }
 
-.pol-lineage {
+.pol-analytic {
+  grid-column: 3;
   justify-content: flex-start;
+  width: max-content;
 }
 
 @media (max-height: 760px) {
@@ -466,7 +565,7 @@ watch(locale, () => void nextTick(measure))
     --card-w: 48px;
     --info-h: 1.4rem;
     padding: 10px 32px 12px;
-    gap: 10px var(--gutter-x);
+    gap: 8px var(--gutter-x);
   }
 }
 </style>

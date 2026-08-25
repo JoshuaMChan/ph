@@ -65,6 +65,7 @@ const zh = {
     died: '卒',
     map: '地图',
     scroll: '滚动查看谱系树',
+    bce: '公元前{n}',
   },
   person: {
     socrates: '苏格拉底',

@@ -10,7 +10,9 @@ const props = defineProps<{
 
 const { t } = useI18n()
 
-const life = computed(() => formatLifespan(props.person.birth, props.person.death))
+const life = computed(() =>
+  formatLifespan(props.person.birth, props.person.death, t('ui.bce')),
+)
 </script>
 
 <template>

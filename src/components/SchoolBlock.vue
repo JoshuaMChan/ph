@@ -13,11 +13,11 @@ const props = withDefaults(
   { nested: false },
 )
 
-const { t, locale } = useI18n()
+const { t } = useI18n()
 const school = computed(() => schools[props.schoolId])
 const people = computed(() => peopleOf(props.schoolId))
 const years = computed(() =>
-  formatEraYears(school.value.yearStart, school.value.yearEnd, String(locale.value)),
+  formatEraYears(school.value.yearStart, school.value.yearEnd, t('ui.bce')),
 )
 const countries = computed(() =>
   school.value.regionKeys.map((key) => t(`region.${key}`)).join(' · '),
