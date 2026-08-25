@@ -194,7 +194,7 @@ h2 {
 
 .reason-grid {
   display: grid;
-  grid-template-columns: auto auto;
+  grid-template-columns: max-content max-content;
   grid-template-areas:
     'descartes .'
     'spinoza leibniz';
@@ -217,7 +217,7 @@ h2 {
 
 .experience-grid {
   display: grid;
-  grid-template-columns: auto auto;
+  grid-template-columns: max-content max-content;
   grid-template-areas:
     'hume .'
     'locke berkeley';

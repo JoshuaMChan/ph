@@ -411,9 +411,26 @@ watch(locale, () => void nextTick(measure))
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: stretch;
   gap: 16px;
   min-height: 0;
   align-self: center;
+  width: max-content;
+}
+
+.modern .node {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.modern :deep(.school) {
+  width: 100%;
+}
+
+.modern :deep(.reason-grid),
+.modern :deep(.experience-grid) {
+  width: 100%;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 }
 
 #classical {
