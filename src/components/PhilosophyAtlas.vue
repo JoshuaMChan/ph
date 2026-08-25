@@ -212,16 +212,18 @@ watch(locale, () => void nextTick(measure))
         </div>
 
         <section id="political" class="political">
-          <header class="pol-head" style="--accent: var(--c-political)">
-            <h2>{{ t('school.political') }}</h2>
-            <p class="pol-meta">
-              <span class="when">{{ politicalYears }}</span>
-              <span class="where">{{ politicalRegion }}</span>
-            </p>
-          </header>
           <div class="pol-modern">
-            <PhilosopherCard :person="philosophers.machiavelli" />
-            <PhilosopherCard :person="philosophers.hobbes" />
+            <header class="pol-head">
+              <h2>{{ t('school.political') }}</h2>
+              <p class="pol-meta">
+                <span class="when">{{ politicalYears }}</span>
+                <span class="where">{{ politicalRegion }}</span>
+              </p>
+            </header>
+            <div class="pol-people">
+              <PhilosopherCard :person="philosophers.machiavelli" />
+              <PhilosopherCard :person="philosophers.hobbes" />
+            </div>
           </div>
           <div class="pol-classical">
             <PhilosopherCard :person="philosophers.rousseau" />
@@ -324,10 +326,11 @@ watch(locale, () => void nextTick(measure))
 .lineage {
   grid-area: lineage;
   display: grid;
-  grid-template-columns: max-content max-content max-content max-content;
+  grid-template-columns: max-content max-content;
   grid-template-areas:
-    'life existentialism analytic deconstruction'
-    'phenomenology . . .';
+    'life existentialism'
+    'phenomenology analytic'
+    '. deconstruction';
   gap: 12px 36px;
   align-items: center;
 }
@@ -338,17 +341,14 @@ watch(locale, () => void nextTick(measure))
 
 #existentialism {
   grid-area: existentialism;
-  align-self: center;
 }
 
 #analytic {
   grid-area: analytic;
-  align-self: center;
 }
 
 #deconstruction {
   grid-area: deconstruction;
-  align-self: center;
 }
 
 #phenomenology {
@@ -371,14 +371,12 @@ watch(locale, () => void nextTick(measure))
 }
 
 .pol-head {
-  grid-column: 1 / 3;
-  align-self: center;
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: baseline;
   gap: 8px 10px;
-  padding-left: 2px;
+  white-space: nowrap;
 }
 
 .pol-head h2 {
@@ -389,7 +387,6 @@ watch(locale, () => void nextTick(measure))
   color: var(--cream);
   letter-spacing: 0.03em;
   line-height: 1.15;
-  white-space: nowrap;
 }
 
 .pol-meta {
@@ -420,7 +417,16 @@ watch(locale, () => void nextTick(measure))
 
 .pol-modern {
   grid-column: 3;
-  justify-content: flex-start;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.pol-people {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
 }
 
 .pol-classical {
