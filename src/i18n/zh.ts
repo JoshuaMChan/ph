@@ -28,7 +28,7 @@ const zh = {
     life: '生存哲学',
     phenomenology: '现象学',
     existentialism: '存在主义',
-    structuralism: '结构主义',
+    deconstruction: '解构主义',
     analytic: '分析哲学',
     political: '政治哲学',
   },
@@ -41,7 +41,7 @@ const zh = {
     life: '德 · 丹麦',
     phenomenology: '德',
     existentialism: '德 · 法',
-    structuralism: '法',
+    deconstruction: '法',
     analytic: '英',
   },
   branch: {

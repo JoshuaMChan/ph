@@ -1,11 +1,20 @@
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { graphEdges } from '../data/graph'
+import { philosophers, schools } from '../data/philosophers'
+import { formatEraYears } from '../utils/dates'
+import PhilosopherCard from './PhilosopherCard.vue'
 import SchoolBlock from './SchoolBlock.vue'
 import SiteHeader from './SiteHeader.vue'
 
-const { locale } = useI18n()
+const { t, locale } = useI18n()
+
+const political = schools.political
+const politicalYears = formatEraYears(political.yearStart, political.yearEnd)
+const politicalRegion = computed(() =>
+  political.regionKeys.map((key) => t(`region.${key}`)).join(' · '),
+)
 
 type Link = {
   id: string
@@ -188,8 +197,8 @@ watch(locale, () => void nextTick(measure))
           <article id="life" data-node="life" class="node">
             <SchoolBlock school-id="life" />
           </article>
-          <article id="structuralism" data-node="structuralism" class="node">
-            <SchoolBlock school-id="structuralism" />
+          <article id="deconstruction" data-node="deconstruction" class="node">
+            <SchoolBlock school-id="deconstruction" />
           </article>
           <article id="phenomenology" data-node="phenomenology" class="node">
             <SchoolBlock school-id="phenomenology" />
@@ -202,9 +211,25 @@ watch(locale, () => void nextTick(measure))
           </article>
         </div>
 
-        <article id="political" data-node="political" class="node">
-          <SchoolBlock school-id="political" />
-        </article>
+        <section id="political" class="political">
+          <header class="pol-head" style="--accent: var(--c-political)">
+            <h2>{{ t('school.political') }}</h2>
+            <p class="pol-meta">
+              <span class="when">{{ politicalYears }}</span>
+              <span class="where">{{ politicalRegion }}</span>
+            </p>
+          </header>
+          <div class="pol-modern">
+            <PhilosopherCard :person="philosophers.machiavelli" />
+            <PhilosopherCard :person="philosophers.hobbes" />
+          </div>
+          <div class="pol-classical">
+            <PhilosopherCard :person="philosophers.rousseau" />
+          </div>
+          <div class="pol-lineage">
+            <PhilosopherCard :person="philosophers.marx" />
+          </div>
+        </section>
       </main>
     </div>
   </div>
@@ -257,7 +282,8 @@ watch(locale, () => void nextTick(measure))
 
 .node,
 .modern,
-.lineage {
+.lineage,
+.political {
   position: relative;
   z-index: 1;
 }
@@ -298,10 +324,10 @@ watch(locale, () => void nextTick(measure))
 .lineage {
   grid-area: lineage;
   display: grid;
-  grid-template-columns: max-content max-content max-content;
+  grid-template-columns: max-content max-content max-content max-content;
   grid-template-areas:
-    'life existentialism analytic'
-    'phenomenology structuralism analytic';
+    'life existentialism analytic deconstruction'
+    'phenomenology . . .';
   gap: 12px 36px;
   align-items: center;
 }
@@ -310,17 +336,9 @@ watch(locale, () => void nextTick(measure))
   grid-area: life;
 }
 
-#structuralism {
-  grid-area: structuralism;
-  align-self: center;
-}
-
-#phenomenology {
-  grid-area: phenomenology;
-}
-
 #existentialism {
   grid-area: existentialism;
+  align-self: center;
 }
 
 #analytic {
@@ -328,10 +346,91 @@ watch(locale, () => void nextTick(measure))
   align-self: center;
 }
 
-#political {
+#deconstruction {
+  grid-area: deconstruction;
+  align-self: center;
+}
+
+#phenomenology {
+  grid-area: phenomenology;
+}
+
+.political {
   grid-area: political;
-  width: auto;
-  justify-self: stretch;
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-column: 1 / -1;
+  align-items: end;
+  column-gap: var(--gutter-x);
+  padding: 10px 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(20, 24, 33, 0.88);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
+  border-top: 3px solid var(--c-political);
+}
+
+.pol-head {
+  grid-column: 1 / 3;
+  align-self: center;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 10px;
+  padding-left: 2px;
+}
+
+.pol-head h2 {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 1.12rem;
+  font-weight: 600;
+  color: var(--cream);
+  letter-spacing: 0.03em;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+
+.pol-meta {
+  display: flex;
+  gap: 8px;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.pol-meta .when {
+  color: var(--gold-2);
+  font-size: 0.78rem;
+}
+
+.pol-meta .where {
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.pol-modern,
+.pol-classical,
+.pol-lineage {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  min-width: 0;
+}
+
+.pol-modern {
+  grid-column: 3;
+  justify-content: flex-start;
+}
+
+.pol-classical {
+  grid-column: 4;
+  justify-content: flex-start;
+}
+
+.pol-lineage {
+  grid-column: 5;
+  justify-content: flex-start;
 }
 
 @media (max-height: 760px) {

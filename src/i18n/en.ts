@@ -28,7 +28,7 @@ const en = {
     life: 'Philosophy of Life',
     phenomenology: 'Phenomenology',
     existentialism: 'Existentialism',
-    structuralism: 'Structuralism',
+    deconstruction: 'Deconstruction',
     analytic: 'Analytic Philosophy',
     political: 'Political Philosophy',
   },
@@ -41,7 +41,7 @@ const en = {
     life: 'Germany · Denmark',
     phenomenology: 'Germany',
     existentialism: 'Germany · France',
-    structuralism: 'France',
+    deconstruction: 'France',
     analytic: 'Britain',
   },
   branch: {

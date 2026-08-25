@@ -28,7 +28,7 @@ const ja = {
     life: '生の哲学',
     phenomenology: '現象学',
     existentialism: '実存主義',
-    structuralism: '構造主義',
+    deconstruction: '脱構築',
     analytic: '分析哲学',
     political: '政治哲学',
   },
@@ -41,7 +41,7 @@ const ja = {
     life: 'ドイツ · デンマーク',
     phenomenology: 'ドイツ',
     existentialism: 'ドイツ · フランス',
-    structuralism: 'フランス',
+    deconstruction: 'フランス',
     analytic: 'イギリス',
   },
   branch: {

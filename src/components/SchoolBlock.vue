@@ -29,7 +29,7 @@ const kierkegaard = computed(() => people.value.find((item) => item.id === 'kier
 <template>
   <section
     class="school"
-    :class="{ nested, chain: schoolId === 'political' }"
+    :class="{ nested }"
     :data-school="schoolId"
     :style="{ '--accent': school.accent }"
   >
@@ -44,15 +44,6 @@ const kierkegaard = computed(() => people.value.find((item) => item.id === 'kier
       <PhilosopherCard v-if="nietzsche" class="slot-nietzsche" :person="nietzsche" />
       <PhilosopherCard v-if="schopenhauer" class="slot-schopenhauer" :person="schopenhauer" />
       <PhilosopherCard v-if="kierkegaard" class="slot-kierkegaard" :person="kierkegaard" />
-    </div>
-    <div v-else-if="schoolId === 'political'" class="people chain">
-      <template v-for="(item, index) in people" :key="item.id">
-        <span v-if="index" class="chain-arrow" aria-hidden="true">
-          <span class="chain-line" />
-          <span class="chain-head" />
-        </span>
-        <PhilosopherCard :person="item" />
-      </template>
     </div>
     <div v-else class="people">
       <PhilosopherCard v-for="item in people" :key="item.id" :person="item" />
@@ -69,11 +60,6 @@ const kierkegaard = computed(() => people.value.find((item) => item.id === 'kier
   gap: 8px;
   padding: 2px 2px 0;
   border-top: 3px solid var(--accent);
-}
-
-.school.chain {
-  width: 100%;
-  min-width: 0;
 }
 
 .head {
@@ -120,41 +106,6 @@ h2 {
   flex-wrap: nowrap;
   gap: 10px 14px;
   align-items: center;
-}
-
-.chain {
-  flex-direction: row;
-  align-items: center;
-  width: 100%;
-  gap: 0;
-}
-
-.chain-arrow {
-  flex: 1 1 2rem;
-  display: flex;
-  align-items: center;
-  min-width: 1.75rem;
-  max-width: 4.5rem;
-  height: calc(var(--card-w, 70px) * 4 / 3);
-  color: var(--accent);
-  padding: 0 2px;
-}
-
-.chain-line {
-  flex: 1 1 auto;
-  height: 2px;
-  min-width: 8px;
-  background: currentColor;
-  border-radius: 1px;
-}
-
-.chain-head {
-  flex: none;
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 4.5px 0 4.5px 8px;
-  border-color: transparent transparent transparent currentColor;
 }
 
 .life-grid {

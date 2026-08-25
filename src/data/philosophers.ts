@@ -725,14 +725,14 @@ export const schools: Record<string, School> = {
     countryIds: ['276', '250', '012'],
     accent: 'var(--c-existence)',
   },
-  structuralism: {
-    id: 'structuralism',
+  deconstruction: {
+    id: 'deconstruction',
     people: byBirth(['foucault', 'derrida']),
     yearStart: 1926,
     yearEnd: 2004,
     regionKeys: ['france'],
     countryIds: ['250', '012'],
-    accent: 'var(--c-struct)',
+    accent: 'var(--c-deconstruction)',
   },
   analytic: {
     id: 'analytic',
