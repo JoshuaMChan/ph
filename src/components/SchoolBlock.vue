@@ -51,7 +51,7 @@ const hume = computed(() => people.value.find((item) => item.id === 'hume'))
       <h2>{{ t(`school.${schoolId}`) }}</h2>
       <p class="meta">
         <span class="when">{{ years }}</span>
-        <span class="where">{{ countries }}</span>
+        <span v-if="countries" class="where">{{ countries }}</span>
       </p>
     </header>
     <div v-if="schoolId === 'life'" class="people life-grid">

@@ -8,7 +8,7 @@ const zh = {
   nav: {
     greece: '希腊',
     stoicism: '斯多葛',
-    scholasticism: '经院',
+    scholasticism: '中世纪',
     modern: '近代',
     classical: '古典',
     split: '分裂',
@@ -22,7 +22,7 @@ const zh = {
   school: {
     greece: '希腊三贤',
     stoicism: '斯多葛学派',
-    scholasticism: '经院哲学',
+    scholasticism: '中世纪哲学',
     rationalism: '理性主义',
     empiricism: '经验主义',
     classical: '古典哲学',
@@ -30,7 +30,7 @@ const zh = {
     life: '生存哲学',
     phenomenology: '现象学',
     existentialism: '存在主义',
-    deconstruction: '解构主义',
+    deconstruction: '后结构主义',
     analytic: '分析哲学',
     political: '政治哲学',
   },

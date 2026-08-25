@@ -8,7 +8,7 @@ const ja = {
   nav: {
     greece: 'ギリシア',
     stoicism: 'ストア',
-    scholasticism: 'スコラ',
+    scholasticism: '中世',
     modern: '近代',
     classical: '古典',
     split: '分裂',
@@ -22,7 +22,7 @@ const ja = {
   school: {
     greece: 'ギリシア三賢人',
     stoicism: 'ストア派',
-    scholasticism: 'スコラ哲学',
+    scholasticism: '中世哲学',
     rationalism: '合理主義',
     empiricism: '経験論',
     classical: 'ドイツ古典哲学',
@@ -30,7 +30,7 @@ const ja = {
     life: '生の哲学',
     phenomenology: '現象学',
     existentialism: '実存主義',
-    deconstruction: '脱構築',
+    deconstruction: 'ポスト構造主義',
     analytic: '分析哲学',
     political: '政治哲学',
   },

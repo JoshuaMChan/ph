@@ -8,7 +8,7 @@ const en = {
   nav: {
     greece: 'Greece',
     stoicism: 'Stoic',
-    scholasticism: 'Scholastic',
+    scholasticism: 'Medieval',
     modern: 'Modern',
     classical: 'Classical',
     split: 'Split',
@@ -22,7 +22,7 @@ const en = {
   school: {
     greece: 'The Three Greats of Greece',
     stoicism: 'Stoicism',
-    scholasticism: 'Scholasticism',
+    scholasticism: 'Medieval Philosophy',
     rationalism: 'Rationalism',
     empiricism: 'Empiricism',
     classical: 'German Classical Philosophy',
@@ -30,7 +30,7 @@ const en = {
     life: 'Philosophy of Life',
     phenomenology: 'Phenomenology',
     existentialism: 'Existentialism',
-    deconstruction: 'Deconstruction',
+    deconstruction: 'Post-structuralism',
     analytic: 'Analytic Philosophy',
     political: 'Political Philosophy',
   },

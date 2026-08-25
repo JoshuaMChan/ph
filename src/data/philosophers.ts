@@ -770,9 +770,7 @@ export const schools: Record<string, School> = {
     people: byBirth(['frege', 'russell', 'wittgenstein']),
     yearStart: 1848,
     yearEnd: 1970,
-    regionKeys: ['britain'],
-    countryIds: ['276', '826', '040'],
-    accent: 'var(--c-analytic)',
+    regionKeys: [],
   },
   political: {
     id: 'political',
