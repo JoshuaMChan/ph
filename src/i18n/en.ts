@@ -65,7 +65,6 @@ const en = {
     died: 'd.',
     map: 'Map',
     scroll: 'Scroll the tree',
-    bce: '{n} BCE',
   },
   person: {
     socrates: 'Socrates',
@@ -75,7 +74,6 @@ const en = {
     aurelius: 'Marcus Aurelius',
     augustine: 'Augustine of Hippo',
     aquinas: 'Thomas Aquinas',
-    ockham: 'William of Ockham',
     descartes: 'René Descartes',
     spinoza: 'Baruch Spinoza',
     leibniz: 'Gottfried Leibniz',

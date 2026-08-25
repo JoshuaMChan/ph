@@ -65,7 +65,6 @@ const ja = {
     died: '没',
     map: '地図',
     scroll: '樹形図をスクロール',
-    bce: '前{n}',
   },
   person: {
     socrates: 'ソクラテス',
@@ -75,7 +74,6 @@ const ja = {
     aurelius: 'マルクス・アウレリウス',
     augustine: 'アウグスティヌス',
     aquinas: 'トマス・アクィナス',
-    ockham: 'オッカムのウィリアム',
     descartes: 'ルネ・デカルト',
     spinoza: 'バールーフ・スピノザ',
     leibniz: 'ゴットフリート・ライプニッツ',

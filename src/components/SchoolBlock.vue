@@ -17,7 +17,7 @@ const { t } = useI18n()
 const school = computed(() => schools[props.schoolId])
 const people = computed(() => peopleOf(props.schoolId))
 const years = computed(() =>
-  formatEraYears(school.value.yearStart, school.value.yearEnd, t('ui.bce')),
+  formatEraYears(school.value.yearStart, school.value.yearEnd),
 )
 const countries = computed(() =>
   school.value.regionKeys.map((key) => t(`region.${key}`)).join(' · '),
@@ -47,7 +47,11 @@ const kierkegaard = computed(() => people.value.find((item) => item.id === 'kier
       <PhilosopherCard v-if="schopenhauer" class="slot-schopenhauer" :person="schopenhauer" />
       <PhilosopherCard v-if="kierkegaard" class="slot-kierkegaard" :person="kierkegaard" />
     </div>
-    <div v-else class="people">
+    <div
+      v-else
+      class="people"
+      :class="{ stacked: people.length >= 3 && schoolId !== 'greece' && schoolId !== 'analytic' }"
+    >
       <PhilosopherCard v-for="item in people" :key="item.id" :person="item" />
     </div>
   </section>
@@ -108,6 +112,12 @@ h2 {
   flex-wrap: nowrap;
   gap: 10px 14px;
   align-items: center;
+}
+
+.people.stacked {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
 }
 
 .life-grid {

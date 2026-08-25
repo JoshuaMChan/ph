@@ -65,7 +65,6 @@ const zh = {
     died: '卒',
     map: '地图',
     scroll: '滚动查看谱系树',
-    bce: '公元前{n}',
   },
   person: {
     socrates: '苏格拉底',
@@ -75,7 +74,6 @@ const zh = {
     aurelius: '奥勒留',
     augustine: '奥古斯丁',
     aquinas: '托马斯·阿奎那',
-    ockham: '奥卡姆的威廉',
     descartes: '勒内·笛卡尔',
     spinoza: '巴鲁赫·斯宾诺莎',
     leibniz: '戈特弗里德·莱布尼茨',

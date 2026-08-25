@@ -139,28 +139,6 @@ export const philosophers: Record<string, Philosopher> = {
       countryId: '380',
     },
   },
-  ockham: {
-    id: 'ockham',
-    nativeName: 'William of Ockham',
-    country: 'england',
-    portrait: '/portraits/ockham.png',
-    birth: { year: 1287, circa: true },
-    death: { year: 1347, circa: true },
-    born: {
-      city: 'ockham',
-      region: 'england',
-      lat: 51.298,
-      lng: -0.451,
-      countryId: '826',
-    },
-    died: {
-      city: 'munich',
-      region: 'germany',
-      lat: 48.1351,
-      lng: 11.582,
-      countryId: '276',
-    },
-  },
   descartes: {
     id: 'descartes',
     nativeName: 'René Descartes',
@@ -717,11 +695,11 @@ export const schools: Record<string, School> = {
   },
   scholasticism: {
     id: 'scholasticism',
-    people: byBirth(['augustine', 'aquinas', 'ockham']),
+    people: byBirth(['augustine', 'aquinas']),
     yearStart: 354,
-    yearEnd: 1347,
+    yearEnd: 1274,
     regionKeys: ['europe'],
-    countryIds: ['012', '380', '826'],
+    countryIds: ['012', '380'],
     accent: 'var(--c-scholastic)',
   },
   rationalism: {

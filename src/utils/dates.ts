@@ -1,16 +1,28 @@
 import type { DateMark } from '../types'
 
-/** `bce` uses `{n}` for the absolute year, e.g. `公元前{n}` or `{n} BCE`. */
-export function formatYear(year: number, bce: string): string {
+export function formatYear(year: number): string {
   const n = Math.abs(year)
   if (year >= 0) return String(n)
-  return bce.replaceAll('{n}', String(n))
+  return `${n} BC`
 }
 
-export function formatLifespan(birth: DateMark, death: DateMark, bce: string): string {
-  return `${formatYear(birth.year, bce)}–${formatYear(death.year, bce)}`
+export function formatLifespan(birth: DateMark, death: DateMark): string {
+  return formatRange(birth.year, death.year)
 }
 
-export function formatEraYears(start: number, end: number, bce: string): string {
-  return `${formatYear(start, bce)}–${formatYear(end, bce)}`
+export function formatEraYears(start: number, end: number): string {
+  return formatRange(start, end)
+}
+
+function formatRange(start: number, end: number): string {
+  if (start < 0 && end < 0) {
+    return `${Math.abs(start)}–${Math.abs(end)} BC`
+  }
+  if (start < 0) {
+    return `${Math.abs(start)} BC–${end}`
+  }
+  if (end < 0) {
+    return `${start}–${Math.abs(end)} BC`
+  }
+  return `${start}–${end}`
 }

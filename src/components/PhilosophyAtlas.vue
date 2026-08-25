@@ -12,7 +12,7 @@ const { t, locale } = useI18n()
 
 const political = schools.political
 const politicalYears = computed(() =>
-  formatEraYears(political.yearStart, political.yearEnd, t('ui.bce')),
+  formatEraYears(political.yearStart, political.yearEnd),
 )
 const politicalRegion = computed(() =>
   political.regionKeys.map((key) => t(`region.${key}`)).join(' · '),
@@ -219,7 +219,6 @@ watch(locale, () => void nextTick(measure))
                     formatEraYears(
                       schools.rationalism.yearStart,
                       schools.rationalism.yearEnd,
-                      t('ui.bce'),
                     )
                   }}</span>
                   <span class="where">{{
@@ -244,7 +243,6 @@ watch(locale, () => void nextTick(measure))
                     formatEraYears(
                       schools.empiricism.yearStart,
                       schools.empiricism.yearEnd,
-                      t('ui.bce'),
                     )
                   }}</span>
                   <span class="where">{{
