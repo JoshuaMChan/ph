@@ -1,0 +1,185 @@
+<script setup lang="ts">
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { peopleOf, schools } from '../data/philosophers'
+import { formatEraYears } from '../utils/dates'
+import PhilosopherCard from './PhilosopherCard.vue'
+
+const props = withDefaults(
+  defineProps<{
+    schoolId: string
+    nested?: boolean
+  }>(),
+  { nested: false },
+)
+
+const { t } = useI18n()
+const school = computed(() => schools[props.schoolId])
+const people = computed(() => peopleOf(props.schoolId))
+const years = computed(() => formatEraYears(school.value.yearStart, school.value.yearEnd))
+const countries = computed(() =>
+  school.value.regionKeys.map((key) => t(`region.${key}`)).join(' · '),
+)
+
+const nietzsche = computed(() => people.value.find((item) => item.id === 'nietzsche'))
+const schopenhauer = computed(() => people.value.find((item) => item.id === 'schopenhauer'))
+const kierkegaard = computed(() => people.value.find((item) => item.id === 'kierkegaard'))
+</script>
+
+<template>
+  <section
+    class="school"
+    :class="{ nested, chain: schoolId === 'political' }"
+    :data-school="schoolId"
+    :style="{ '--accent': school.accent }"
+  >
+    <header class="head">
+      <h2>{{ t(`school.${schoolId}`) }}</h2>
+      <p class="meta">
+        <span class="when">{{ years }}</span>
+        <span class="where">{{ countries }}</span>
+      </p>
+    </header>
+    <div v-if="schoolId === 'life'" class="people life-grid">
+      <PhilosopherCard v-if="nietzsche" class="slot-nietzsche" :person="nietzsche" />
+      <PhilosopherCard v-if="schopenhauer" class="slot-schopenhauer" :person="schopenhauer" />
+      <PhilosopherCard v-if="kierkegaard" class="slot-kierkegaard" :person="kierkegaard" />
+    </div>
+    <div v-else-if="schoolId === 'political'" class="people chain">
+      <template v-for="(item, index) in people" :key="item.id">
+        <span v-if="index" class="chain-arrow" aria-hidden="true">
+          <svg viewBox="0 0 40 10" preserveAspectRatio="none">
+            <line x1="0" y1="5" x2="31" y2="5" />
+            <polygon points="31,1.2 40,5 31,8.8" />
+          </svg>
+        </span>
+        <PhilosopherCard :person="item" />
+      </template>
+    </div>
+    <div v-else class="people">
+      <PhilosopherCard v-for="item in people" :key="item.id" :person="item" />
+    </div>
+  </section>
+</template>
+
+<style scoped>
+.school {
+  min-width: max-content;
+  width: max-content;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 2px 2px 0;
+  border-top: 3px solid var(--accent);
+}
+
+.school.chain {
+  width: 100%;
+  min-width: 0;
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+h2 {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 1.12rem;
+  font-weight: 600;
+  color: var(--cream);
+  letter-spacing: 0.03em;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0 10px;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.when {
+  margin: 0;
+  color: var(--gold-2);
+  font-size: 0.78rem;
+}
+
+.where {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.people {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px 12px;
+}
+
+.chain {
+  align-items: center;
+  width: 100%;
+  gap: 0;
+}
+
+.chain-arrow {
+  flex: 1 1 2.5rem;
+  display: flex;
+  align-items: center;
+  min-width: 1.6rem;
+  height: calc(var(--card-w, 70px) * 4 / 3);
+  color: var(--accent);
+}
+
+.chain-arrow svg {
+  width: 100%;
+  height: 10px;
+  overflow: visible;
+}
+
+.chain-arrow line {
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+}
+
+.chain-arrow polygon {
+  fill: currentColor;
+}
+
+.life-grid {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-areas:
+    'nietzsche schopenhauer'
+    '. kierkegaard';
+  justify-content: start;
+  align-items: start;
+}
+
+.slot-nietzsche {
+  grid-area: nietzsche;
+}
+
+.slot-schopenhauer {
+  grid-area: schopenhauer;
+}
+
+.slot-kierkegaard {
+  grid-area: kierkegaard;
+}
+
+.nested {
+  gap: 6px;
+  padding-top: 0;
+}
+
+.nested h2 {
+  font-size: 1.05rem;
+}
+</style>

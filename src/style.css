@@ -1,0 +1,70 @@
+:root {
+  --bg: #0b0c10;
+  --bg-card: #141821;
+  --line: rgba(212, 184, 122, 0.22);
+  --gold: #d4b87a;
+  --gold-2: #e8d5a3;
+  --cream: #f3ead8;
+  --muted: #9a9284;
+  --ink: #14110c;
+  --c-greece: #c4a574;
+  --c-reason: #7ba3c9;
+  --c-experience: #d08a5a;
+  --c-classical: #c4b07a;
+  --c-life: #9b7bb8;
+  --c-phenom: #7b8ec9;
+  --c-existence: #8b6bb5;
+  --c-struct: #c97b9b;
+  --c-analytic: #5eaea0;
+  --c-political: #c46b6b;
+  --serif: 'Cormorant Garamond', 'Songti SC', 'STSong', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+  --sans: 'Source Sans 3', 'PingFang SC', 'Hiragino Sans', 'Yu Gothic UI', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  overflow: hidden;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--cream);
+  background:
+    radial-gradient(1200px 600px at 50% -10%, rgba(212, 184, 122, 0.08), transparent 60%),
+    var(--bg);
+}
+
+body::before {
+  content: '';
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E");
+}
+
+#app {
+  height: 100%;
+}
+
+button {
+  font-family: inherit;
+}
+
+img {
+  max-width: 100%;
+}
