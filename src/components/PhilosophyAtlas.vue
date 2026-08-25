@@ -30,6 +30,12 @@ type Side = 'left' | 'right' | 'top' | 'bottom'
 const graph = ref<HTMLElement | null>(null)
 const canvas = ref({ w: 0, h: 0 })
 const links = ref<Link[]>([])
+const polLayout = ref({
+  hobbes: 0,
+  rousseau: 0,
+  marx: 0,
+  trackW: 200,
+})
 
 function box(el: Element, root: DOMRect) {
   const r = el.getBoundingClientRect()
@@ -100,7 +106,42 @@ function curve(
   return `M ${x1} ${y1} C ${x1} ${midY}, ${midX} ${y2}, ${x2} ${y2}`
 }
 
-function measure() {
+function layoutPolitical(rootEl: HTMLElement) {
+  const track = rootEl.querySelector('.pol-track') as HTMLElement | null
+  const kant = rootEl.querySelector('#classical [data-node="kant"]')
+  const frege = rootEl.querySelector('#analytic [data-node="frege"]')
+  const machSlot = rootEl.querySelector('.pol-slot-machiavelli') as HTMLElement | null
+  const hobbesSlot = rootEl.querySelector('.pol-slot-hobbes') as HTMLElement | null
+  const marxSlot = rootEl.querySelector('.pol-slot-marx') as HTMLElement | null
+  if (!track || !kant || !frege || !machSlot || !hobbesSlot || !marxSlot) return false
+
+  const trackLeft = track.getBoundingClientRect().left
+  const gap = 28
+  const machW = machSlot.offsetWidth
+  const hobbesW = hobbesSlot.offsetWidth
+  const marxW = marxSlot.offsetWidth
+
+  let rousseau = Math.max(0, kant.getBoundingClientRect().left - trackLeft)
+  let marx = Math.max(0, frege.getBoundingClientRect().left - trackLeft)
+  let hobbes = machW + gap
+
+  if (hobbes + hobbesW + gap > rousseau) {
+    hobbes = Math.max(machW + 16, rousseau - hobbesW - gap)
+  }
+
+  const trackW = Math.ceil(marx + marxW)
+  const next = { hobbes, rousseau, marx, trackW }
+  const prev = polLayout.value
+  const changed =
+    Math.abs(prev.hobbes - next.hobbes) > 0.5 ||
+    Math.abs(prev.rousseau - next.rousseau) > 0.5 ||
+    Math.abs(prev.marx - next.marx) > 0.5 ||
+    Math.abs(prev.trackW - next.trackW) > 0.5
+  if (changed) polLayout.value = next
+  return changed
+}
+
+function measureLinks() {
   const rootEl = graph.value
   if (!rootEl) return
   const root = rootEl.getBoundingClientRect()
@@ -129,6 +170,19 @@ function measure() {
       },
     ]
   })
+}
+
+function measure() {
+  const rootEl = graph.value
+  if (!rootEl) return
+  const moved = layoutPolitical(rootEl)
+  if (moved) {
+    void nextTick(() => {
+      measureLinks()
+    })
+    return
+  }
+  measureLinks()
 }
 
 let observer: ResizeObserver | null = null
@@ -205,56 +259,12 @@ watch(locale, () => void nextTick(measure))
         </article>
 
         <div id="modern" class="modern">
-          <div class="modern-pair">
-            <article
-              id="rationalism"
-              data-node="rationalism"
-              class="node modern-school"
-              :style="{ '--accent': schools.rationalism.accent }"
-            >
-              <header class="school-head">
-                <h2>{{ t('school.rationalism') }}</h2>
-                <p class="school-meta">
-                  <span class="when">{{
-                    formatEraYears(
-                      schools.rationalism.yearStart,
-                      schools.rationalism.yearEnd,
-                    )
-                  }}</span>
-                  <span class="where">{{
-                    schools.rationalism.regionKeys.map((key) => t(`region.${key}`)).join(' · ')
-                  }}</span>
-                </p>
-              </header>
-              <PhilosopherCard :person="philosophers.descartes" />
-              <PhilosopherCard :person="philosophers.spinoza" />
-              <PhilosopherCard :person="philosophers.leibniz" />
-            </article>
-            <article
-              id="empiricism"
-              data-node="empiricism"
-              class="node modern-school"
-              :style="{ '--accent': schools.empiricism.accent }"
-            >
-              <header class="school-head">
-                <h2>{{ t('school.empiricism') }}</h2>
-                <p class="school-meta">
-                  <span class="when">{{
-                    formatEraYears(
-                      schools.empiricism.yearStart,
-                      schools.empiricism.yearEnd,
-                    )
-                  }}</span>
-                  <span class="where">{{
-                    schools.empiricism.regionKeys.map((key) => t(`region.${key}`)).join(' · ')
-                  }}</span>
-                </p>
-              </header>
-              <PhilosopherCard :person="philosophers.locke" />
-              <PhilosopherCard :person="philosophers.berkeley" />
-              <PhilosopherCard :person="philosophers.hume" />
-            </article>
-          </div>
+          <article id="rationalism" data-node="rationalism" class="node">
+            <SchoolBlock school-id="rationalism" />
+          </article>
+          <article id="empiricism" data-node="empiricism" class="node">
+            <SchoolBlock school-id="empiricism" />
+          </article>
         </div>
 
         <article id="classical" data-node="classical" class="node">
@@ -283,24 +293,35 @@ watch(locale, () => void nextTick(measure))
         </div>
 
         <section id="political" data-node="political" class="political">
-          <div class="pol-modern">
-            <header class="pol-head">
-              <h2>{{ t('school.political') }}</h2>
-              <p class="pol-meta">
-                <span class="when">{{ politicalYears }}</span>
-                <span class="where">{{ politicalRegion }}</span>
-              </p>
-            </header>
-            <div class="pol-people">
+          <header class="pol-head">
+            <h2>{{ t('school.political') }}</h2>
+            <p class="pol-meta">
+              <span class="when">{{ politicalYears }}</span>
+              <span class="where">{{ politicalRegion }}</span>
+            </p>
+          </header>
+          <div class="pol-track" :style="{ width: `${polLayout.trackW}px` }">
+            <div class="pol-slot pol-slot-machiavelli" style="left: 0">
               <PhilosopherCard :person="philosophers.machiavelli" />
+            </div>
+            <div
+              class="pol-slot pol-slot-hobbes"
+              :style="{ left: `${polLayout.hobbes}px` }"
+            >
               <PhilosopherCard :person="philosophers.hobbes" />
             </div>
-          </div>
-          <div class="pol-classical">
-            <PhilosopherCard :person="philosophers.rousseau" />
-          </div>
-          <div class="pol-analytic">
-            <PhilosopherCard :person="philosophers.marx" />
+            <div
+              class="pol-slot pol-slot-rousseau"
+              :style="{ left: `${polLayout.rousseau}px` }"
+            >
+              <PhilosopherCard :person="philosophers.rousseau" />
+            </div>
+            <div
+              class="pol-slot pol-slot-marx"
+              :style="{ left: `${polLayout.marx}px` }"
+            >
+              <PhilosopherCard :person="philosophers.marx" />
+            </div>
           </div>
         </section>
       </main>
@@ -387,61 +408,12 @@ watch(locale, () => void nextTick(measure))
 
 .modern {
   grid-area: modern;
-  align-self: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
   min-height: 0;
-}
-
-.modern-pair {
-  display: grid;
-  grid-template-columns: max-content max-content;
-  grid-template-rows: auto auto auto auto;
-  column-gap: 16px;
-  row-gap: 8px;
-  align-items: start;
-}
-
-.modern-school {
-  display: grid;
-  grid-template-rows: subgrid;
-  grid-row: 1 / -1;
-  row-gap: 8px;
-  border-top: 3px solid var(--accent);
-}
-
-.school-head {
-  display: flex;
-  flex-direction: row;
-  align-items: baseline;
-  gap: 10px;
-  white-space: nowrap;
-  padding: 2px 2px 0;
-}
-
-.school-head h2 {
-  margin: 0;
-  font-family: var(--serif);
-  font-size: 1.12rem;
-  font-weight: 600;
-  color: var(--cream);
-  letter-spacing: 0.03em;
-  line-height: 1.15;
-}
-
-.school-meta {
-  display: flex;
-  gap: 8px;
-  margin: 0;
-  white-space: nowrap;
-}
-
-.school-meta .when {
-  color: var(--gold-2);
-  font-size: 0.78rem;
-}
-
-.school-meta .where {
-  color: var(--muted);
-  font-size: 0.72rem;
+  align-self: center;
 }
 
 #classical {
@@ -453,7 +425,8 @@ watch(locale, () => void nextTick(measure))
 .exist-col {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
+  align-self: start;
   gap: 12px;
 }
 
@@ -469,12 +442,13 @@ watch(locale, () => void nextTick(measure))
   grid-area: political;
   position: relative;
   z-index: 1;
-  display: grid;
-  grid-template-columns: subgrid;
-  align-items: end;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   align-self: start;
-  justify-self: stretch;
-  column-gap: var(--gutter-x);
+  justify-self: start;
+  width: max-content;
+  gap: 8px;
   margin-top: -2px;
   padding: 10px 10px 12px;
   border: 1px solid var(--line);
@@ -522,40 +496,16 @@ watch(locale, () => void nextTick(measure))
   font-size: 0.72rem;
 }
 
-.pol-modern,
-.pol-classical,
-.pol-analytic {
+.pol-track {
   position: relative;
   z-index: 3;
-  display: flex;
-  align-items: flex-end;
-  gap: 14px;
+  height: calc(var(--card-w, 56px) * 4 / 3 + var(--info-h, 1.55rem));
   min-width: 0;
 }
 
-.pol-modern {
-  grid-column: 1;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
-  justify-content: flex-end;
-}
-
-.pol-people {
-  display: flex;
-  align-items: flex-end;
-  gap: 28px;
-}
-
-.pol-classical {
-  grid-column: 2;
-  justify-content: flex-start;
-}
-
-.pol-analytic {
-  grid-column: 3;
-  justify-content: flex-start;
-  width: max-content;
+.pol-slot {
+  position: absolute;
+  top: 0;
 }
 
 @media (max-height: 760px) {

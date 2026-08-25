@@ -26,6 +26,18 @@ const countries = computed(() =>
 const nietzsche = computed(() => people.value.find((item) => item.id === 'nietzsche'))
 const schopenhauer = computed(() => people.value.find((item) => item.id === 'schopenhauer'))
 const kierkegaard = computed(() => people.value.find((item) => item.id === 'kierkegaard'))
+
+const heidegger = computed(() => people.value.find((item) => item.id === 'heidegger'))
+const sartre = computed(() => people.value.find((item) => item.id === 'sartre'))
+const camus = computed(() => people.value.find((item) => item.id === 'camus'))
+
+const descartes = computed(() => people.value.find((item) => item.id === 'descartes'))
+const spinoza = computed(() => people.value.find((item) => item.id === 'spinoza'))
+const leibniz = computed(() => people.value.find((item) => item.id === 'leibniz'))
+
+const locke = computed(() => people.value.find((item) => item.id === 'locke'))
+const berkeley = computed(() => people.value.find((item) => item.id === 'berkeley'))
+const hume = computed(() => people.value.find((item) => item.id === 'hume'))
 </script>
 
 <template>
@@ -46,6 +58,21 @@ const kierkegaard = computed(() => people.value.find((item) => item.id === 'kier
       <PhilosopherCard v-if="nietzsche" class="slot-nietzsche" :person="nietzsche" />
       <PhilosopherCard v-if="schopenhauer" class="slot-schopenhauer" :person="schopenhauer" />
       <PhilosopherCard v-if="kierkegaard" class="slot-kierkegaard" :person="kierkegaard" />
+    </div>
+    <div v-else-if="schoolId === 'existentialism'" class="people existence-grid">
+      <PhilosopherCard v-if="heidegger" class="slot-heidegger" :person="heidegger" />
+      <PhilosopherCard v-if="sartre" class="slot-sartre" :person="sartre" />
+      <PhilosopherCard v-if="camus" class="slot-camus" :person="camus" />
+    </div>
+    <div v-else-if="schoolId === 'rationalism'" class="people reason-grid">
+      <PhilosopherCard v-if="descartes" class="slot-descartes" :person="descartes" />
+      <PhilosopherCard v-if="spinoza" class="slot-spinoza" :person="spinoza" />
+      <PhilosopherCard v-if="leibniz" class="slot-leibniz" :person="leibniz" />
+    </div>
+    <div v-else-if="schoolId === 'empiricism'" class="people experience-grid">
+      <PhilosopherCard v-if="hume" class="slot-hume" :person="hume" />
+      <PhilosopherCard v-if="locke" class="slot-locke" :person="locke" />
+      <PhilosopherCard v-if="berkeley" class="slot-berkeley" :person="berkeley" />
     </div>
     <div
       v-else
@@ -140,6 +167,75 @@ h2 {
 
 .slot-kierkegaard {
   grid-area: kierkegaard;
+}
+
+.existence-grid {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-areas:
+    'heidegger sartre'
+    '. camus';
+  justify-content: start;
+  align-items: start;
+  gap: 8px 14px;
+}
+
+.slot-heidegger {
+  grid-area: heidegger;
+}
+
+.slot-sartre {
+  grid-area: sartre;
+}
+
+.slot-camus {
+  grid-area: camus;
+}
+
+.reason-grid {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-areas:
+    'descartes .'
+    'spinoza leibniz';
+  justify-content: start;
+  align-items: start;
+  gap: 8px 14px;
+}
+
+.slot-descartes {
+  grid-area: descartes;
+}
+
+.slot-spinoza {
+  grid-area: spinoza;
+}
+
+.slot-leibniz {
+  grid-area: leibniz;
+}
+
+.experience-grid {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-areas:
+    'hume .'
+    'locke berkeley';
+  justify-content: start;
+  align-items: start;
+  gap: 8px 14px;
+}
+
+.slot-hume {
+  grid-area: hume;
+}
+
+.slot-locke {
+  grid-area: locke;
+}
+
+.slot-berkeley {
+  grid-area: berkeley;
 }
 
 .nested {
