@@ -20,8 +20,10 @@ const life = computed(() => formatLifespan(props.person.birth, props.person.deat
     </div>
     <div class="info">
       <h3>{{ t(`person.${person.id}`) }}</h3>
-      <p class="dates">{{ life }}</p>
-      <p class="country">{{ t(`region.${person.country}`) }}</p>
+      <p class="meta">
+        <span class="dates">{{ life }}</span>
+        <span class="country">{{ t(`region.${person.country}`) }}</span>
+      </p>
     </div>
   </article>
 </template>
@@ -33,7 +35,7 @@ const life = computed(() => formatLifespan(props.person.birth, props.person.deat
   flex-direction: column;
   align-items: flex-start;
   width: max-content;
-  height: calc(var(--portrait-h) + var(--info-h, 3.2rem));
+  height: calc(var(--portrait-h) + var(--info-h, 1.55rem));
   flex: 0 0 auto;
 }
 
@@ -60,28 +62,39 @@ const life = computed(() => formatLifespan(props.person.birth, props.person.deat
 }
 
 .info {
-  height: var(--info-h, 3.2rem);
+  height: var(--info-h, 1.55rem);
   display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 6px;
+  margin-top: 5px;
+  min-width: 0;
 }
 
 h3 {
-  margin: 5px 0 0;
+  margin: 0;
   font-family: var(--serif);
   font-size: 0.78rem;
   font-weight: 600;
   color: var(--cream);
-  line-height: 1.15;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: baseline;
+  gap: 5px;
+  margin: 0;
   white-space: nowrap;
 }
 
 .dates,
 .country {
-  margin: 2px 0 0;
+  margin: 0;
   font-size: 0.62rem;
-  line-height: 1.25;
-  white-space: nowrap;
+  line-height: 1.2;
 }
 
 .dates {

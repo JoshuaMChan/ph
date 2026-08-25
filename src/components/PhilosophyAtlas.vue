@@ -42,9 +42,33 @@ function point(
   return [b.cx, b.bottom]
 }
 
-function curve(x1: number, y1: number, x2: number, y2: number) {
-  const cx = x1 + (x2 - x1) * 0.55
-  return `M ${x1} ${y1} C ${cx} ${y1}, ${x1 + (x2 - x1) * 0.45} ${y2}, ${x2} ${y2}`
+function curve(
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  fromSide: Side = 'right',
+  toSide: Side = 'left',
+) {
+  const horizontalOut = fromSide === 'left' || fromSide === 'right'
+  const horizontalIn = toSide === 'left' || toSide === 'right'
+
+  if (horizontalOut && horizontalIn) {
+    const mid = x1 + (x2 - x1) * 0.5
+    return `M ${x1} ${y1} C ${mid} ${y1}, ${mid} ${y2}, ${x2} ${y2}`
+  }
+
+  if (!horizontalOut && !horizontalIn) {
+    const mid = y1 + (y2 - y1) * 0.5
+    return `M ${x1} ${y1} C ${x1} ${mid}, ${x2} ${mid}, ${x2} ${y2}`
+  }
+
+  const midX = x1 + (x2 - x1) * 0.5
+  const midY = y1 + (y2 - y1) * 0.5
+  if (horizontalOut) {
+    return `M ${x1} ${y1} C ${midX} ${y1}, ${x2} ${midY}, ${x2} ${y2}`
+  }
+  return `M ${x1} ${y1} C ${x1} ${midY}, ${midX} ${y2}, ${x2} ${y2}`
 }
 
 function measure() {
@@ -59,8 +83,10 @@ function measure() {
     if (!a || !b) return []
     const from = box(a, root)
     const to = box(b, root)
-    const start = point(from, edge.fromSide ?? 'right')
-    const end = point(to, edge.toSide ?? 'left')
+    const fromSide = edge.fromSide ?? 'right'
+    const toSide = edge.toSide ?? 'left'
+    const start = point(from, fromSide)
+    const end = point(to, toSide)
     if (edge.viaCluster) {
       const cluster = rootEl.querySelector(`[data-node="${edge.viaCluster}"]`)
       if (cluster) start[0] = box(cluster, root).right
@@ -68,7 +94,7 @@ function measure() {
     return [
       {
         id: `${edge.from}-${edge.to}`,
-        d: curve(start[0], start[1], end[0], end[1]),
+        d: curve(start[0], start[1], end[0], end[1], fromSide, toSide),
         color: edge.color,
         dashed: Boolean(edge.dashed),
       },
@@ -115,11 +141,12 @@ watch(locale, () => void nextTick(measure))
               viewBox="0 0 10 10"
               refX="9"
               refY="5"
-              markerWidth="7"
-              markerHeight="7"
-              orient="auto-start-reverse"
+              markerWidth="10"
+              markerHeight="10"
+              markerUnits="userSpaceOnUse"
+              orient="auto"
             >
-              <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor" />
+              <path d="M 1 1.2 L 9 5 L 1 8.8 z" fill="context-stroke" />
             </marker>
           </defs>
           <path
@@ -128,15 +155,20 @@ watch(locale, () => void nextTick(measure))
             :d="link.d"
             fill="none"
             :stroke="link.color"
-            :stroke-dasharray="link.dashed ? '7 6' : 'none'"
-            stroke-width="2.2"
+            :stroke-dasharray="link.dashed ? '6 5' : 'none'"
+            stroke-width="2"
             stroke-linecap="round"
+            stroke-linejoin="round"
             marker-end="url(#arrow)"
           />
         </svg>
 
         <article id="greece" data-node="greece" class="node">
           <SchoolBlock school-id="greece" />
+        </article>
+
+        <article id="scholasticism" data-node="scholasticism" class="node">
+          <SchoolBlock school-id="scholasticism" />
         </article>
 
         <div id="modern" class="modern">
@@ -194,16 +226,15 @@ watch(locale, () => void nextTick(measure))
 }
 
 .graph {
-  --col-gap: 6.5rem;
   --gutter-x: 40px;
-  --card-w: 70px;
-  --info-h: 3.2rem;
+  --card-w: 56px;
+  --info-h: 1.55rem;
   position: relative;
   display: grid;
-  grid-template-columns: max-content var(--col-gap) max-content max-content max-content;
+  grid-template-columns: max-content max-content max-content max-content max-content;
   grid-template-rows: minmax(0, 1fr) auto;
   grid-template-areas:
-    'greece . modern classical lineage'
+    'greece scholasticism modern classical lineage'
     'political political political political political';
   gap: 14px var(--gutter-x);
   padding: 14px 40px 16px;
@@ -242,6 +273,11 @@ watch(locale, () => void nextTick(measure))
 
 #greece {
   grid-area: greece;
+  align-self: center;
+}
+
+#scholasticism {
+  grid-area: scholasticism;
   align-self: center;
 }
 
@@ -300,8 +336,8 @@ watch(locale, () => void nextTick(measure))
 
 @media (max-height: 760px) {
   .graph {
-    --card-w: 62px;
-    --info-h: 3rem;
+    --card-w: 48px;
+    --info-h: 1.4rem;
     padding: 10px 32px 12px;
     gap: 10px var(--gutter-x);
   }

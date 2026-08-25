@@ -9,8 +9,9 @@ export type GraphEdge = {
 }
 
 export const graphEdges: GraphEdge[] = [
-  { from: 'greece', to: 'rationalism', dashed: true, color: 'var(--c-greece)' },
-  { from: 'greece', to: 'empiricism', dashed: true, color: 'var(--c-greece)' },
+  { from: 'greece', to: 'scholasticism', dashed: true, color: 'var(--c-greece)' },
+  { from: 'scholasticism', to: 'rationalism', color: 'var(--c-scholastic)' },
+  { from: 'scholasticism', to: 'empiricism', color: 'var(--c-scholastic)' },
   { from: 'rationalism', to: 'classical', color: 'var(--c-reason)' },
   { from: 'empiricism', to: 'classical', color: 'var(--c-experience)' },
   { from: 'classical', to: 'life', color: 'var(--c-classical)' },

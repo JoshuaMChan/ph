@@ -48,10 +48,8 @@ const kierkegaard = computed(() => people.value.find((item) => item.id === 'kier
     <div v-else-if="schoolId === 'political'" class="people chain">
       <template v-for="(item, index) in people" :key="item.id">
         <span v-if="index" class="chain-arrow" aria-hidden="true">
-          <svg viewBox="0 0 40 10" preserveAspectRatio="none">
-            <line x1="0" y1="5" x2="31" y2="5" />
-            <polygon points="31,1.2 40,5 31,8.8" />
-          </svg>
+          <span class="chain-line" />
+          <span class="chain-head" />
         </span>
         <PhilosopherCard :person="item" />
       </template>
@@ -68,7 +66,7 @@ const kierkegaard = computed(() => people.value.find((item) => item.id === 'kier
   width: max-content;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   padding: 2px 2px 0;
   border-top: 3px solid var(--accent);
 }
@@ -80,8 +78,10 @@ const kierkegaard = computed(() => people.value.find((item) => item.id === 'kier
 
 .head {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 10px;
+  white-space: nowrap;
 }
 
 h2 {
@@ -92,15 +92,14 @@ h2 {
   color: var(--cream);
   letter-spacing: 0.03em;
   line-height: 1.15;
-  white-space: nowrap;
 }
 
 .meta {
   display: flex;
   flex-wrap: nowrap;
-  gap: 0 10px;
+  align-items: baseline;
+  gap: 8px;
   margin: 0;
-  white-space: nowrap;
 }
 
 .when {
@@ -117,39 +116,45 @@ h2 {
 
 .people {
   display: flex;
+  flex-direction: row;
   flex-wrap: nowrap;
-  gap: 8px 12px;
+  gap: 10px 14px;
+  align-items: center;
 }
 
 .chain {
+  flex-direction: row;
   align-items: center;
   width: 100%;
   gap: 0;
 }
 
 .chain-arrow {
-  flex: 1 1 2.5rem;
+  flex: 1 1 2rem;
   display: flex;
   align-items: center;
-  min-width: 1.6rem;
+  min-width: 1.75rem;
+  max-width: 4.5rem;
   height: calc(var(--card-w, 70px) * 4 / 3);
   color: var(--accent);
+  padding: 0 2px;
 }
 
-.chain-arrow svg {
-  width: 100%;
-  height: 10px;
-  overflow: visible;
+.chain-line {
+  flex: 1 1 auto;
+  height: 2px;
+  min-width: 8px;
+  background: currentColor;
+  border-radius: 1px;
 }
 
-.chain-arrow line {
-  stroke: currentColor;
-  stroke-width: 2.2;
-  stroke-linecap: round;
-}
-
-.chain-arrow polygon {
-  fill: currentColor;
+.chain-head {
+  flex: none;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 4.5px 0 4.5px 8px;
+  border-color: transparent transparent transparent currentColor;
 }
 
 .life-grid {
