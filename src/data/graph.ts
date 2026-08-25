@@ -9,7 +9,8 @@ export type GraphEdge = {
 }
 
 export const graphEdges: GraphEdge[] = [
-  { from: 'greece', to: 'scholasticism', dashed: true, color: 'var(--c-greece)' },
+  { from: 'greece', to: 'stoicism', color: 'var(--c-greece)' },
+  { from: 'stoicism', to: 'scholasticism', color: 'var(--c-stoicism)' },
   { from: 'scholasticism', to: 'rationalism', color: 'var(--c-scholastic)' },
   { from: 'scholasticism', to: 'empiricism', color: 'var(--c-scholastic)' },
   { from: 'rationalism', to: 'classical', color: 'var(--c-reason)' },
@@ -22,13 +23,12 @@ export const graphEdges: GraphEdge[] = [
   { from: 'phenomenology', to: 'existentialism', color: 'var(--c-phenom)' },
   {
     from: 'greece',
-    to: 'machiavelli',
-    dashed: true,
+    to: 'political',
     color: 'var(--c-political)',
     fromSide: 'bottom',
     toSide: 'top',
   },
-  { from: 'machiavelli', to: 'hobbes', color: 'var(--c-political)' },
-  { from: 'hobbes', to: 'rousseau', color: 'var(--c-political)' },
-  { from: 'rousseau', to: 'marx', color: 'var(--c-political)' },
+  { from: 'machiavelli', to: 'hobbes', color: 'var(--c-political)', fromSide: 'right', toSide: 'left' },
+  { from: 'hobbes', to: 'rousseau', color: 'var(--c-political)', fromSide: 'right', toSide: 'left' },
+  { from: 'rousseau', to: 'marx', color: 'var(--c-political)', fromSide: 'right', toSide: 'left' },
 ]

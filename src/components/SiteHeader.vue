@@ -29,6 +29,7 @@ function onLocale(event: Event) {
     </a>
     <nav>
       <button type="button" @click="go('greece')">{{ t('nav.greece') }}</button>
+      <button type="button" @click="go('stoicism')">{{ t('nav.stoicism') }}</button>
       <button type="button" @click="go('scholasticism')">{{ t('nav.scholasticism') }}</button>
       <button type="button" @click="go('modern')">{{ t('nav.modern') }}</button>
       <button type="button" @click="go('classical')">{{ t('nav.classical') }}</button>

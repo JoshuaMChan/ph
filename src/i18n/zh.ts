@@ -7,6 +7,7 @@ const zh = {
   },
   nav: {
     greece: '希腊',
+    stoicism: '斯多葛',
     scholasticism: '经院',
     modern: '近代',
     classical: '古典',
@@ -20,6 +21,7 @@ const zh = {
   },
   school: {
     greece: '希腊三贤',
+    stoicism: '斯多葛学派',
     scholasticism: '经院哲学',
     rationalism: '理性主义',
     empiricism: '经验主义',
@@ -34,6 +36,7 @@ const zh = {
   },
   schoolTag: {
     greece: '希腊',
+    stoicism: '罗马',
     scholasticism: '欧',
     rationalism: '欧',
     empiricism: '英',
@@ -67,6 +70,8 @@ const zh = {
     socrates: '苏格拉底',
     plato: '柏拉图',
     aristotle: '亚里士多德',
+    seneca: '塞涅卡',
+    aurelius: '奥勒留',
     augustine: '奥古斯丁',
     aquinas: '托马斯·阿奎那',
     ockham: '奥卡姆的威廉',
@@ -156,6 +161,7 @@ const zh = {
     britain: '英国',
     germanLands: '德国',
     italy: '意大利',
+    rome: '罗马',
     switzerland: '瑞士',
   },
 }

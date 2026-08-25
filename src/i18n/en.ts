@@ -7,6 +7,7 @@ const en = {
   },
   nav: {
     greece: 'Greece',
+    stoicism: 'Stoic',
     scholasticism: 'Scholastic',
     modern: 'Modern',
     classical: 'Classical',
@@ -20,6 +21,7 @@ const en = {
   },
   school: {
     greece: 'The Three Greats of Greece',
+    stoicism: 'Stoicism',
     scholasticism: 'Scholasticism',
     rationalism: 'Rationalism',
     empiricism: 'Empiricism',
@@ -34,6 +36,7 @@ const en = {
   },
   schoolTag: {
     greece: 'Greece',
+    stoicism: 'Rome',
     scholasticism: 'Continent',
     rationalism: 'Continent',
     empiricism: 'Britain',
@@ -67,6 +70,8 @@ const en = {
     socrates: 'Socrates',
     plato: 'Plato',
     aristotle: 'Aristotle',
+    seneca: 'Seneca',
+    aurelius: 'Marcus Aurelius',
     augustine: 'Augustine of Hippo',
     aquinas: 'Thomas Aquinas',
     ockham: 'William of Ockham',
@@ -156,6 +161,7 @@ const en = {
     britain: 'Britain',
     germanLands: 'Germany',
     italy: 'Italy',
+    rome: 'Rome',
     switzerland: 'Switzerland',
   },
 }

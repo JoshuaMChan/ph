@@ -14,8 +14,8 @@ const life = computed(() => formatLifespan(props.person.birth, props.person.deat
 </script>
 
 <template>
-  <article class="card" :data-node="person.id">
-    <div class="portrait">
+  <article class="card">
+    <div class="portrait" :data-node="person.id">
       <img :src="person.portrait" :alt="t(`person.${person.id}`)" />
     </div>
     <div class="info">

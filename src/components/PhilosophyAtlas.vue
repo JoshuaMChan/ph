@@ -59,21 +59,33 @@ function curve(
   fromSide: Side = 'right',
   toSide: Side = 'left',
 ) {
+  const dx = x2 - x1
+  const dy = y2 - y1
+  if (Math.hypot(dx, dy) < 56) {
+    return `M ${x1} ${y1} L ${x2} ${y2}`
+  }
+
   const horizontalOut = fromSide === 'left' || fromSide === 'right'
   const horizontalIn = toSide === 'left' || toSide === 'right'
 
   if (horizontalOut && horizontalIn) {
-    const mid = x1 + (x2 - x1) * 0.5
+    const mid = x1 + dx * 0.5
     return `M ${x1} ${y1} C ${mid} ${y1}, ${mid} ${y2}, ${x2} ${y2}`
   }
 
   if (!horizontalOut && !horizontalIn) {
-    const mid = y1 + (y2 - y1) * 0.5
+    const mid = y1 + dy * 0.5
     return `M ${x1} ${y1} C ${x1} ${mid}, ${x2} ${mid}, ${x2} ${y2}`
   }
 
-  const midX = x1 + (x2 - x1) * 0.5
-  const midY = y1 + (y2 - y1) * 0.5
+  // Drop from a school down into the political row: go down, then across, then in
+  if (fromSide === 'bottom' && toSide === 'top') {
+    const midY = y1 + (y2 - y1) * 0.55
+    return `M ${x1} ${y1} C ${x1} ${midY}, ${x2} ${midY}, ${x2} ${y2}`
+  }
+
+  const midX = x1 + dx * 0.5
+  const midY = y1 + dy * 0.5
   if (horizontalOut) {
     return `M ${x1} ${y1} C ${midX} ${y1}, ${x2} ${midY}, ${x2} ${y2}`
   }
@@ -176,6 +188,10 @@ watch(locale, () => void nextTick(measure))
           <SchoolBlock school-id="greece" />
         </article>
 
+        <article id="stoicism" data-node="stoicism" class="node">
+          <SchoolBlock school-id="stoicism" />
+        </article>
+
         <article id="scholasticism" data-node="scholasticism" class="node">
           <SchoolBlock school-id="scholasticism" />
         </article>
@@ -215,7 +231,7 @@ watch(locale, () => void nextTick(measure))
           </div>
         </div>
 
-        <section id="political" class="political">
+        <section id="political" data-node="political" class="political">
           <div class="pol-modern">
             <header class="pol-head">
               <h2>{{ t('school.political') }}</h2>
@@ -262,11 +278,11 @@ watch(locale, () => void nextTick(measure))
   --info-h: 1.55rem;
   position: relative;
   display: grid;
-  grid-template-columns: max-content max-content max-content max-content max-content;
+  grid-template-columns: max-content max-content max-content max-content max-content max-content;
   grid-template-rows: minmax(0, 1fr) auto;
   grid-template-areas:
-    'greece scholasticism modern classical lineage'
-    '. . political political political';
+    'greece stoicism scholasticism modern classical lineage'
+    '. . . political political political';
   gap: 14px var(--gutter-x);
   padding: 14px 40px 16px;
   height: 100%;
@@ -280,7 +296,7 @@ watch(locale, () => void nextTick(measure))
 .wires {
   position: absolute;
   inset: 0;
-  z-index: 0;
+  z-index: 2;
   pointer-events: none;
   overflow: visible;
   color: var(--gold);
@@ -288,10 +304,9 @@ watch(locale, () => void nextTick(measure))
 
 .node,
 .modern,
-.lineage,
-.political {
+.lineage {
   position: relative;
-  z-index: 1;
+  z-index: 3;
 }
 
 .node {
@@ -305,6 +320,11 @@ watch(locale, () => void nextTick(measure))
 
 #greece {
   grid-area: greece;
+  align-self: center;
+}
+
+#stoicism {
+  grid-area: stoicism;
   align-self: center;
 }
 
@@ -352,21 +372,25 @@ watch(locale, () => void nextTick(measure))
 
 .political {
   grid-area: political;
-  display: grid;
-  grid-template-columns: subgrid;
-  align-items: end;
-  column-gap: var(--gutter-x);
-  width: auto;
-  justify-self: stretch;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-self: start;
+  width: max-content;
+  gap: var(--gutter-x);
   padding: 10px 10px 12px;
   border: 1px solid var(--line);
   border-radius: 12px;
-  background: rgba(20, 24, 33, 0.88);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
+  background: rgba(20, 24, 33, 0.42);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
   border-top: 3px solid var(--c-political);
 }
 
 .pol-head {
+  position: relative;
+  z-index: 3;
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -405,14 +429,16 @@ watch(locale, () => void nextTick(measure))
 .pol-modern,
 .pol-classical,
 .pol-lineage {
+  position: relative;
+  z-index: 3;
   display: flex;
   align-items: flex-end;
   gap: 14px;
   min-width: 0;
+  flex: none;
 }
 
 .pol-modern {
-  grid-column: 1;
   flex-direction: column;
   align-items: flex-start;
   gap: 8px;
@@ -422,16 +448,14 @@ watch(locale, () => void nextTick(measure))
 .pol-people {
   display: flex;
   align-items: flex-end;
-  gap: 14px;
+  gap: 28px;
 }
 
 .pol-classical {
-  grid-column: 2;
   justify-content: flex-start;
 }
 
 .pol-lineage {
-  grid-column: 3;
   justify-content: flex-start;
 }
 

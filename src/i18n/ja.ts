@@ -7,6 +7,7 @@ const ja = {
   },
   nav: {
     greece: 'ギリシア',
+    stoicism: 'ストア',
     scholasticism: 'スコラ',
     modern: '近代',
     classical: '古典',
@@ -20,6 +21,7 @@ const ja = {
   },
   school: {
     greece: 'ギリシア三賢人',
+    stoicism: 'ストア派',
     scholasticism: 'スコラ哲学',
     rationalism: '合理主義',
     empiricism: '経験論',
@@ -34,6 +36,7 @@ const ja = {
   },
   schoolTag: {
     greece: 'ギリシア',
+    stoicism: 'ローマ',
     scholasticism: '欧州',
     rationalism: '欧州',
     empiricism: 'イギリス',
@@ -67,6 +70,8 @@ const ja = {
     socrates: 'ソクラテス',
     plato: 'プラトン',
     aristotle: 'アリストテレス',
+    seneca: 'セネカ',
+    aurelius: 'マルクス・アウレリウス',
     augustine: 'アウグスティヌス',
     aquinas: 'トマス・アクィナス',
     ockham: 'オッカムのウィリアム',
@@ -156,6 +161,7 @@ const ja = {
     britain: 'イギリス',
     germanLands: 'ドイツ',
     italy: 'イタリア',
+    rome: 'ローマ',
     switzerland: 'スイス',
   },
 }
