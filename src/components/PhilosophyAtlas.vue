@@ -11,7 +11,9 @@ import SiteHeader from './SiteHeader.vue'
 const { t, locale } = useI18n()
 
 const political = schools.political
-const politicalYears = formatEraYears(political.yearStart, political.yearEnd)
+const politicalYears = computed(() =>
+  formatEraYears(political.yearStart, political.yearEnd, String(locale.value)),
+)
 const politicalRegion = computed(() =>
   political.regionKeys.map((key) => t(`region.${key}`)).join(' · '),
 )
