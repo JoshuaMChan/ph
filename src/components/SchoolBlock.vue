@@ -112,8 +112,8 @@ h2 {
   display: grid;
   grid-template-columns: auto auto;
   grid-template-areas:
-    'nietzsche schopenhauer'
-    '. kierkegaard';
+    'schopenhauer nietzsche'
+    'kierkegaard .';
   justify-content: start;
   align-items: start;
 }

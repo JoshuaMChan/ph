@@ -194,21 +194,25 @@ watch(locale, () => void nextTick(measure))
         </article>
 
         <div id="split" class="lineage">
-          <article id="life" data-node="life" class="node">
-            <SchoolBlock school-id="life" />
-          </article>
-          <article id="deconstruction" data-node="deconstruction" class="node">
-            <SchoolBlock school-id="deconstruction" />
-          </article>
-          <article id="phenomenology" data-node="phenomenology" class="node">
-            <SchoolBlock school-id="phenomenology" />
-          </article>
-          <article id="existentialism" data-node="existentialism" class="node">
-            <SchoolBlock school-id="existentialism" />
-          </article>
-          <article id="analytic" data-node="analytic" class="node">
-            <SchoolBlock school-id="analytic" />
-          </article>
+          <div class="lineage-left">
+            <article id="life" data-node="life" class="node">
+              <SchoolBlock school-id="life" />
+            </article>
+            <article id="phenomenology" data-node="phenomenology" class="node">
+              <SchoolBlock school-id="phenomenology" />
+            </article>
+          </div>
+          <div class="lineage-right">
+            <article id="existentialism" data-node="existentialism" class="node">
+              <SchoolBlock school-id="existentialism" />
+            </article>
+            <article id="analytic" data-node="analytic" class="node">
+              <SchoolBlock school-id="analytic" />
+            </article>
+            <article id="deconstruction" data-node="deconstruction" class="node">
+              <SchoolBlock school-id="deconstruction" />
+            </article>
+          </div>
         </div>
 
         <section id="political" class="political">
@@ -262,7 +266,7 @@ watch(locale, () => void nextTick(measure))
   grid-template-rows: minmax(0, 1fr) auto;
   grid-template-areas:
     'greece scholasticism modern classical lineage'
-    'political political political political political';
+    '. . political political political';
   gap: 14px var(--gutter-x);
   padding: 14px 40px 16px;
   height: 100%;
@@ -325,43 +329,35 @@ watch(locale, () => void nextTick(measure))
 
 .lineage {
   grid-area: lineage;
-  display: grid;
-  grid-template-columns: max-content max-content;
-  grid-template-areas:
-    'life existentialism'
-    'phenomenology analytic'
-    '. deconstruction';
-  gap: 12px 36px;
+  display: flex;
+  flex-direction: row;
   align-items: center;
+  gap: 36px;
 }
 
-#life {
-  grid-area: life;
+.lineage-left,
+.lineage-right {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-#existentialism {
-  grid-area: existentialism;
+.lineage-left {
+  justify-content: center;
 }
 
-#analytic {
-  grid-area: analytic;
-}
-
-#deconstruction {
-  grid-area: deconstruction;
-}
-
-#phenomenology {
-  grid-area: phenomenology;
+.lineage-right {
+  justify-content: center;
 }
 
 .political {
   grid-area: political;
   display: grid;
   grid-template-columns: subgrid;
-  grid-column: 1 / -1;
   align-items: end;
   column-gap: var(--gutter-x);
+  width: auto;
+  justify-self: stretch;
   padding: 10px 10px 12px;
   border: 1px solid var(--line);
   border-radius: 12px;
@@ -416,7 +412,7 @@ watch(locale, () => void nextTick(measure))
 }
 
 .pol-modern {
-  grid-column: 3;
+  grid-column: 1;
   flex-direction: column;
   align-items: flex-start;
   gap: 8px;
@@ -430,12 +426,12 @@ watch(locale, () => void nextTick(measure))
 }
 
 .pol-classical {
-  grid-column: 4;
+  grid-column: 2;
   justify-content: flex-start;
 }
 
 .pol-lineage {
-  grid-column: 5;
+  grid-column: 3;
   justify-content: flex-start;
 }
 
