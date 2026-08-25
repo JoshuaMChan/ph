@@ -16,6 +16,7 @@ export const graphEdges: GraphEdge[] = [
   { from: 'rationalism', to: 'classical', color: 'var(--c-reason)' },
   { from: 'empiricism', to: 'classical', color: 'var(--c-experience)' },
   { from: 'classical', to: 'life', color: 'var(--c-classical)' },
+  { from: 'classical', to: 'phenomenology', color: 'var(--c-classical)' },
   { from: 'classical', to: 'analytic', color: 'var(--c-classical)' },
   { from: 'life', to: 'existentialism', color: 'var(--c-life)' },
   { from: 'life', to: 'deconstruction', color: 'var(--c-life)' },

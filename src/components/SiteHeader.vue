@@ -5,6 +5,9 @@ import type { AppLocale } from '../i18n'
 const { t, locale } = useI18n()
 const langs: AppLocale[] = ['en', 'zh', 'ja']
 
+/** Section jump targets — empty for now; fill when chapter nav returns. */
+const sections: { id: string; labelKey: string }[] = []
+
 function go(id: string) {
   document.getElementById(id)?.scrollIntoView({
     behavior: 'smooth',
@@ -27,14 +30,15 @@ function onLocale(event: Event) {
       <span class="mark">Φ</span>
       <span class="name">{{ t('site.title') }}</span>
     </a>
-    <nav>
-      <button type="button" @click="go('greece')">{{ t('nav.greece') }}</button>
-      <button type="button" @click="go('stoicism')">{{ t('nav.stoicism') }}</button>
-      <button type="button" @click="go('scholasticism')">{{ t('nav.scholasticism') }}</button>
-      <button type="button" @click="go('modern')">{{ t('nav.modern') }}</button>
-      <button type="button" @click="go('classical')">{{ t('nav.classical') }}</button>
-      <button type="button" @click="go('split')">{{ t('nav.split') }}</button>
-      <button type="button" @click="go('political')">{{ t('nav.political') }}</button>
+    <nav v-if="sections.length">
+      <button
+        v-for="section in sections"
+        :key="section.id"
+        type="button"
+        @click="go(section.id)"
+      >
+        {{ t(section.labelKey) }}
+      </button>
     </nav>
     <label class="lang">
       <span class="sr">{{ t('lang.en') }}</span>
@@ -103,6 +107,10 @@ nav button:hover {
   color: var(--cream);
 }
 
+.lang {
+  margin-left: auto;
+}
+
 .lang select {
   appearance: none;
   background: var(--bg-card);
@@ -120,6 +128,10 @@ nav button:hover {
     calc(100% - 9px) 11px;
   background-size: 5px 5px;
   background-repeat: no-repeat;
+}
+
+nav + .lang {
+  margin-left: 0;
 }
 
 .sr {
