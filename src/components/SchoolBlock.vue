@@ -27,10 +27,6 @@ const nietzsche = computed(() => people.value.find((item) => item.id === 'nietzs
 const schopenhauer = computed(() => people.value.find((item) => item.id === 'schopenhauer'))
 const kierkegaard = computed(() => people.value.find((item) => item.id === 'kierkegaard'))
 
-const heidegger = computed(() => people.value.find((item) => item.id === 'heidegger'))
-const sartre = computed(() => people.value.find((item) => item.id === 'sartre'))
-const camus = computed(() => people.value.find((item) => item.id === 'camus'))
-
 const descartes = computed(() => people.value.find((item) => item.id === 'descartes'))
 const spinoza = computed(() => people.value.find((item) => item.id === 'spinoza'))
 const leibniz = computed(() => people.value.find((item) => item.id === 'leibniz'))
@@ -58,11 +54,6 @@ const hume = computed(() => people.value.find((item) => item.id === 'hume'))
       <PhilosopherCard v-if="nietzsche" class="slot-nietzsche" :person="nietzsche" />
       <PhilosopherCard v-if="schopenhauer" class="slot-schopenhauer" :person="schopenhauer" />
       <PhilosopherCard v-if="kierkegaard" class="slot-kierkegaard" :person="kierkegaard" />
-    </div>
-    <div v-else-if="schoolId === 'existentialism'" class="people existence-grid">
-      <PhilosopherCard v-if="heidegger" class="slot-heidegger" :person="heidegger" />
-      <PhilosopherCard v-if="sartre" class="slot-sartre" :person="sartre" />
-      <PhilosopherCard v-if="camus" class="slot-camus" :person="camus" />
     </div>
     <div v-else-if="schoolId === 'rationalism'" class="people reason-grid">
       <PhilosopherCard v-if="descartes" class="slot-descartes" :person="descartes" />
@@ -167,29 +158,6 @@ h2 {
 
 .slot-kierkegaard {
   grid-area: kierkegaard;
-}
-
-.existence-grid {
-  display: grid;
-  grid-template-columns: auto auto;
-  grid-template-areas:
-    'heidegger sartre'
-    '. camus';
-  justify-content: start;
-  align-items: start;
-  gap: 8px 14px;
-}
-
-.slot-heidegger {
-  grid-area: heidegger;
-}
-
-.slot-sartre {
-  grid-area: sartre;
-}
-
-.slot-camus {
-  grid-area: camus;
 }
 
 .reason-grid {

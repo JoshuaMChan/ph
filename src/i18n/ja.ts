@@ -43,7 +43,7 @@ const ja = {
     classical: 'ドイツ',
     life: 'ドイツ · デンマーク',
     phenomenology: 'ドイツ',
-    existentialism: 'ドイツ · フランス',
+    existentialism: 'フランス',
     deconstruction: 'フランス',
     analytic: 'イギリス',
   },

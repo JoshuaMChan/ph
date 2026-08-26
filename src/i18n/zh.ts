@@ -43,7 +43,7 @@ const zh = {
     classical: '德',
     life: '德 · 丹麦',
     phenomenology: '德',
-    existentialism: '德 · 法',
+    existentialism: '法',
     deconstruction: '法',
     analytic: '英',
   },

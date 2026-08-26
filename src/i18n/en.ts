@@ -43,7 +43,7 @@ const en = {
     classical: 'Germany',
     life: 'Germany · Denmark',
     phenomenology: 'Germany',
-    existentialism: 'Germany · France',
+    existentialism: 'France',
     deconstruction: 'France',
     analytic: 'Britain',
   },
