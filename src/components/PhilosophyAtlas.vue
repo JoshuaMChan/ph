@@ -254,9 +254,14 @@ watch(locale, () => void nextTick(measure))
           <SchoolBlock school-id="greece" />
         </article>
 
-        <article id="stoicism" data-node="stoicism" class="node">
-          <SchoolBlock school-id="stoicism" />
-        </article>
+        <div id="hellenistic" class="hellenistic">
+          <article id="stoicism" data-node="stoicism" class="node">
+            <SchoolBlock school-id="stoicism" />
+          </article>
+          <article id="epicureanism" data-node="epicureanism" class="node">
+            <SchoolBlock school-id="epicureanism" />
+          </article>
+        </div>
 
         <article id="scholasticism" data-node="scholasticism" class="node">
           <SchoolBlock school-id="scholasticism" />
@@ -358,7 +363,7 @@ watch(locale, () => void nextTick(measure))
   grid-template-rows: auto minmax(0, 1fr) auto;
   grid-template-areas:
     'epochOnto epochOnto epochOnto epochEpist epochEpist epochContemp epochContemp'
-    'greece stoicism scholasticism modern classical lifeCol existCol'
+    'greece hellenistic scholasticism modern classical lifeCol existCol'
     '. . . political political political existCol';
   gap: 10px var(--gutter-x);
   padding: 10px 40px 16px;
@@ -426,6 +431,7 @@ watch(locale, () => void nextTick(measure))
 
 .node,
 .modern,
+.hellenistic,
 .life-col,
 .exist-col {
   position: relative;
@@ -447,13 +453,29 @@ watch(locale, () => void nextTick(measure))
 }
 
 #stoicism {
-  grid-area: stoicism;
   align-self: center;
 }
 
 #scholasticism {
   grid-area: scholasticism;
   align-self: center;
+}
+
+.hellenistic {
+  grid-area: hellenistic;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  gap: 16px;
+  min-height: 0;
+  align-self: center;
+  width: max-content;
+}
+
+.hellenistic .node {
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .modern {

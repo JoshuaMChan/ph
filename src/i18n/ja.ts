@@ -79,6 +79,7 @@ const ja = {
     aurelius: 'マルクス・アウレリウス',
     augustine: 'アウグスティヌス',
     aquinas: 'トマス・アクィナス',
+    ockham: 'オッカム',
     descartes: 'ルネ・デカルト',
     spinoza: 'バールーフ・スピノザ',
     leibniz: 'ゴットフリート・ライプニッツ',
@@ -142,6 +143,8 @@ const ja = {
     trier: 'トリーア',
     london: 'ロンドン',
     barmen: 'バルメン',
+    ockham: 'オッカム',
+    munich: 'ミュンヘン',
   },
   region: {
     greece: 'ギリシア',

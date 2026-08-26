@@ -79,6 +79,7 @@ const zh = {
     aurelius: '奥勒留',
     augustine: '奥古斯丁',
     aquinas: '托马斯·阿奎那',
+    ockham: '奥卡姆',
     descartes: '勒内·笛卡尔',
     spinoza: '巴鲁赫·斯宾诺莎',
     leibniz: '戈特弗里德·莱布尼茨',
@@ -142,6 +143,8 @@ const zh = {
     trier: '特里尔',
     london: '伦敦',
     barmen: '巴门',
+    ockham: '奥卡姆',
+    munich: '慕尼黑',
   },
   region: {
     greece: '希腊',

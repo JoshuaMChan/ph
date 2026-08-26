@@ -34,6 +34,10 @@ const leibniz = computed(() => people.value.find((item) => item.id === 'leibniz'
 const locke = computed(() => people.value.find((item) => item.id === 'locke'))
 const berkeley = computed(() => people.value.find((item) => item.id === 'berkeley'))
 const hume = computed(() => people.value.find((item) => item.id === 'hume'))
+
+const augustine = computed(() => people.value.find((item) => item.id === 'augustine'))
+const aquinas = computed(() => people.value.find((item) => item.id === 'aquinas'))
+const ockham = computed(() => people.value.find((item) => item.id === 'ockham'))
 </script>
 
 <template>
@@ -54,6 +58,11 @@ const hume = computed(() => people.value.find((item) => item.id === 'hume'))
       <PhilosopherCard v-if="nietzsche" class="slot-nietzsche" :person="nietzsche" />
       <PhilosopherCard v-if="schopenhauer" class="slot-schopenhauer" :person="schopenhauer" />
       <PhilosopherCard v-if="kierkegaard" class="slot-kierkegaard" :person="kierkegaard" />
+    </div>
+    <div v-else-if="schoolId === 'scholasticism'" class="people medieval-grid">
+      <PhilosopherCard v-if="augustine" class="slot-augustine" :person="augustine" />
+      <PhilosopherCard v-if="aquinas" class="slot-aquinas" :person="aquinas" />
+      <PhilosopherCard v-if="ockham" class="slot-ockham" :person="ockham" />
     </div>
     <div v-else-if="schoolId === 'rationalism'" class="people reason-grid">
       <PhilosopherCard v-if="descartes" class="slot-descartes" :person="descartes" />
@@ -158,6 +167,29 @@ h2 {
 
 .slot-kierkegaard {
   grid-area: kierkegaard;
+}
+
+.medieval-grid {
+  display: grid;
+  grid-template-columns: max-content max-content;
+  grid-template-areas:
+    'augustine .'
+    'aquinas ockham';
+  justify-content: start;
+  align-items: start;
+  gap: 8px 14px;
+}
+
+.slot-augustine {
+  grid-area: augustine;
+}
+
+.slot-aquinas {
+  grid-area: aquinas;
+}
+
+.slot-ockham {
+  grid-area: ockham;
 }
 
 .reason-grid {

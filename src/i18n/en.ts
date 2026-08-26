@@ -79,6 +79,7 @@ const en = {
     aurelius: 'Marcus Aurelius',
     augustine: 'Augustine of Hippo',
     aquinas: 'Thomas Aquinas',
+    ockham: 'Ockham',
     descartes: 'René Descartes',
     spinoza: 'Baruch Spinoza',
     leibniz: 'Gottfried Leibniz',
@@ -142,6 +143,8 @@ const en = {
     trier: 'Trier',
     london: 'London',
     barmen: 'Barmen',
+    ockham: 'Ockham',
+    munich: 'Munich',
   },
   region: {
     greece: 'Greece',
