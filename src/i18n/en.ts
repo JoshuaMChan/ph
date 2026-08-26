@@ -118,6 +118,21 @@ const en = {
     hobbes: 'Thomas Hobbes',
     rousseau: 'Jean-Jacques Rousseau',
   },
+  // Keys mirror person; philosophers omitted here do not show a quote yet.
+  quote: {
+    socrates: 'The unexamined life is not worth living.',
+    descartes: 'I think, therefore I am.',
+    leibniz: 'This is the best of all possible worlds.',
+    kant: 'Act in such a way that you treat humanity, whether in your own person or in the person of any other, always at the same time as an end and never merely as a means.',
+    hegel: 'The owl of Minerva spreads its wings only with the falling of the dusk.',
+    schopenhauer: 'All life is suffering in its very essence … Life swings like a pendulum to and fro between pain and boredom.',
+    nietzsche: 'We should consider every day lost on which we have not danced at least once.',
+    husserl: 'Back to the things themselves!',
+    heidegger: 'The “essence” of Dasein lies in its existence. … As long as Dasein exists, it is already Being-towards-death.',
+    sartre: 'Existence precedes essence.',
+    camus: 'There is but one truly serious philosophical problem, and that is suicide.',
+    wittgenstein: 'The limits of my language mean the limits of my world.',
+  },
   place: {
     ephesus: 'Ephesus',
     elea: 'Elea',
