@@ -34,6 +34,8 @@ const polLayout = ref({
   hobbes: 0,
   rousseau: 0,
   marx: 0,
+  mill: 0,
+  rawls: 0,
   trackW: 200,
 })
 
@@ -113,13 +115,18 @@ function layoutPolitical(rootEl: HTMLElement) {
   const machSlot = rootEl.querySelector('.pol-slot-machiavelli') as HTMLElement | null
   const hobbesSlot = rootEl.querySelector('.pol-slot-hobbes') as HTMLElement | null
   const marxSlot = rootEl.querySelector('.pol-slot-marx') as HTMLElement | null
-  if (!track || !kant || !frege || !machSlot || !hobbesSlot || !marxSlot) return false
+  const millSlot = rootEl.querySelector('.pol-slot-mill') as HTMLElement | null
+  const rawlsSlot = rootEl.querySelector('.pol-slot-rawls') as HTMLElement | null
+  if (!track || !kant || !frege || !machSlot || !hobbesSlot || !marxSlot || !millSlot || !rawlsSlot)
+    return false
 
   const trackLeft = track.getBoundingClientRect().left
   const gap = 28
   const machW = machSlot.offsetWidth
   const hobbesW = hobbesSlot.offsetWidth
   const marxW = marxSlot.offsetWidth
+  const millW = millSlot.offsetWidth
+  const rawlsW = rawlsSlot.offsetWidth
 
   let rousseau = Math.max(0, kant.getBoundingClientRect().left - trackLeft)
   let marx = Math.max(0, frege.getBoundingClientRect().left - trackLeft)
@@ -129,13 +136,17 @@ function layoutPolitical(rootEl: HTMLElement) {
     hobbes = Math.max(machW + 16, rousseau - hobbesW - gap)
   }
 
-  const trackW = Math.ceil(marx + marxW)
-  const next = { hobbes, rousseau, marx, trackW }
+  const mill = marx + marxW + gap
+  const rawls = mill + millW + gap
+  const trackW = Math.ceil(rawls + rawlsW)
+  const next = { hobbes, rousseau, marx, mill, rawls, trackW }
   const prev = polLayout.value
   const changed =
     Math.abs(prev.hobbes - next.hobbes) > 0.5 ||
     Math.abs(prev.rousseau - next.rousseau) > 0.5 ||
     Math.abs(prev.marx - next.marx) > 0.5 ||
+    Math.abs(prev.mill - next.mill) > 0.5 ||
+    Math.abs(prev.rawls - next.rawls) > 0.5 ||
     Math.abs(prev.trackW - next.trackW) > 0.5
   if (changed) polLayout.value = next
   return changed
@@ -250,6 +261,10 @@ watch(locale, () => void nextTick(measure))
         <p class="epoch epoch-epist">{{ t('epoch.epistemology') }}</p>
         <p class="epoch epoch-contemp">{{ t('epoch.contemporary') }}</p>
 
+        <article id="presocratic" data-node="presocratic" class="node">
+          <SchoolBlock school-id="presocratic" />
+        </article>
+
         <article id="greece" data-node="greece" class="node">
           <SchoolBlock school-id="greece" />
         </article>
@@ -260,6 +275,9 @@ watch(locale, () => void nextTick(measure))
           </article>
           <article id="epicureanism" data-node="epicureanism" class="node">
             <SchoolBlock school-id="epicureanism" />
+          </article>
+          <article id="skepticism" data-node="skepticism" class="node">
+            <SchoolBlock school-id="skepticism" />
           </article>
         </div>
 
@@ -331,6 +349,18 @@ watch(locale, () => void nextTick(measure))
             >
               <PhilosopherCard :person="philosophers.marx" />
             </div>
+            <div
+              class="pol-slot pol-slot-mill"
+              :style="{ left: `${polLayout.mill}px` }"
+            >
+              <PhilosopherCard :person="philosophers.mill" />
+            </div>
+            <div
+              class="pol-slot pol-slot-rawls"
+              :style="{ left: `${polLayout.rawls}px` }"
+            >
+              <PhilosopherCard :person="philosophers.rawls" />
+            </div>
           </div>
         </section>
       </main>
@@ -359,12 +389,12 @@ watch(locale, () => void nextTick(measure))
   --info-h: 1.55rem;
   position: relative;
   display: grid;
-  grid-template-columns: max-content max-content max-content max-content max-content max-content max-content;
+  grid-template-columns: max-content max-content max-content max-content max-content max-content max-content max-content;
   grid-template-rows: auto minmax(0, 1fr) auto;
   grid-template-areas:
-    'epochOnto epochOnto epochOnto epochEpist epochEpist epochContemp epochContemp'
-    'greece hellenistic scholasticism modern classical lifeCol existCol'
-    '. . . political political political existCol';
+    'epochOnto epochOnto epochOnto epochOnto epochEpist epochEpist epochContemp epochContemp'
+    'presocratic greece hellenistic scholasticism modern classical lifeCol existCol'
+    '. . . . political political political existCol';
   gap: 10px var(--gutter-x);
   padding: 10px 40px 16px;
   height: 100%;
@@ -445,6 +475,11 @@ watch(locale, () => void nextTick(measure))
   border-radius: 12px;
   background: rgba(20, 24, 33, 0.88);
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
+}
+
+#presocratic {
+  grid-area: presocratic;
+  align-self: center;
 }
 
 #greece {

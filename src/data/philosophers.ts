@@ -9,6 +9,50 @@ const athens: Philosopher['born'] = {
 }
 
 export const philosophers: Record<string, Philosopher> = {
+  heraclitus: {
+    id: 'heraclitus',
+    nativeName: 'Ἡράκλειτος',
+    country: 'greece',
+    portrait: '/portraits/heraclitus.jpg',
+    birth: { year: -535, circa: true },
+    death: { year: -475, circa: true },
+    born: {
+      city: 'ephesus',
+      region: 'greece',
+      lat: 37.9411,
+      lng: 27.3419,
+      countryId: '792',
+    },
+    died: {
+      city: 'ephesus',
+      region: 'greece',
+      lat: 37.9411,
+      lng: 27.3419,
+      countryId: '792',
+    },
+  },
+  parmenides: {
+    id: 'parmenides',
+    nativeName: 'Παρμενίδης',
+    country: 'greece',
+    portrait: '/portraits/parmenides.jpg',
+    birth: { year: -515, circa: true },
+    death: { year: -450, circa: true },
+    born: {
+      city: 'elea',
+      region: 'italy',
+      lat: 40.1606,
+      lng: 15.1614,
+      countryId: '380',
+    },
+    died: {
+      city: 'elea',
+      region: 'italy',
+      lat: 40.1606,
+      lng: 15.1614,
+      countryId: '380',
+    },
+  },
   socrates: {
     id: 'socrates',
     nativeName: 'Σωκράτης',
@@ -66,6 +110,28 @@ export const philosophers: Record<string, Philosopher> = {
       countryId: '300',
     },
     died: { ...athens },
+  },
+  pyrrho: {
+    id: 'pyrrho',
+    nativeName: 'Πύρρων',
+    country: 'greece',
+    portrait: '/portraits/pyrrho.jpg',
+    birth: { year: -360, circa: true },
+    death: { year: -270, circa: true },
+    born: {
+      city: 'elis',
+      region: 'greece',
+      lat: 37.8914,
+      lng: 21.3753,
+      countryId: '300',
+    },
+    died: {
+      city: 'elis',
+      region: 'greece',
+      lat: 37.8914,
+      lng: 21.3753,
+      countryId: '300',
+    },
   },
   seneca: {
     id: 'seneca',
@@ -157,7 +223,7 @@ export const philosophers: Record<string, Philosopher> = {
   },
   ockham: {
     id: 'ockham',
-    nativeName: 'Ockham',
+    nativeName: 'William of Ockham',
     country: 'england',
     portrait: '/portraits/ockham.png',
     birth: { year: 1287, circa: true },
@@ -727,6 +793,50 @@ export const philosophers: Record<string, Philosopher> = {
       countryId: '826',
     },
   },
+  mill: {
+    id: 'mill',
+    nativeName: 'John Stuart Mill',
+    country: 'england',
+    portrait: '/portraits/mill.jpg',
+    birth: { year: 1806, month: 5, day: 20 },
+    death: { year: 1873, month: 5, day: 8 },
+    born: {
+      city: 'london',
+      region: 'england',
+      lat: 51.5074,
+      lng: -0.1278,
+      countryId: '826',
+    },
+    died: {
+      city: 'avignon',
+      region: 'france',
+      lat: 43.9493,
+      lng: 4.8055,
+      countryId: '250',
+    },
+  },
+  rawls: {
+    id: 'rawls',
+    nativeName: 'John Rawls',
+    country: 'america',
+    portrait: '/portraits/rawls.jpg',
+    birth: { year: 1921, month: 2, day: 21 },
+    death: { year: 2002, month: 11, day: 24 },
+    born: {
+      city: 'baltimore',
+      region: 'america',
+      lat: 39.2904,
+      lng: -76.6122,
+      countryId: '840',
+    },
+    died: {
+      city: 'lexington',
+      region: 'america',
+      lat: 42.4449,
+      lng: -71.229,
+      countryId: '840',
+    },
+  },
 }
 
 function byBirth(ids: string[]): string[] {
@@ -734,6 +844,16 @@ function byBirth(ids: string[]): string[] {
 }
 
 export const schools: Record<string, School> = {
+  presocratic: {
+    id: 'presocratic',
+    people: byBirth(['heraclitus', 'parmenides']),
+    yearStart: -535,
+    yearEnd: -450,
+    circa: true,
+    regionKeys: ['greece'],
+    countryIds: ['300', '380'],
+    accent: 'var(--c-presocratic)',
+  },
   greece: {
     id: 'greece',
     people: byBirth(['socrates', 'plato', 'aristotle']),
@@ -762,6 +882,16 @@ export const schools: Record<string, School> = {
     regionKeys: ['greece'],
     countryIds: ['300'],
     accent: 'var(--c-epicurean)',
+  },
+  skepticism: {
+    id: 'skepticism',
+    people: ['pyrrho'],
+    yearStart: -360,
+    yearEnd: -270,
+    circa: true,
+    regionKeys: ['greece'],
+    countryIds: ['300'],
+    accent: 'var(--c-skepticism)',
   },
   scholasticism: {
     id: 'scholasticism',
@@ -844,11 +974,11 @@ export const schools: Record<string, School> = {
   },
   political: {
     id: 'political',
-    people: ['machiavelli', 'hobbes', 'rousseau', 'marx'],
+    people: ['machiavelli', 'hobbes', 'rousseau', 'marx', 'mill', 'rawls'],
     yearStart: 1469,
-    yearEnd: 1883,
+    yearEnd: 2002,
     regionKeys: ['europe'],
-    countryIds: ['380', '826', '756', '276'],
+    countryIds: ['380', '826', '756', '276', '840'],
     accent: 'var(--c-political)',
   },
 }

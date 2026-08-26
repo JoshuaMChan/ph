@@ -9,10 +9,13 @@ export type GraphEdge = {
 }
 
 export const graphEdges: GraphEdge[] = [
+  { from: 'presocratic', to: 'greece', color: 'var(--c-presocratic)' },
   { from: 'greece', to: 'stoicism', color: 'var(--c-greece)' },
   { from: 'greece', to: 'epicureanism', color: 'var(--c-greece)' },
+  { from: 'greece', to: 'skepticism', color: 'var(--c-greece)' },
   { from: 'stoicism', to: 'scholasticism', color: 'var(--c-stoicism)' },
   { from: 'epicureanism', to: 'scholasticism', color: 'var(--c-epicurean)' },
+  { from: 'skepticism', to: 'scholasticism', color: 'var(--c-skepticism)' },
   { from: 'scholasticism', to: 'rationalism', color: 'var(--c-scholastic)' },
   { from: 'scholasticism', to: 'empiricism', color: 'var(--c-scholastic)' },
   { from: 'rationalism', to: 'classical', color: 'var(--c-reason)' },
@@ -33,4 +36,6 @@ export const graphEdges: GraphEdge[] = [
   { from: 'machiavelli', to: 'hobbes', color: 'var(--c-political)' },
   { from: 'hobbes', to: 'rousseau', color: 'var(--c-political)' },
   { from: 'rousseau', to: 'marx', color: 'var(--c-political)' },
+  { from: 'marx', to: 'mill', color: 'var(--c-political)' },
+  { from: 'mill', to: 'rawls', color: 'var(--c-political)' },
 ]
