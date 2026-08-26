@@ -140,18 +140,18 @@ function layoutPolitical(rootEl: HTMLElement) {
   const rawlsW = rawlsSlot.offsetWidth
 
   let rousseau = Math.max(0, kant.getBoundingClientRect().left - trackLeft)
-  let marx = Math.max(0, frege.getBoundingClientRect().left - trackLeft)
+  let mill = Math.max(0, frege.getBoundingClientRect().left - trackLeft)
   let rawls = Math.max(0, foucault.getBoundingClientRect().left - trackLeft)
   let hobbes = machW + gap
 
   if (hobbes + hobbesW + gap > rousseau) {
     hobbes = Math.max(machW + 16, rousseau - hobbesW - gap)
   }
-
-  let mill = Math.max(0, marx - millW - gap)
   if (mill < rousseau + gap) {
-    mill = Math.max(rousseau + gap, marx - millW - gap)
+    mill = rousseau + gap
   }
+
+  const marx = mill + millW + gap
   if (rawls < marx + marxW + gap) {
     rawls = marx + marxW + gap
   }

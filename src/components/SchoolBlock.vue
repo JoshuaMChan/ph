@@ -79,7 +79,11 @@ const ockham = computed(() => people.value.find((item) => item.id === 'ockham'))
     <div
       v-else
       class="people"
-      :class="{ stacked: people.length >= 3 && schoolId !== 'greece' && schoolId !== 'analytic' }"
+      :class="{
+        stacked:
+          schoolId === 'presocratic' ||
+          (people.length >= 3 && schoolId !== 'greece' && schoolId !== 'analytic'),
+      }"
     >
       <PhilosopherCard v-for="item in people" :key="item.id" :person="item" />
     </div>
