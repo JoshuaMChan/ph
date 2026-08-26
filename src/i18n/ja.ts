@@ -60,6 +60,11 @@ const ja = {
     split: '分裂',
     afterHegel: 'ヘーゲルのあと、思想史はいくつかの大河に裂ける',
   },
+  epoch: {
+    ontology: '存在論',
+    epistemology: '認識論',
+    contemporary: '近現代哲学',
+  },
   ui: {
     born: '生',
     died: '没',

@@ -60,6 +60,11 @@ const zh = {
     split: '分裂',
     afterHegel: '黑格尔之后，思想史裂为几条大河',
   },
+  epoch: {
+    ontology: '本体论',
+    epistemology: '认识论',
+    contemporary: '现当代哲学',
+  },
   ui: {
     born: '生',
     died: '卒',

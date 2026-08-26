@@ -60,6 +60,11 @@ const en = {
     split: 'The split',
     afterHegel: 'After Hegel, the story divides into great rivers',
   },
+  epoch: {
+    ontology: 'Ontology',
+    epistemology: 'Epistemology',
+    contemporary: 'Contemporary',
+  },
   ui: {
     born: 'b.',
     died: 'd.',

@@ -246,6 +246,10 @@ watch(locale, () => void nextTick(measure))
           />
         </svg>
 
+        <p class="epoch epoch-onto">{{ t('epoch.ontology') }}</p>
+        <p class="epoch epoch-epist">{{ t('epoch.epistemology') }}</p>
+        <p class="epoch epoch-contemp">{{ t('epoch.contemporary') }}</p>
+
         <article id="greece" data-node="greece" class="node">
           <SchoolBlock school-id="greece" />
         </article>
@@ -351,12 +355,13 @@ watch(locale, () => void nextTick(measure))
   position: relative;
   display: grid;
   grid-template-columns: max-content max-content max-content max-content max-content max-content max-content;
-  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-rows: auto minmax(0, 1fr) auto;
   grid-template-areas:
+    'epochOnto epochOnto epochOnto epochEpist epochEpist epochContemp epochContemp'
     'greece stoicism scholasticism modern classical lifeCol existCol'
     '. . . political political political existCol';
   gap: 10px var(--gutter-x);
-  padding: 14px 40px 16px;
+  padding: 10px 40px 16px;
   height: 100%;
   min-height: 0;
   width: max-content;
@@ -372,6 +377,51 @@ watch(locale, () => void nextTick(measure))
   pointer-events: none;
   overflow: visible;
   color: var(--gold);
+}
+
+.epoch {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 0;
+  padding: 0 2px 4px;
+  align-self: end;
+  font-family: var(--serif);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  color: var(--gold-2);
+  white-space: nowrap;
+  opacity: 0.9;
+}
+
+.epoch::before,
+.epoch::after {
+  content: '';
+  flex: 1 1 1.5rem;
+  height: 1px;
+  min-width: 12px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(212, 184, 122, 0.45),
+    transparent
+  );
+}
+
+.epoch-onto {
+  grid-area: epochOnto;
+}
+
+.epoch-epist {
+  grid-area: epochEpist;
+}
+
+.epoch-contemp {
+  grid-area: epochContemp;
 }
 
 .node,
