@@ -33,9 +33,4 @@ export const graphEdges: GraphEdge[] = [
     fromSide: 'bottom',
     toSide: 'left',
   },
-  { from: 'machiavelli', to: 'hobbes', color: 'var(--c-political)' },
-  { from: 'hobbes', to: 'rousseau', color: 'var(--c-political)' },
-  { from: 'rousseau', to: 'marx', color: 'var(--c-political)' },
-  { from: 'marx', to: 'mill', color: 'var(--c-political)' },
-  { from: 'mill', to: 'rawls', color: 'var(--c-political)' },
 ]

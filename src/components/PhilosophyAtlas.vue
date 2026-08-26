@@ -112,12 +112,23 @@ function layoutPolitical(rootEl: HTMLElement) {
   const track = rootEl.querySelector('.pol-track') as HTMLElement | null
   const kant = rootEl.querySelector('#classical [data-node="kant"]')
   const frege = rootEl.querySelector('#analytic [data-node="frege"]')
+  const foucault = rootEl.querySelector('#deconstruction [data-node="foucault"]')
   const machSlot = rootEl.querySelector('.pol-slot-machiavelli') as HTMLElement | null
   const hobbesSlot = rootEl.querySelector('.pol-slot-hobbes') as HTMLElement | null
   const marxSlot = rootEl.querySelector('.pol-slot-marx') as HTMLElement | null
   const millSlot = rootEl.querySelector('.pol-slot-mill') as HTMLElement | null
   const rawlsSlot = rootEl.querySelector('.pol-slot-rawls') as HTMLElement | null
-  if (!track || !kant || !frege || !machSlot || !hobbesSlot || !marxSlot || !millSlot || !rawlsSlot)
+  if (
+    !track ||
+    !kant ||
+    !frege ||
+    !foucault ||
+    !machSlot ||
+    !hobbesSlot ||
+    !marxSlot ||
+    !millSlot ||
+    !rawlsSlot
+  )
     return false
 
   const trackLeft = track.getBoundingClientRect().left
@@ -130,14 +141,21 @@ function layoutPolitical(rootEl: HTMLElement) {
 
   let rousseau = Math.max(0, kant.getBoundingClientRect().left - trackLeft)
   let marx = Math.max(0, frege.getBoundingClientRect().left - trackLeft)
+  let rawls = Math.max(0, foucault.getBoundingClientRect().left - trackLeft)
   let hobbes = machW + gap
 
   if (hobbes + hobbesW + gap > rousseau) {
     hobbes = Math.max(machW + 16, rousseau - hobbesW - gap)
   }
 
-  const mill = marx + marxW + gap
-  const rawls = mill + millW + gap
+  let mill = Math.max(0, marx - millW - gap)
+  if (mill < rousseau + gap) {
+    mill = Math.max(rousseau + gap, marx - millW - gap)
+  }
+  if (rawls < marx + marxW + gap) {
+    rawls = marx + marxW + gap
+  }
+
   const trackW = Math.ceil(rawls + rawlsW)
   const next = { hobbes, rousseau, marx, mill, rawls, trackW }
   const prev = polLayout.value
@@ -344,16 +362,16 @@ watch(locale, () => void nextTick(measure))
               <PhilosopherCard :person="philosophers.rousseau" />
             </div>
             <div
-              class="pol-slot pol-slot-marx"
-              :style="{ left: `${polLayout.marx}px` }"
-            >
-              <PhilosopherCard :person="philosophers.marx" />
-            </div>
-            <div
               class="pol-slot pol-slot-mill"
               :style="{ left: `${polLayout.mill}px` }"
             >
               <PhilosopherCard :person="philosophers.mill" />
+            </div>
+            <div
+              class="pol-slot pol-slot-marx"
+              :style="{ left: `${polLayout.marx}px` }"
+            >
+              <PhilosopherCard :person="philosophers.marx" />
             </div>
             <div
               class="pol-slot pol-slot-rawls"
@@ -394,7 +412,7 @@ watch(locale, () => void nextTick(measure))
   grid-template-areas:
     'epochOnto epochOnto epochOnto epochOnto epochEpist epochEpist epochContemp epochContemp'
     'presocratic greece hellenistic scholasticism modern classical lifeCol existCol'
-    '. . . . political political political existCol';
+    '. . . . political political political political';
   gap: 10px var(--gutter-x);
   padding: 10px 40px 16px;
   height: 100%;
@@ -572,6 +590,9 @@ watch(locale, () => void nextTick(measure))
   align-self: start;
   justify-self: start;
   width: max-content;
+  max-width: 100%;
+  min-width: 0;
+  overflow: visible;
   gap: 8px;
   margin-top: -2px;
   padding: 10px 10px 12px;

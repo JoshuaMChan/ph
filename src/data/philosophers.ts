@@ -974,7 +974,7 @@ export const schools: Record<string, School> = {
   },
   political: {
     id: 'political',
-    people: ['machiavelli', 'hobbes', 'rousseau', 'marx', 'mill', 'rawls'],
+    people: ['machiavelli', 'hobbes', 'rousseau', 'mill', 'marx', 'rawls'],
     yearStart: 1469,
     yearEnd: 2002,
     regionKeys: ['europe'],
