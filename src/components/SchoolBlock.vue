@@ -34,6 +34,7 @@ const leibniz = computed(() => people.value.find((item) => item.id === 'leibniz'
 const locke = computed(() => people.value.find((item) => item.id === 'locke'))
 const berkeley = computed(() => people.value.find((item) => item.id === 'berkeley'))
 const hume = computed(() => people.value.find((item) => item.id === 'hume'))
+const bacon = computed(() => people.value.find((item) => item.id === 'bacon'))
 
 const augustine = computed(() => people.value.find((item) => item.id === 'augustine'))
 const aquinas = computed(() => people.value.find((item) => item.id === 'aquinas'))
@@ -70,6 +71,7 @@ const ockham = computed(() => people.value.find((item) => item.id === 'ockham'))
       <PhilosopherCard v-if="leibniz" class="slot-leibniz" :person="leibniz" />
     </div>
     <div v-else-if="schoolId === 'empiricism'" class="people experience-grid">
+      <PhilosopherCard v-if="bacon" class="slot-bacon" :person="bacon" />
       <PhilosopherCard v-if="hume" class="slot-hume" :person="hume" />
       <PhilosopherCard v-if="locke" class="slot-locke" :person="locke" />
       <PhilosopherCard v-if="berkeley" class="slot-berkeley" :person="berkeley" />
@@ -219,11 +221,15 @@ h2 {
   display: grid;
   grid-template-columns: max-content max-content;
   grid-template-areas:
-    'hume .'
-    'locke berkeley';
+    'bacon locke'
+    'berkeley hume';
   justify-content: start;
   align-items: start;
   gap: 8px 14px;
+}
+
+.slot-bacon {
+  grid-area: bacon;
 }
 
 .slot-hume {
