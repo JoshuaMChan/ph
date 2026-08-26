@@ -8,12 +8,12 @@ const props = defineProps<{
   person: Philosopher
 }>()
 
-const { t } = useI18n()
+const { t, te, locale } = useI18n()
 
 const life = computed(() => formatLifespan(props.person.birth, props.person.death))
 const quote = computed(() => {
   const key = `quote.${props.person.id}`
-  return t(key, '')
+  return te(key, locale.value) ? t(key, locale.value) : ''
 })
 const tooltipId = computed(() => `quote-${props.person.id}`)
 const tooltip = ref({ visible: false, left: 0, top: 0, below: false })
