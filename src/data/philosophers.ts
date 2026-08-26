@@ -971,6 +971,8 @@ export const schools: Record<string, School> = {
     yearStart: 1848,
     yearEnd: 1970,
     regionKeys: [],
+    countryIds: ['276', '826', '040'],
+    accent: 'var(--c-analytic)',
   },
   political: {
     id: 'political',

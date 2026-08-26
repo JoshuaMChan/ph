@@ -595,12 +595,21 @@ watch(locale, () => void nextTick(measure))
   overflow: visible;
   gap: 8px;
   margin-top: -2px;
-  padding: 10px 10px 12px;
+  padding: 13px 10px 12px;
   border: 1px solid var(--line);
   border-radius: 12px;
   background: rgba(20, 24, 33, 0.42);
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
-  border-top: 3px solid var(--c-political);
+}
+
+.political::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  left: 10px;
+  height: 3px;
+  background: var(--c-political);
 }
 
 .pol-head {
