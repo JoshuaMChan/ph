@@ -58,6 +58,9 @@ function onLocale(event: Event) {
   align-items: center;
   gap: 16px;
   padding: 10px 22px;
+  padding-top: max(10px, env(safe-area-inset-top));
+  padding-left: max(22px, env(safe-area-inset-left));
+  padding-right: max(22px, env(safe-area-inset-right));
   background: rgba(11, 12, 16, 0.92);
   border-bottom: 1px solid var(--line);
   backdrop-filter: blur(16px);
@@ -145,7 +148,15 @@ nav + .lang {
 @media (max-width: 820px) {
   .bar {
     flex-wrap: wrap;
+    gap: 10px;
     padding: 10px 14px;
+    padding-top: max(10px, env(safe-area-inset-top));
+    padding-left: max(14px, env(safe-area-inset-left));
+    padding-right: max(14px, env(safe-area-inset-right));
+  }
+
+  .name {
+    font-size: 0.95rem;
   }
 
   nav {
@@ -153,6 +164,11 @@ nav + .lang {
     width: 100%;
     margin: 0;
     justify-content: space-between;
+  }
+
+  .lang select {
+    min-height: 36px;
+    font-size: 0.86rem;
   }
 }
 </style>

@@ -28,8 +28,10 @@ type Link = {
 type Side = 'left' | 'right' | 'top' | 'bottom'
 
 const graph = ref<HTMLElement | null>(null)
+const viewport = ref<HTMLElement | null>(null)
 const canvas = ref({ w: 0, h: 0 })
 const links = ref<Link[]>([])
+const showScrollHint = ref(false)
 const polLayout = ref({
   hobbes: 0,
   rousseau: 0,
@@ -215,6 +217,19 @@ function measure() {
 }
 
 let observer: ResizeObserver | null = null
+let hintTimer: number | null = null
+
+function dismissScrollHint() {
+  showScrollHint.value = false
+  if (hintTimer !== null) {
+    window.clearTimeout(hintTimer)
+    hintTimer = null
+  }
+}
+
+function onViewportScroll() {
+  dismissScrollHint()
+}
 
 onMounted(() => {
   observer = new ResizeObserver(() => measure())
@@ -227,10 +242,21 @@ onMounted(() => {
   void nextTick(() => {
     measure()
     requestAnimationFrame(measure)
+    const el = viewport.value
+    if (el && el.scrollWidth > el.clientWidth + 24) {
+      showScrollHint.value = true
+      hintTimer = window.setTimeout(() => {
+        showScrollHint.value = false
+        hintTimer = null
+      }, 4200)
+    }
   })
 })
 
-onBeforeUnmount(() => observer?.disconnect())
+onBeforeUnmount(() => {
+  observer?.disconnect()
+  dismissScrollHint()
+})
 
 watch(locale, () => void nextTick(measure))
 </script>
@@ -238,7 +264,8 @@ watch(locale, () => void nextTick(measure))
 <template>
   <div class="shell">
     <SiteHeader />
-    <div class="viewport">
+    <div ref="viewport" class="viewport" @scroll.passive="onViewportScroll">
+      <p v-if="showScrollHint" class="scroll-hint">{{ t('ui.scroll') }}</p>
       <main id="top" ref="graph" class="graph">
         <svg
           class="wires"
@@ -397,8 +424,29 @@ watch(locale, () => void nextTick(measure))
   position: relative;
   flex: 1;
   min-height: 0;
-  overflow-x: auto;
-  overflow-y: hidden;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-x pan-y;
+}
+
+.scroll-hint {
+  position: sticky;
+  top: 10px;
+  left: 0;
+  z-index: 8;
+  width: max-content;
+  max-width: calc(100% - 28px);
+  margin: 0 0 -28px 14px;
+  padding: 7px 12px;
+  border: 1px solid rgba(212, 184, 122, 0.35);
+  border-radius: 999px;
+  background: rgba(14, 16, 22, 0.88);
+  color: var(--gold-2);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  pointer-events: none;
+  backdrop-filter: blur(10px);
 }
 
 .graph {
@@ -415,6 +463,9 @@ watch(locale, () => void nextTick(measure))
     '. . . . political political political political';
   gap: 10px var(--gutter-x);
   padding: 10px 40px 16px;
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+  padding-left: max(40px, env(safe-area-inset-left));
+  padding-right: max(40px, env(safe-area-inset-right));
   height: 100%;
   min-height: 0;
   width: max-content;
@@ -667,7 +718,75 @@ watch(locale, () => void nextTick(measure))
     --card-w: 48px;
     --info-h: 1.4rem;
     padding: 10px 32px 12px;
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+    padding-left: max(32px, env(safe-area-inset-left));
+    padding-right: max(32px, env(safe-area-inset-right));
     gap: 8px var(--gutter-x);
+  }
+}
+
+@media (max-width: 900px) {
+  .scroll-hint {
+    top: 8px;
+    margin-left: max(12px, env(safe-area-inset-left));
+  }
+
+  .graph {
+    --gutter-x: 22px;
+    --card-w: 46px;
+    --info-h: 1.45rem;
+    grid-template-rows: auto auto auto;
+    height: auto;
+    min-height: 100%;
+    gap: 12px 22px;
+    padding: 8px 18px 24px;
+    padding-bottom: max(24px, calc(env(safe-area-inset-bottom) + 12px));
+    padding-left: max(18px, env(safe-area-inset-left));
+    padding-right: max(18px, env(safe-area-inset-right));
+    align-items: start;
+  }
+
+  .epoch {
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    gap: 8px;
+  }
+
+  .node {
+    padding: 7px 8px;
+    border-radius: 10px;
+  }
+
+  .hellenistic,
+  .modern {
+    gap: 12px;
+  }
+
+  .life-col,
+  .exist-col {
+    gap: 10px;
+  }
+
+  .pol-head {
+    flex-wrap: wrap;
+    white-space: normal;
+  }
+
+  .pol-head h2 {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .graph {
+    --gutter-x: 16px;
+    --card-w: 42px;
+    --info-h: 1.35rem;
+    gap: 10px 16px;
+  }
+
+  .epoch {
+    letter-spacing: 0.12em;
   }
 }
 </style>

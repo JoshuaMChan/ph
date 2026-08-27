@@ -256,4 +256,37 @@ h2 {
 .nested h2 {
   font-size: 1.05rem;
 }
+
+@media (max-width: 900px) {
+  .school {
+    gap: 6px;
+  }
+
+  .head {
+    gap: 8px;
+  }
+
+  h2 {
+    font-size: 1rem;
+  }
+
+  .when {
+    font-size: 0.72rem;
+  }
+
+  .where {
+    font-size: 0.66rem;
+  }
+
+  .people {
+    gap: 8px 10px;
+  }
+
+  .life-grid,
+  .medieval-grid,
+  .reason-grid,
+  .experience-grid {
+    gap: 8px 10px;
+  }
+}
 </style>

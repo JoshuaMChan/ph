@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { Philosopher } from '../types'
 import { formatLifespan } from '../utils/dates'
@@ -12,16 +12,21 @@ const { t, te, locale } = useI18n()
 
 const life = computed(() => formatLifespan(props.person.birth, props.person.death))
 const portraitSrc = computed(
-  () => `${import.meta.env.BASE_URL}${props.person.portrait.replace(/^\/+/, '')}`,
+  () => import.meta.env.BASE_URL + props.person.portrait.replace(/^\/+/, ''),
 )
 const quote = computed(() => {
-  const key = `quote.${props.person.id}`
+  const key = 'quote.' + props.person.id
   return te(key, locale.value) ? t(key, locale.value) : ''
 })
-const tooltipId = computed(() => `quote-${props.person.id}`)
+const tooltipId = computed(() => 'quote-' + props.person.id)
 const tooltip = ref({ visible: false, left: 0, top: 0, below: false })
+const pinned = ref(false)
+const tooltipStyle = computed(() => ({
+  left: tooltip.value.left + 'px',
+  top: tooltip.value.top + 'px',
+}))
 
-function showQuote(event: Event) {
+function placeQuote(event: Event) {
   if (!quote.value) return
 
   const rect = (event.currentTarget as HTMLElement).getBoundingClientRect()
@@ -41,8 +46,54 @@ function showQuote(event: Event) {
 }
 
 function hideQuote() {
+  if (pinned.value) return
   tooltip.value.visible = false
 }
+
+function onPointerEnter(event: PointerEvent) {
+  if (event.pointerType === 'touch') return
+  placeQuote(event)
+}
+
+function onPointerLeave(event: PointerEvent) {
+  if (event.pointerType === 'touch') return
+  hideQuote()
+}
+
+function onClick(event: MouseEvent) {
+  if (!quote.value) return
+  if (!window.matchMedia('(hover: none), (pointer: coarse)').matches) return
+
+  event.preventDefault()
+  if (pinned.value && tooltip.value.visible) {
+    pinned.value = false
+    tooltip.value.visible = false
+    return
+  }
+
+  pinned.value = true
+  placeQuote(event)
+}
+
+function onEsc() {
+  pinned.value = false
+  tooltip.value.visible = false
+}
+
+function onDocumentPointerDown(event: PointerEvent) {
+  if (!pinned.value) return
+  const target = event.target as HTMLElement | null
+  const host = target?.closest?.('[aria-describedby="' + tooltipId.value + '"]')
+  if (host) return
+  pinned.value = false
+  tooltip.value.visible = false
+}
+
+document.addEventListener('pointerdown', onDocumentPointerDown)
+
+onBeforeUnmount(() => {
+  document.removeEventListener('pointerdown', onDocumentPointerDown)
+})
 </script>
 
 <template>
@@ -51,20 +102,25 @@ function hideQuote() {
     :class="{ 'has-quote': quote }"
     :tabindex="quote ? 0 : undefined"
     :aria-describedby="quote ? tooltipId : undefined"
-    @pointerenter="showQuote"
-    @pointerleave="hideQuote"
-    @focus="showQuote"
+    @pointerenter="onPointerEnter"
+    @pointerleave="onPointerLeave"
+    @click="onClick"
+    @focus="placeQuote"
     @blur="hideQuote"
-    @keydown.esc="hideQuote"
+    @keydown.esc="onEsc"
   >
     <div class="portrait" :data-node="person.id">
-      <img :src="portraitSrc" :alt="t(`person.${person.id}`)" />
+      <img
+        :src="portraitSrc"
+        :alt="t('person.' + person.id)"
+        loading="lazy"
+      />
     </div>
     <div class="info">
-      <h3>{{ t(`person.${person.id}`) }}</h3>
+      <h3>{{ t('person.' + person.id) }}</h3>
       <p class="meta">
         <span class="dates">{{ life }}</span>
-        <span class="country">{{ t(`region.${person.country}`) }}</span>
+        <span class="country">{{ t('region.' + person.country) }}</span>
       </p>
     </div>
     <Teleport to="body">
@@ -74,7 +130,7 @@ function hideQuote() {
           :id="tooltipId"
           class="quote-tooltip"
           :class="{ below: tooltip.below }"
-          :style="{ left: `${tooltip.left}px`, top: `${tooltip.top}px` }"
+          :style="tooltipStyle"
           role="tooltip"
         >
           <span aria-hidden="true">“</span>{{ quote }}<span aria-hidden="true">”</span>
@@ -93,6 +149,7 @@ function hideQuote() {
   width: max-content;
   height: calc(var(--portrait-h) + var(--info-h, 1.55rem));
   flex: 0 0 auto;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .card.has-quote {
@@ -211,5 +268,21 @@ h3 {
 :global(.quote-tooltip.below.quote-enter-from),
 :global(.quote-tooltip.below.quote-leave-to) {
   transform: translateY(-5px);
+}
+
+@media (max-width: 900px) {
+  h3 {
+    font-size: 0.72rem;
+  }
+
+  .dates,
+  .country {
+    font-size: 0.58rem;
+  }
+
+  :global(.quote-tooltip) {
+    font-size: 0.8rem;
+    padding: 12px 14px 13px;
+  }
 }
 </style>
