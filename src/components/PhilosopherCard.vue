@@ -11,6 +11,9 @@ const props = defineProps<{
 const { t, te, locale } = useI18n()
 
 const life = computed(() => formatLifespan(props.person.birth, props.person.death))
+const portraitSrc = computed(
+  () => `${import.meta.env.BASE_URL}${props.person.portrait.replace(/^\/+/, '')}`,
+)
 const quote = computed(() => {
   const key = `quote.${props.person.id}`
   return te(key, locale.value) ? t(key, locale.value) : ''
@@ -55,7 +58,7 @@ function hideQuote() {
     @keydown.esc="hideQuote"
   >
     <div class="portrait" :data-node="person.id">
-      <img :src="person.portrait" :alt="t(`person.${person.id}`)" />
+      <img :src="portraitSrc" :alt="t(`person.${person.id}`)" />
     </div>
     <div class="info">
       <h3>{{ t(`person.${person.id}`) }}</h3>
