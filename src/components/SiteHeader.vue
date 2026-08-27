@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import type { AppLocale } from '../i18n'
+import { setLocaleCookie, type AppLocale } from '../i18n'
 
 const { t, locale } = useI18n()
 const langs: AppLocale[] = ['en', 'zh', 'ja']
@@ -19,7 +19,7 @@ function go(id: string) {
 function onLocale(event: Event) {
   const value = (event.target as HTMLSelectElement).value as AppLocale
   locale.value = value
-  localStorage.setItem('locale', value)
+  setLocaleCookie(value)
   document.documentElement.lang = value === 'zh' ? 'zh-Hans' : value
 }
 </script>
