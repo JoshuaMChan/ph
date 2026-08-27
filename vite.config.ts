@@ -3,6 +3,7 @@ import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/ph/',
+  // Relative base works for GitHub project pages (/ph/) without hardcoding.
+  base: './',
   plugins: [vue()],
 })
