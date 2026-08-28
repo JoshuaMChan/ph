@@ -11,8 +11,14 @@ npm run dev
 
 站点地址：https://joshuamchan.github.io/ph/
 
-推送到 `main` 后会自动构建，并把产物发布到 `gh-pages` 分支。请在仓库设置里确认：
+推送到 `main` 后会自动 `npm run build`，并把产物写入 `docs/`（同时更新 `gh-pages` 分支）。
 
-**Settings → Pages → Build and deployment → Branch → `gh-pages` / `/ (root)`**
+**Settings → Pages → Build and deployment** 任选其一：
 
-不要选 `main` 作为发布源；`main` 上的是源码，浏览器不能直接运行 `/src/main.ts`。
+| Source | 设置 |
+|--------|------|
+| Deploy from a branch（推荐） | Branch: **`main`**，Folder: **`/docs`** |
+| Deploy from a branch | Branch: **`gh-pages`**，Folder: **`/ (root)`** |
+| GitHub Actions | Source: **GitHub Actions** |
+
+不要选 **`main` / `/ (root)`**——那是 Vue 源码，浏览器无法运行 `/src/main.ts`，页面会空白。

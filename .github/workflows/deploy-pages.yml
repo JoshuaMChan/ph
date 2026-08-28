@@ -3,6 +3,8 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'docs/**'
   workflow_dispatch:
 
 permissions:
@@ -33,7 +35,17 @@ jobs:
       - name: Build
         run: npm run build
 
-      # Reliable for "Deploy from a branch": publish the Vite dist to gh-pages.
+      - name: Publish build to docs/
+        run: |
+          rm -rf docs
+          cp -r dist docs
+
+      - name: Commit docs/ to main
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'deploy: update GitHub Pages [skip ci]'
+          file_pattern: docs/*
+
       - name: Deploy to gh-pages branch
         uses: peaceiris/actions-gh-pages@v4
         with:
@@ -41,7 +53,6 @@ jobs:
           publish_dir: ./dist
           force_orphan: true
 
-      # Also publish via the official Pages artifact flow (Source: GitHub Actions).
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
@@ -49,7 +60,6 @@ jobs:
 
   deploy-actions-pages:
     needs: build-and-deploy
-    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
