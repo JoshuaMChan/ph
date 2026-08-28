@@ -9,7 +9,9 @@ npm run dev
 
 ## GitHub Pages
 
-站点地址：https://joshuamchan.github.io/ph/
+站点地址：https://joshuamchan.github.io/ph/ （会自动跳转到构建版本）
+
+若直接访问构建产物：https://joshuamchan.github.io/ph/docs/
 
 推送到 `main` 后会自动 `npm run build`，并把产物写入 `docs/`（同时更新 `gh-pages` 分支）。
 
