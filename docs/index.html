@@ -2,6 +2,17 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      // GitHub Pages 若仍发布 main 根目录，构建产物在 /ph/docs/；本地 dev 不受影响。
+      ;(function () {
+        var path = location.pathname
+        if (/\/ph\/?$/.test(path) && path.indexOf('/docs') === -1) {
+          location.replace(
+            path.replace(/\/?$/, '/docs/') + location.search + location.hash,
+          )
+        }
+      })()
+    </script>
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <meta
       name="viewport"
