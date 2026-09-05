@@ -41,13 +41,12 @@ export const graphEdges: GraphEdge[] = [
     fromSide: 'top',
     toSide: 'left',
   },
-  // Science expanded: fork from the philosophy summary bar down into astronomy
-  // (same approach as greece → political)
+  // Science expanded: philosophy summary sits below science; arrow grows up into astronomy
   {
     from: 'philosophy-bar',
     to: 'astronomy',
     color: 'var(--c-astronomy)',
-    fromSide: 'bottom',
+    fromSide: 'top',
     toSide: 'left',
   },
 ]

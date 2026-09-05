@@ -71,19 +71,85 @@ const polLayout = ref({
   rawls: 0,
   trackW: 200,
 })
-const scienceIndent = ref(0)
 
-function captureScienceIndent(rootEl: HTMLElement) {
-  const modern = rootEl.querySelector('#modern') as HTMLElement | null
-  if (!modern) return
+/** Stable domain-slot geometry so expand/collapse keeps the same left edge & width. */
+const slotGeom = ref({
+  scienceLeft: 0,
+  scienceWidth: 0,
+  philosophyLeft: 0,
+  philosophyWidth: 0,
+})
+
+const slotVars = computed(() => ({
+  '--science-left': `${slotGeom.value.scienceLeft}px`,
+  '--science-width':
+    slotGeom.value.scienceWidth > 0
+      ? `${slotGeom.value.scienceWidth}px`
+      : 'max-content',
+  '--philosophy-left': `${slotGeom.value.philosophyLeft}px`,
+  '--philosophy-width':
+    slotGeom.value.philosophyWidth > 0
+      ? `${slotGeom.value.philosophyWidth}px`
+      : 'max-content',
+}))
+
+function captureSlotGeom(rootEl: HTMLElement) {
   const root = rootEl.getBoundingClientRect()
-  const padLeft =
-    Number.parseFloat(getComputedStyle(rootEl).paddingLeft) || 0
-  const next = Math.max(
-    0,
-    Math.round(modern.getBoundingClientRect().left - root.left - padLeft),
+  const padLeft = Number.parseFloat(getComputedStyle(rootEl).paddingLeft) || 0
+  const relLeft = (el: Element) =>
+    el.getBoundingClientRect().left - root.left - padLeft
+  const relRight = (el: Element) =>
+    el.getBoundingClientRect().right - root.left - padLeft
+
+  if (activeDomain.value === 'philosophy') {
+    const modern = rootEl.querySelector('#modern')
+    const tree = rootEl.querySelector('.philosophy-tree')
+    const sciBar = rootEl.querySelector('[data-node="science-bar"]')
+    if (!modern || !tree) return
+
+    const scienceLeft = Math.max(0, Math.round(relLeft(modern)))
+    const treeRight = Math.round(relRight(tree))
+    const barWidth = sciBar
+      ? Math.round((sciBar as HTMLElement).offsetWidth)
+      : 0
+    const scienceWidth = Math.max(
+      slotGeom.value.scienceWidth,
+      barWidth,
+      treeRight - scienceLeft,
+    )
+    const philosophyLeft = Math.max(0, Math.round(relLeft(tree)))
+    const philosophyWidth = Math.max(
+      slotGeom.value.philosophyWidth,
+      Math.round((tree as HTMLElement).offsetWidth),
+    )
+
+    const next = {
+      scienceLeft,
+      scienceWidth,
+      philosophyLeft,
+      philosophyWidth,
+    }
+    const prev = slotGeom.value
+    if (
+      Math.abs(prev.scienceLeft - next.scienceLeft) > 0.5 ||
+      Math.abs(prev.scienceWidth - next.scienceWidth) > 0.5 ||
+      Math.abs(prev.philosophyLeft - next.philosophyLeft) > 0.5 ||
+      Math.abs(prev.philosophyWidth - next.philosophyWidth) > 0.5
+    ) {
+      slotGeom.value = next
+    }
+    return
+  }
+
+  const astronomy = rootEl.querySelector('#astronomy') as HTMLElement | null
+  if (!astronomy) return
+  const scienceWidth = Math.max(
+    slotGeom.value.scienceWidth,
+    Math.round(astronomy.offsetWidth),
   )
-  if (Math.abs(scienceIndent.value - next) > 0.5) scienceIndent.value = next
+  if (Math.abs(slotGeom.value.scienceWidth - scienceWidth) > 0.5) {
+    slotGeom.value = { ...slotGeom.value, scienceWidth }
+  }
 }
 
 function box(el: Element, root: DOMRect) {
@@ -264,14 +330,16 @@ function measure() {
   const rootEl = graph.value
   if (!rootEl) return
   if (activeDomain.value === 'science') {
+    captureSlotGeom(rootEl)
     canvas.value = { w: rootEl.offsetWidth, h: rootEl.offsetHeight }
     measureLinks()
     return
   }
-  captureScienceIndent(rootEl)
   const moved = layoutPolitical(rootEl)
+  captureSlotGeom(rootEl)
   if (moved) {
     void nextTick(() => {
+      captureSlotGeom(rootEl)
       measureLinks()
     })
     return
@@ -335,7 +403,7 @@ watch(activeDomain, () => void nextTick(measure))
         ref="graph"
         class="graph"
         :class="`domain-${activeDomain}`"
-        :style="{ '--science-indent': `${scienceIndent}px` }"
+        :style="slotVars"
       >
         <svg
           class="wires"
@@ -372,147 +440,150 @@ watch(activeDomain, () => void nextTick(measure))
           />
         </svg>
 
-        <!-- Philosophy collapsed / expanded -->
-        <button
-          v-if="activeDomain !== 'philosophy'"
-          id="philosophy-bar"
-          type="button"
-          data-node="philosophy-bar"
-          class="domain-bar philosophy-bar"
-          @click="openDomain('philosophy')"
-        >
-          <span class="domain-bar-label">{{ t('domain.philosophy') }}</span>
-        </button>
-
-        <!-- Science collapsed / expanded -->
-        <button
-          v-if="activeDomain !== 'science'"
-          id="science-bar"
-          type="button"
-          data-node="science-bar"
-          class="domain-bar science-bar"
-          @click="openDomain('science')"
-        >
-          <span class="domain-bar-label">{{ t('domain.science') }}</span>
-        </button>
-
-        <article
-          v-else
-          id="astronomy"
-          data-node="astronomy"
-          class="node"
-        >
-          <SchoolBlock school-id="astronomy" />
-        </article>
-
-        <template v-if="activeDomain === 'philosophy'">
-          <p class="epoch epoch-onto">{{ t('epoch.ontology') }}</p>
-          <p class="epoch epoch-epist">{{ t('epoch.epistemology') }}</p>
-          <p class="epoch epoch-contemp">{{ t('epoch.contemporary') }}</p>
-
-          <article id="presocratic" data-node="presocratic" class="node">
-            <SchoolBlock school-id="presocratic" />
+        <!-- Science always above philosophy -->
+        <section class="domain-slot science-slot">
+          <button
+            v-if="activeDomain !== 'science'"
+            id="science-bar"
+            type="button"
+            data-node="science-bar"
+            class="domain-bar science-bar"
+            @click="openDomain('science')"
+          >
+            <span class="domain-bar-label">{{ t('domain.science') }}</span>
+          </button>
+          <article
+            v-else
+            id="astronomy"
+            data-node="astronomy"
+            class="node"
+          >
+            <SchoolBlock school-id="astronomy" />
           </article>
+        </section>
 
-          <article id="greece" data-node="greece" class="node">
-            <SchoolBlock school-id="greece" />
-          </article>
+        <!-- Philosophy always below science -->
+        <section class="domain-slot philosophy-slot">
+          <button
+            v-if="activeDomain !== 'philosophy'"
+            id="philosophy-bar"
+            type="button"
+            data-node="philosophy-bar"
+            class="domain-bar philosophy-bar"
+            @click="openDomain('philosophy')"
+          >
+            <span class="domain-bar-label">{{ t('domain.philosophy') }}</span>
+          </button>
 
-          <div id="hellenistic" class="hellenistic">
-            <article id="stoicism" data-node="stoicism" class="node">
-              <SchoolBlock school-id="stoicism" />
-            </article>
-            <article id="epicureanism" data-node="epicureanism" class="node">
-              <SchoolBlock school-id="epicureanism" />
-            </article>
-            <article id="skepticism" data-node="skepticism" class="node">
-              <SchoolBlock school-id="skepticism" />
-            </article>
-          </div>
+          <div v-else class="philosophy-tree">
+            <p class="epoch epoch-onto">{{ t('epoch.ontology') }}</p>
+            <p class="epoch epoch-epist">{{ t('epoch.epistemology') }}</p>
+            <p class="epoch epoch-contemp">{{ t('epoch.contemporary') }}</p>
 
-          <article id="scholasticism" data-node="scholasticism" class="node">
-            <SchoolBlock school-id="scholasticism" />
-          </article>
+            <article id="presocratic" data-node="presocratic" class="node">
+              <SchoolBlock school-id="presocratic" />
+            </article>
 
-          <div id="modern" class="modern">
-            <article id="rationalism" data-node="rationalism" class="node">
-              <SchoolBlock school-id="rationalism" />
+            <article id="greece" data-node="greece" class="node">
+              <SchoolBlock school-id="greece" />
             </article>
-            <article id="empiricism" data-node="empiricism" class="node">
-              <SchoolBlock school-id="empiricism" />
-            </article>
-          </div>
 
-          <article id="classical" data-node="classical" class="node">
-            <SchoolBlock school-id="classical" />
-          </article>
-
-          <div id="split" class="life-col">
-            <article id="life" data-node="life" class="node">
-              <SchoolBlock school-id="life" />
-            </article>
-            <article id="phenomenology" data-node="phenomenology" class="node">
-              <SchoolBlock school-id="phenomenology" />
-            </article>
-            <article id="analytic" data-node="analytic" class="node">
-              <SchoolBlock school-id="analytic" />
-            </article>
-          </div>
-
-          <div id="existCol" class="exist-col">
-            <article id="existentialism" data-node="existentialism" class="node">
-              <SchoolBlock school-id="existentialism" />
-            </article>
-            <article id="deconstruction" data-node="deconstruction" class="node">
-              <SchoolBlock school-id="deconstruction" />
-            </article>
-          </div>
-
-          <section id="political" data-node="political" class="political">
-            <header class="pol-head">
-              <h2>{{ t('school.political') }}</h2>
-              <p class="pol-meta">
-                <span class="when">{{ politicalYears }}</span>
-                <span class="where">{{ politicalRegion }}</span>
-              </p>
-            </header>
-            <div class="pol-track" :style="{ width: `${polLayout.trackW}px` }">
-              <div class="pol-slot pol-slot-machiavelli" style="left: 0">
-                <PhilosopherCard :person="philosophers.machiavelli" />
-              </div>
-              <div
-                class="pol-slot pol-slot-hobbes"
-                :style="{ left: `${polLayout.hobbes}px` }"
-              >
-                <PhilosopherCard :person="philosophers.hobbes" />
-              </div>
-              <div
-                class="pol-slot pol-slot-rousseau"
-                :style="{ left: `${polLayout.rousseau}px` }"
-              >
-                <PhilosopherCard :person="philosophers.rousseau" />
-              </div>
-              <div
-                class="pol-slot pol-slot-mill"
-                :style="{ left: `${polLayout.mill}px` }"
-              >
-                <PhilosopherCard :person="philosophers.mill" />
-              </div>
-              <div
-                class="pol-slot pol-slot-marx"
-                :style="{ left: `${polLayout.marx}px` }"
-              >
-                <PhilosopherCard :person="philosophers.marx" />
-              </div>
-              <div
-                class="pol-slot pol-slot-rawls"
-                :style="{ left: `${polLayout.rawls}px` }"
-              >
-                <PhilosopherCard :person="philosophers.rawls" />
-              </div>
+            <div id="hellenistic" class="hellenistic">
+              <article id="stoicism" data-node="stoicism" class="node">
+                <SchoolBlock school-id="stoicism" />
+              </article>
+              <article id="epicureanism" data-node="epicureanism" class="node">
+                <SchoolBlock school-id="epicureanism" />
+              </article>
+              <article id="skepticism" data-node="skepticism" class="node">
+                <SchoolBlock school-id="skepticism" />
+              </article>
             </div>
-          </section>
-        </template>
+
+            <article id="scholasticism" data-node="scholasticism" class="node">
+              <SchoolBlock school-id="scholasticism" />
+            </article>
+
+            <div id="modern" class="modern">
+              <article id="rationalism" data-node="rationalism" class="node">
+                <SchoolBlock school-id="rationalism" />
+              </article>
+              <article id="empiricism" data-node="empiricism" class="node">
+                <SchoolBlock school-id="empiricism" />
+              </article>
+            </div>
+
+            <article id="classical" data-node="classical" class="node">
+              <SchoolBlock school-id="classical" />
+            </article>
+
+            <div id="split" class="life-col">
+              <article id="life" data-node="life" class="node">
+                <SchoolBlock school-id="life" />
+              </article>
+              <article id="phenomenology" data-node="phenomenology" class="node">
+                <SchoolBlock school-id="phenomenology" />
+              </article>
+              <article id="analytic" data-node="analytic" class="node">
+                <SchoolBlock school-id="analytic" />
+              </article>
+            </div>
+
+            <div id="existCol" class="exist-col">
+              <article id="existentialism" data-node="existentialism" class="node">
+                <SchoolBlock school-id="existentialism" />
+              </article>
+              <article id="deconstruction" data-node="deconstruction" class="node">
+                <SchoolBlock school-id="deconstruction" />
+              </article>
+            </div>
+
+            <section id="political" data-node="political" class="political">
+              <header class="pol-head">
+                <h2>{{ t('school.political') }}</h2>
+                <p class="pol-meta">
+                  <span class="when">{{ politicalYears }}</span>
+                  <span class="where">{{ politicalRegion }}</span>
+                </p>
+              </header>
+              <div class="pol-track" :style="{ width: `${polLayout.trackW}px` }">
+                <div class="pol-slot pol-slot-machiavelli" style="left: 0">
+                  <PhilosopherCard :person="philosophers.machiavelli" />
+                </div>
+                <div
+                  class="pol-slot pol-slot-hobbes"
+                  :style="{ left: `${polLayout.hobbes}px` }"
+                >
+                  <PhilosopherCard :person="philosophers.hobbes" />
+                </div>
+                <div
+                  class="pol-slot pol-slot-rousseau"
+                  :style="{ left: `${polLayout.rousseau}px` }"
+                >
+                  <PhilosopherCard :person="philosophers.rousseau" />
+                </div>
+                <div
+                  class="pol-slot pol-slot-mill"
+                  :style="{ left: `${polLayout.mill}px` }"
+                >
+                  <PhilosopherCard :person="philosophers.mill" />
+                </div>
+                <div
+                  class="pol-slot pol-slot-marx"
+                  :style="{ left: `${polLayout.marx}px` }"
+                >
+                  <PhilosopherCard :person="philosophers.marx" />
+                </div>
+                <div
+                  class="pol-slot pol-slot-rawls"
+                  :style="{ left: `${polLayout.rawls}px` }"
+                >
+                  <PhilosopherCard :person="philosophers.rawls" />
+                </div>
+              </div>
+            </section>
+          </div>
+        </section>
       </main>
     </div>
   </div>
@@ -559,9 +630,10 @@ watch(activeDomain, () => void nextTick(measure))
   --card-w: 56px;
   --info-h: 1.55rem;
   position: relative;
-  display: grid;
-  grid-template-columns: max-content max-content max-content max-content max-content max-content max-content max-content;
-  gap: 10px var(--gutter-x);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
   padding: 10px 40px 16px;
   padding-bottom: max(16px, env(safe-area-inset-bottom));
   padding-left: max(40px, env(safe-area-inset-left));
@@ -570,35 +642,64 @@ watch(activeDomain, () => void nextTick(measure))
   min-height: 0;
   width: max-content;
   min-width: 100%;
-  align-items: center;
   box-sizing: border-box;
 }
 
-.graph.domain-philosophy {
-  grid-template-rows: auto auto minmax(0, 1fr) auto;
-  grid-template-areas:
-    '. . . . sciBar sciBar sciBar sciBar'
-    'epochOnto epochOnto epochOnto epochOnto epochEpist epochEpist epochContemp epochContemp'
-    'presocratic greece hellenistic scholasticism modern classical lifeCol existCol'
-    '. . . . political political political political';
+.domain-slot {
+  position: relative;
+  z-index: 3;
+  box-sizing: border-box;
+}
+
+.science-slot {
+  margin-left: var(--science-left, 0px);
+  width: var(--science-width, max-content);
+  min-width: var(--science-width, 0px);
+  flex: 0 0 auto;
+}
+
+.graph.domain-philosophy .philosophy-slot {
+  margin-left: 0;
+  width: max-content;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.graph.domain-science .philosophy-slot {
+  margin-left: var(--philosophy-left, 0px);
+  width: var(--philosophy-width, max-content);
+  min-width: var(--philosophy-width, 0px);
+  flex: 0 0 auto;
 }
 
 .graph.domain-science {
-  grid-template-columns: max-content;
-  grid-template-rows: auto minmax(0, 1fr);
-  grid-template-areas:
-    'philBar'
-    'astronomy';
-  width: max-content;
-  min-width: 100%;
-  justify-content: start;
-  align-content: center;
-  padding-left: max(40px, env(safe-area-inset-left));
+  justify-content: flex-start;
 }
 
-.graph.domain-science #astronomy,
-.graph.domain-science .philosophy-bar {
-  margin-left: var(--science-indent, 0px);
+.graph.domain-science .science-slot {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+}
+
+.philosophy-tree {
+  --gutter-x: 40px;
+  position: relative;
+  display: grid;
+  grid-template-columns: max-content max-content max-content max-content max-content max-content max-content max-content;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    'epochOnto epochOnto epochOnto epochOnto epochEpist epochEpist epochContemp epochContemp'
+    'presocratic greece hellenistic scholasticism modern classical lifeCol existCol'
+    '. . . . political political political political';
+  gap: 10px var(--gutter-x);
+  flex: 1 1 auto;
+  min-height: 0;
+  width: max-content;
+  align-items: center;
+  box-sizing: border-box;
 }
 
 .domain-bar {
@@ -615,6 +716,7 @@ watch(activeDomain, () => void nextTick(measure))
   font: inherit;
   cursor: pointer;
   text-align: center;
+  box-sizing: border-box;
   transition:
     background 0.15s ease,
     border-color 0.15s ease,
@@ -638,21 +740,20 @@ watch(activeDomain, () => void nextTick(measure))
 }
 
 .science-bar {
-  grid-area: sciBar;
-  justify-self: stretch;
-  width: 100%;
   border: 1px solid rgba(74, 155, 184, 0.4);
   background: rgba(74, 155, 184, 0.1);
   color: #9ecfe0;
 }
 
 .philosophy-bar {
-  grid-area: philBar;
-  justify-self: stretch;
-  width: 100%;
   border: 1px solid var(--line);
   background: rgba(212, 184, 122, 0.08);
   color: var(--gold-2);
+}
+
+.science-slot > .node {
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .wires {
@@ -908,6 +1009,11 @@ watch(activeDomain, () => void nextTick(measure))
     padding-bottom: max(12px, env(safe-area-inset-bottom));
     padding-left: max(32px, env(safe-area-inset-left));
     padding-right: max(32px, env(safe-area-inset-right));
+    gap: 8px;
+  }
+
+  .philosophy-tree {
+    --gutter-x: 40px;
     gap: 8px var(--gutter-x);
   }
 }
@@ -924,20 +1030,20 @@ watch(activeDomain, () => void nextTick(measure))
     --info-h: 1.45rem;
     height: auto;
     min-height: 100%;
-    gap: 12px 22px;
+    gap: 12px;
     padding: 8px 18px 24px;
     padding-bottom: max(24px, calc(env(safe-area-inset-bottom) + 12px));
     padding-left: max(18px, env(safe-area-inset-left));
     padding-right: max(18px, env(safe-area-inset-right));
+    align-items: flex-start;
+  }
+
+  .philosophy-tree {
+    --gutter-x: 22px;
+    grid-template-rows: auto auto auto;
+    height: auto;
+    gap: 12px var(--gutter-x);
     align-items: start;
-  }
-
-  .graph.domain-philosophy {
-    grid-template-rows: auto auto auto auto;
-  }
-
-  .graph.domain-science {
-    grid-template-rows: auto auto;
   }
 
   .epoch {
@@ -976,7 +1082,12 @@ watch(activeDomain, () => void nextTick(measure))
     --gutter-x: 16px;
     --card-w: 42px;
     --info-h: 1.35rem;
-    gap: 10px 16px;
+    gap: 10px;
+  }
+
+  .philosophy-tree {
+    --gutter-x: 16px;
+    gap: 10px var(--gutter-x);
   }
 
   .epoch {
