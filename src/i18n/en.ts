@@ -46,6 +46,7 @@ const en = {
     quantumMechanics: 'Quantum Mechanics',
     quantumFieldTheory: 'Quantum Field Theory',
     chemistry: 'Chemistry',
+    biology: 'Biology',
   },
   schoolTag: {
     greece: 'Greece',
@@ -70,6 +71,7 @@ const en = {
     quantumMechanics: 'Europe · U.S.',
     quantumFieldTheory: 'U.S. · China',
     chemistry: 'Europe',
+    biology: 'Europe',
   },
   domain: {
     philosophy: 'Philosophy',
@@ -162,6 +164,8 @@ const en = {
     dalton: 'John Dalton',
     mendeleev: 'Dmitri Mendeleev',
     curie: 'Marie Curie',
+    darwin: 'Charles Darwin',
+    mendel: 'Gregor Mendel',
   },
   // Keys mirror person; philosophers omitted here do not show a quote yet.
   quote: {
@@ -263,6 +267,10 @@ const en = {
     saintPetersburg: 'Saint Petersburg',
     warsaw: 'Warsaw',
     sancellemoz: 'Sancellemoz',
+    shrewsbury: 'Shrewsbury',
+    downe: 'Downe',
+    hyncice: 'Hynčice',
+    brno: 'Brno',
   },
   region: {
     greece: 'Greece',

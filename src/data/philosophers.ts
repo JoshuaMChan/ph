@@ -1299,6 +1299,50 @@ export const philosophers: Record<string, Philosopher> = {
       countryId: '250',
     },
   },
+  darwin: {
+    id: 'darwin',
+    nativeName: 'Charles Darwin',
+    country: 'england',
+    portrait: '/portraits/darwin.jpg',
+    birth: { year: 1809, month: 2, day: 12 },
+    death: { year: 1882, month: 4, day: 19 },
+    born: {
+      city: 'shrewsbury',
+      region: 'england',
+      lat: 52.7073,
+      lng: -2.7553,
+      countryId: '826',
+    },
+    died: {
+      city: 'downe',
+      region: 'england',
+      lat: 51.333,
+      lng: 0.054,
+      countryId: '826',
+    },
+  },
+  mendel: {
+    id: 'mendel',
+    nativeName: 'Gregor Mendel',
+    country: 'austria',
+    portrait: '/portraits/mendel.jpg',
+    birth: { year: 1822, month: 7, day: 20 },
+    death: { year: 1884, month: 1, day: 6 },
+    born: {
+      city: 'hyncice',
+      region: 'moravia',
+      lat: 49.566,
+      lng: 17.75,
+      countryId: '203',
+    },
+    died: {
+      city: 'brno',
+      region: 'moravia',
+      lat: 49.1951,
+      lng: 16.6068,
+      countryId: '203',
+    },
+  },
 }
 
 function byBirth(ids: string[]): string[] {
@@ -1528,6 +1572,16 @@ export const schools: Record<string, School> = {
     regionKeys: ['europe'],
     countryIds: ['250', '826', '643', '616'],
     accent: 'var(--c-chemistry)',
+  },
+  // Fixed order for now: Darwin → Mendel
+  biology: {
+    id: 'biology',
+    people: ['darwin', 'mendel'],
+    yearStart: 1809,
+    yearEnd: 1884,
+    regionKeys: ['europe'],
+    countryIds: ['826', '040', '203'],
+    accent: 'var(--c-biology)',
   },
 }
 

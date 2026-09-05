@@ -327,6 +327,15 @@ function measureLinks() {
     const toSide = edge.toSide ?? 'left'
     const start = point(from, fromSide)
     const end = point(to, toSide)
+    // Philosophy → science forks at distinct x positions (physics, then chemistry, then biology).
+    if (
+      edge.from === 'philosophy-bar' &&
+      (edge.to === 'astronomy' ||
+        edge.to === 'chemistry' ||
+        edge.to === 'biology')
+    ) {
+      start[0] = end[0]
+    }
     if (edge.viaCluster) {
       const cluster = rootEl.querySelector(`[data-node="${edge.viaCluster}"]`)
       if (cluster) start[0] = box(cluster, root).right
@@ -623,6 +632,9 @@ watch(activeDomain, () => void nextTick(measure))
             <article id="chemistry" data-node="chemistry" class="node">
               <SchoolBlock school-id="chemistry" />
             </article>
+            <article id="biology" data-node="biology" class="node">
+              <SchoolBlock school-id="biology" />
+            </article>
           </div>
           <button
             id="philosophy-bar"
@@ -742,13 +754,13 @@ watch(activeDomain, () => void nextTick(measure))
   grid-template-areas:
     'astronomy classicalMechanics electrodynamics relativity .'
     '. . statisticalPhysics quantumMechanics quantumFieldTheory'
-    '. . chemistry . .';
+    '. chemistry biology . .';
   gap: 16px var(--gutter-x);
   margin-left: var(--science-left, 0px);
   width: max-content;
   flex: 1 1 auto;
-  align-content: center;
-  align-items: center;
+  align-content: start;
+  align-items: start;
   box-sizing: border-box;
 }
 
@@ -782,6 +794,10 @@ watch(activeDomain, () => void nextTick(measure))
 
 .science-atlas #chemistry {
   grid-area: chemistry;
+}
+
+.science-atlas #biology {
+  grid-area: biology;
 }
 
 .graph.domain-science .philosophy-bar {

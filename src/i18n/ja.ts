@@ -46,6 +46,7 @@ const ja = {
     quantumMechanics: '量子力学',
     quantumFieldTheory: '場の量子論',
     chemistry: '化学',
+    biology: '生物学',
   },
   schoolTag: {
     greece: 'ギリシア',
@@ -70,6 +71,7 @@ const ja = {
     quantumMechanics: '欧 · 米',
     quantumFieldTheory: '米 · 中',
     chemistry: '欧州',
+    biology: '欧州',
   },
   domain: {
     philosophy: '哲学',
@@ -161,6 +163,8 @@ const ja = {
     dalton: 'ジョン・ドルトン',
     mendeleev: 'ドミトリ・メンデレーエフ',
     curie: 'マリ・キュリー',
+    darwin: 'チャールズ・ダーウィン',
+    mendel: 'グレゴール・メンデル',
   },
   // person と同じキーを使用。未記載の哲学者には、まだ名言を表示しない。
   quote: {
@@ -250,6 +254,10 @@ const ja = {
     saintPetersburg: 'サンクトペテルブルク',
     warsaw: 'ワルシャワ',
     sancellemoz: 'サンセルモズ',
+    shrewsbury: 'シュルーズベリー',
+    downe: 'ダウン',
+    hyncice: 'ヒンチツェ',
+    brno: 'ブルノ',
   },
   region: {
     greece: 'ギリシア',

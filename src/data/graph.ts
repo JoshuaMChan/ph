@@ -41,7 +41,7 @@ export const graphEdges: GraphEdge[] = [
     fromSide: 'top',
     toSide: 'left',
   },
-  // Science expanded: philosophy summary sits below; arrow into astronomy's left edge
+  // Science forks from philosophy along the x-axis: physics (astronomy) → chemistry → biology
   {
     from: 'philosophy-bar',
     to: 'astronomy',
@@ -82,11 +82,17 @@ export const graphEdges: GraphEdge[] = [
     to: 'quantumFieldTheory',
     color: 'var(--c-qft)',
   },
-  // Chemistry forks from philosophy, left-aligned with electrodynamics
   {
     from: 'philosophy-bar',
     to: 'chemistry',
     color: 'var(--c-chemistry)',
+    fromSide: 'top',
+    toSide: 'left',
+  },
+  {
+    from: 'philosophy-bar',
+    to: 'biology',
+    color: 'var(--c-biology)',
     fromSide: 'top',
     toSide: 'left',
   },

@@ -45,6 +45,7 @@ const zh = {
     quantumMechanics: '量子力学',
     quantumFieldTheory: '量子场论',
     chemistry: '化学',
+    biology: '生物学',
   },
   schoolTag: {
     greece: '希腊',
@@ -69,6 +70,7 @@ const zh = {
     quantumMechanics: '欧 · 美',
     quantumFieldTheory: '美 · 中',
     chemistry: '欧',
+    biology: '欧',
   },
   domain: {
     philosophy: '哲学',
@@ -160,6 +162,8 @@ const zh = {
     dalton: '约翰·道尔顿',
     mendeleev: '德米特里·门捷列夫',
     curie: '玛丽·居里',
+    darwin: '查尔斯·达尔文',
+    mendel: '格雷戈尔·孟德尔',
   },
   // 与 person 使用相同的键；未列出的哲学家暂不显示名言。
   quote: {
@@ -268,6 +272,10 @@ const zh = {
     saintPetersburg: '圣彼得堡',
     warsaw: '华沙',
     sancellemoz: '桑塞勒莫',
+    shrewsbury: '什鲁斯伯里',
+    downe: '唐恩',
+    hyncice: '海因岑多夫',
+    brno: '布尔诺',
   },
   region: {
     greece: '希腊',
