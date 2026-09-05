@@ -51,11 +51,9 @@ export const graphEdges: GraphEdge[] = [
   },
   // Natural science lineage
   {
-    from: 'galileo',
+    from: 'astronomy',
     to: 'classicalMechanics',
     color: 'var(--c-classical-mech)',
-    fromSide: 'bottom',
-    toSide: 'left',
   },
   {
     from: 'classicalMechanics',
