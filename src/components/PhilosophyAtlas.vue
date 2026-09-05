@@ -327,14 +327,25 @@ function measureLinks() {
     const toSide = edge.toSide ?? 'left'
     const start = point(from, fromSide)
     const end = point(to, toSide)
-    // Philosophy → science forks at distinct x positions (physics, then chemistry, then biology).
+    // Philosophy → science: physics first (astronomy); chemistry & biology share one later x.
+    // Nudge fork slightly left of each box's left edge.
+    const forkNudge = 28
+    if (edge.from === 'philosophy-bar' && edge.to === 'astronomy') {
+      start[0] = end[0] - forkNudge
+    }
     if (
       edge.from === 'philosophy-bar' &&
-      (edge.to === 'astronomy' ||
-        edge.to === 'chemistry' ||
-        edge.to === 'biology')
+      (edge.to === 'chemistry' || edge.to === 'biology')
     ) {
-      start[0] = end[0]
+      const chem = rootEl.querySelector('[data-node="chemistry"]')
+      const bio = rootEl.querySelector('[data-node="biology"]')
+      if (chem && bio) {
+        const edgeLeft = Math.min(box(chem, root).left, box(bio, root).left)
+        start[0] = edgeLeft - forkNudge
+        end[0] = edgeLeft
+      } else {
+        start[0] = end[0] - forkNudge
+      }
     }
     if (edge.viaCluster) {
       const cluster = rootEl.querySelector(`[data-node="${edge.viaCluster}"]`)
@@ -750,11 +761,12 @@ watch(activeDomain, () => void nextTick(measure))
   z-index: 3;
   display: grid;
   grid-template-columns: max-content max-content max-content max-content max-content;
-  grid-template-rows: auto auto auto;
+  grid-template-rows: auto auto auto auto;
   grid-template-areas:
     'astronomy classicalMechanics electrodynamics relativity .'
     '. . statisticalPhysics quantumMechanics quantumFieldTheory'
-    '. chemistry biology . .';
+    '. chemistry . . .'
+    '. biology . . .';
   gap: 16px var(--gutter-x);
   margin-left: var(--science-left, 0px);
   width: max-content;

@@ -41,7 +41,8 @@ export const graphEdges: GraphEdge[] = [
     fromSide: 'top',
     toSide: 'left',
   },
-  // Science forks from philosophy along the x-axis: physics (astronomy) → chemistry → biology
+  // Science forks: physics (astronomy) earlier on the x-axis;
+  // chemistry & biology share a later node (stacked, same time).
   {
     from: 'philosophy-bar',
     to: 'astronomy',
