@@ -671,10 +671,8 @@ watch(activeDomain, () => void nextTick(measure))
 .graph.domain-science .science-panel {
   margin-left: var(--science-left, 0px);
   width: fit-content;
-  flex: 1 1 auto;
-  align-self: flex-start;
-  margin-top: auto;
-  margin-bottom: auto;
+  flex: 0 0 auto;
+  align-self: center;
 }
 
 .graph.domain-science .philosophy-bar {
@@ -834,9 +832,7 @@ watch(activeDomain, () => void nextTick(measure))
 }
 
 #astronomy {
-  grid-area: astronomy;
   align-self: center;
-  justify-self: start;
 }
 
 .hellenistic {
