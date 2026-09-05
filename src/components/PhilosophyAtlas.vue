@@ -103,7 +103,7 @@ function captureSlotGeom(rootEl: HTMLElement) {
 
   if (activeDomain.value === 'philosophy') {
     const modern = rootEl.querySelector('#modern')
-    const tree = rootEl.querySelector('.philosophy-tree')
+    const tree = rootEl.querySelector('.philosophy-atlas')
     const sciBar = rootEl.querySelector('[data-node="science-bar"]')
     if (!modern || !tree) return
 
@@ -143,13 +143,7 @@ function captureSlotGeom(rootEl: HTMLElement) {
 
   const astronomy = rootEl.querySelector('#astronomy') as HTMLElement | null
   if (!astronomy) return
-  const scienceWidth = Math.max(
-    slotGeom.value.scienceWidth,
-    Math.round(astronomy.offsetWidth),
-  )
-  if (Math.abs(slotGeom.value.scienceWidth - scienceWidth) > 0.5) {
-    slotGeom.value = { ...slotGeom.value, scienceWidth }
-  }
+  // Keep science-slot left aligned; do not widen the reserved width from astronomy content.
 }
 
 function box(el: Element, root: DOMRect) {
@@ -440,45 +434,21 @@ watch(activeDomain, () => void nextTick(measure))
           />
         </svg>
 
-        <!-- Science always above philosophy -->
-        <section class="domain-slot science-slot">
-          <button
-            v-if="activeDomain !== 'science'"
-            id="science-bar"
-            type="button"
-            data-node="science-bar"
-            class="domain-bar science-bar"
-            @click="openDomain('science')"
-          >
-            <span class="domain-bar-label">{{ t('domain.science') }}</span>
-          </button>
-          <article
-            v-else
-            id="astronomy"
-            data-node="astronomy"
-            class="node"
-          >
-            <SchoolBlock school-id="astronomy" />
-          </article>
-        </section>
-
-        <!-- Philosophy always below science -->
-        <section class="domain-slot philosophy-slot">
-          <button
-            v-if="activeDomain !== 'philosophy'"
-            id="philosophy-bar"
-            type="button"
-            data-node="philosophy-bar"
-            class="domain-bar philosophy-bar"
-            @click="openDomain('philosophy')"
-          >
-            <span class="domain-bar-label">{{ t('domain.philosophy') }}</span>
-          </button>
-
-          <div v-else class="philosophy-tree">
+        <template v-if="activeDomain === 'philosophy'">
+          <div class="philosophy-atlas">
             <p class="epoch epoch-onto">{{ t('epoch.ontology') }}</p>
             <p class="epoch epoch-epist">{{ t('epoch.epistemology') }}</p>
             <p class="epoch epoch-contemp">{{ t('epoch.contemporary') }}</p>
+
+            <button
+              id="science-bar"
+              type="button"
+              data-node="science-bar"
+              class="domain-bar science-bar"
+              @click="openDomain('science')"
+            >
+              <span class="domain-bar-label">{{ t('domain.science') }}</span>
+            </button>
 
             <article id="presocratic" data-node="presocratic" class="node">
               <SchoolBlock school-id="presocratic" />
@@ -583,7 +553,27 @@ watch(activeDomain, () => void nextTick(measure))
               </div>
             </section>
           </div>
-        </section>
+        </template>
+
+        <template v-else>
+          <section
+            class="science-stack"
+            :style="{ marginLeft: 'var(--science-left, 0px)' }"
+          >
+            <article id="astronomy" data-node="astronomy" class="node">
+              <SchoolBlock school-id="astronomy" />
+            </article>
+            <button
+              id="philosophy-bar"
+              type="button"
+              data-node="philosophy-bar"
+              class="domain-bar philosophy-bar"
+              @click="openDomain('philosophy')"
+            >
+              <span class="domain-bar-label">{{ t('domain.philosophy') }}</span>
+            </button>
+          </section>
+        </template>
       </main>
     </div>
   </div>
@@ -633,7 +623,7 @@ watch(activeDomain, () => void nextTick(measure))
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 10px;
+  gap: 8px;
   padding: 10px 40px 16px;
   padding-bottom: max(16px, env(safe-area-inset-bottom));
   padding-left: max(40px, env(safe-area-inset-left));
@@ -642,6 +632,25 @@ watch(activeDomain, () => void nextTick(measure))
   min-height: 0;
   width: max-content;
   min-width: 100%;
+  box-sizing: border-box;
+}
+
+.philosophy-atlas {
+  --gutter-x: 40px;
+  position: relative;
+  display: grid;
+  grid-template-columns: max-content max-content max-content max-content max-content max-content max-content max-content;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    'epochOnto epochOnto epochOnto epochOnto epochEpist epochEpist epochContemp epochContemp'
+    '. . . . science science science science'
+    'presocratic greece hellenistic scholasticism modern classical lifeCol existCol'
+    '. . . . political political political political';
+  gap: 8px var(--gutter-x);
+  flex: 1 1 auto;
+  min-height: 0;
+  width: max-content;
+  align-items: center;
   box-sizing: border-box;
 }
 
@@ -658,47 +667,32 @@ watch(activeDomain, () => void nextTick(measure))
   flex: 0 0 auto;
 }
 
-.graph.domain-philosophy .philosophy-slot {
-  margin-left: 0;
-  width: max-content;
-  flex: 1 1 auto;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.graph.domain-science .philosophy-slot {
-  margin-left: var(--philosophy-left, 0px);
-  width: var(--philosophy-width, max-content);
-  min-width: var(--philosophy-width, 0px);
-  flex: 0 0 auto;
-}
-
 .graph.domain-science {
   justify-content: flex-start;
 }
 
-.graph.domain-science .science-slot {
-  flex: 1 1 auto;
-  display: flex;
-  align-items: center;
+.science-stack {
+  position: relative;
+  z-index: 3;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  width: fit-content;
+  max-width: 100%;
+  flex: 0 0 auto;
+  margin-top: auto;
+  margin-bottom: auto;
+  box-sizing: border-box;
 }
 
-.philosophy-tree {
-  --gutter-x: 40px;
-  position: relative;
-  display: grid;
-  grid-template-columns: max-content max-content max-content max-content max-content max-content max-content max-content;
-  grid-template-rows: auto minmax(0, 1fr) auto;
-  grid-template-areas:
-    'epochOnto epochOnto epochOnto epochOnto epochEpist epochEpist epochContemp epochContemp'
-    'presocratic greece hellenistic scholasticism modern classical lifeCol existCol'
-    '. . . . political political political political';
-  gap: 10px var(--gutter-x);
-  flex: 1 1 auto;
-  min-height: 0;
-  width: max-content;
-  align-items: center;
+.science-stack > .node {
+  width: fit-content;
+}
+
+.science-stack .philosophy-bar {
+  align-self: stretch;
+  width: auto;
   box-sizing: border-box;
 }
 
@@ -740,6 +734,9 @@ watch(activeDomain, () => void nextTick(measure))
 }
 
 .science-bar {
+  grid-area: science;
+  justify-self: stretch;
+  align-self: center;
   border: 1px solid rgba(74, 155, 184, 0.4);
   background: rgba(74, 155, 184, 0.1);
   color: #9ecfe0;
@@ -752,7 +749,7 @@ watch(activeDomain, () => void nextTick(measure))
 }
 
 .science-slot > .node {
-  width: 100%;
+  width: max-content;
   box-sizing: border-box;
 }
 
@@ -773,7 +770,7 @@ watch(activeDomain, () => void nextTick(measure))
   justify-content: center;
   gap: 12px;
   margin: 0;
-  padding: 0 2px 4px;
+  padding: 0 2px;
   align-self: end;
   font-family: var(--serif);
   font-size: 0.78rem;
@@ -1012,9 +1009,8 @@ watch(activeDomain, () => void nextTick(measure))
     gap: 8px;
   }
 
-  .philosophy-tree {
-    --gutter-x: 40px;
-    gap: 8px var(--gutter-x);
+  .philosophy-atlas {
+    gap: 6px var(--gutter-x);
   }
 }
 
@@ -1038,11 +1034,11 @@ watch(activeDomain, () => void nextTick(measure))
     align-items: flex-start;
   }
 
-  .philosophy-tree {
+  .philosophy-atlas {
     --gutter-x: 22px;
-    grid-template-rows: auto auto auto;
+    grid-template-rows: auto auto auto auto;
     height: auto;
-    gap: 12px var(--gutter-x);
+    gap: 10px var(--gutter-x);
     align-items: start;
   }
 
@@ -1085,9 +1081,9 @@ watch(activeDomain, () => void nextTick(measure))
     gap: 10px;
   }
 
-  .philosophy-tree {
+  .philosophy-atlas {
     --gutter-x: 16px;
-    gap: 10px var(--gutter-x);
+    gap: 8px var(--gutter-x);
   }
 
   .epoch {

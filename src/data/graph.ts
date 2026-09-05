@@ -41,12 +41,12 @@ export const graphEdges: GraphEdge[] = [
     fromSide: 'top',
     toSide: 'left',
   },
-  // Science expanded: philosophy summary sits below science; arrow grows up into astronomy
+  // Science expanded: philosophy summary sits below; arrow grows up into astronomy
   {
     from: 'philosophy-bar',
     to: 'astronomy',
     color: 'var(--c-astronomy)',
     fromSide: 'top',
-    toSide: 'left',
+    toSide: 'bottom',
   },
 ]
