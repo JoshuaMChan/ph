@@ -1,9 +1,10 @@
 const en = {
   site: {
-    title: 'Western Thought',
-    chapter: 'Philosophy',
+    title: 'How We Get Here',
+    chapter: 'Philosophy & Science',
     kicker: 'A brief history you can walk',
-    subtitle: 'From Athens to Königsberg, then from confluence into the split',
+    subtitle:
+      'After the Middle Ages, science branches off from philosophy; natural science begins with astronomy',
   },
   nav: {
     greece: 'Greece',
@@ -13,6 +14,7 @@ const en = {
     classical: 'Classical',
     split: 'Split',
     political: 'Politics',
+    astronomy: 'Astronomy',
   },
   lang: {
     zh: '中文',
@@ -36,6 +38,7 @@ const en = {
     deconstruction: 'Post-structuralism',
     analytic: 'Analytic Philosophy',
     political: 'Political Philosophy',
+    astronomy: 'Astronomy',
   },
   schoolTag: {
     greece: 'Greece',
@@ -52,6 +55,11 @@ const en = {
     existentialism: 'France',
     deconstruction: 'France',
     analytic: 'Britain',
+    astronomy: 'Europe · U.S.',
+  },
+  domain: {
+    philosophy: 'Philosophy',
+    science: 'Natural Science',
   },
   branch: {
     trunk: 'Main line',
@@ -65,6 +73,8 @@ const en = {
     mergeAt: 'They meet in Kant',
     split: 'The split',
     afterHegel: 'After Hegel, the story divides into great rivers',
+    scienceBranch:
+      'Branches from medieval philosophy · the first independent line of natural science',
   },
   epoch: {
     ontology: 'Ontology',
@@ -117,6 +127,10 @@ const en = {
     machiavelli: 'Niccolò Machiavelli',
     hobbes: 'Thomas Hobbes',
     rousseau: 'Jean-Jacques Rousseau',
+    copernicus: 'Nicolaus Copernicus',
+    galileo: 'Galileo Galilei',
+    kepler: 'Johannes Kepler',
+    hubble: 'Edwin Hubble',
   },
   // Keys mirror person; philosophers omitted here do not show a quote yet.
   quote: {
@@ -188,6 +202,14 @@ const en = {
     avignon: 'Avignon',
     baltimore: 'Baltimore',
     lexington: 'Lexington',
+    torun: 'Toruń',
+    frombork: 'Frombork',
+    pisa: 'Pisa',
+    arcetri: 'Arcetri',
+    weilDerStadt: 'Weil der Stadt',
+    regensburg: 'Regensburg',
+    marshfield: 'Marshfield',
+    sanMarino: 'San Marino',
   },
   region: {
     greece: 'Greece',
@@ -214,6 +236,7 @@ const en = {
     rome: 'Rome',
     switzerland: 'Switzerland',
     america: 'United States',
+    poland: 'Poland',
   },
 }
 

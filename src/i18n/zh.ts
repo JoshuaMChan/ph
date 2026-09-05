@@ -1,9 +1,9 @@
 const zh = {
   site: {
-    title: '西方思想史',
-    chapter: '哲学篇',
+    title: '涉历至此',
+    chapter: '哲学与科学',
     kicker: '一部可漫游的简史',
-    subtitle: '从雅典到柯尼斯堡，再从合流走向分裂',
+    subtitle: '中世纪之后，科学从哲学中分出；自然科学先以天文学独立',
   },
   nav: {
     greece: '希腊',
@@ -13,6 +13,7 @@ const zh = {
     classical: '古典',
     split: '分裂',
     political: '政治',
+    astronomy: '天文学',
   },
   lang: {
     zh: '中文',
@@ -36,6 +37,7 @@ const zh = {
     deconstruction: '后结构主义',
     analytic: '分析哲学',
     political: '政治哲学',
+    astronomy: '天文学',
   },
   schoolTag: {
     greece: '希腊',
@@ -52,6 +54,11 @@ const zh = {
     existentialism: '法',
     deconstruction: '法',
     analytic: '英',
+    astronomy: '欧 · 美',
+  },
+  domain: {
+    philosophy: '哲学',
+    science: '自然科学',
   },
   branch: {
     trunk: '主干',
@@ -65,6 +72,7 @@ const zh = {
     mergeAt: '合流于康德',
     split: '分裂',
     afterHegel: '黑格尔之后，思想史裂为几条大河',
+    scienceBranch: '自中世纪哲学分出 · 自然科学的第一条独立支线',
   },
   epoch: {
     ontology: '本体论',
@@ -117,6 +125,10 @@ const zh = {
     machiavelli: '尼可罗·马基雅维利',
     hobbes: '托马斯·霍布斯',
     rousseau: '让-雅克·卢梭',
+    copernicus: '尼古拉·哥白尼',
+    galileo: '伽利略·伽利莱',
+    kepler: '约翰内斯·开普勒',
+    hubble: '埃德温·哈勃',
   },
   // 与 person 使用相同的键；未列出的哲学家暂不显示名言。
   quote: {
@@ -195,6 +207,14 @@ const zh = {
     avignon: '阿维尼翁',
     baltimore: '巴尔的摩',
     lexington: '列克星敦',
+    torun: '托伦',
+    frombork: '弗龙堡',
+    pisa: '比萨',
+    arcetri: '阿尔切特里',
+    weilDerStadt: '魏尔城',
+    regensburg: '雷根斯堡',
+    marshfield: '马什菲尔德',
+    sanMarino: '圣马力诺',
   },
   region: {
     greece: '希腊',
@@ -221,6 +241,7 @@ const zh = {
     rome: '罗马',
     switzerland: '瑞士',
     america: '美国',
+    poland: '波兰',
   },
 }
 

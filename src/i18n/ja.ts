@@ -1,9 +1,10 @@
 const ja = {
   site: {
-    title: '西洋思想史',
-    chapter: '哲学篇',
+    title: 'ここに至るまで',
+    chapter: '哲学と科学',
     kicker: '歩いて読める簡史',
-    subtitle: 'アテネからケーニヒスベルクへ、合流から分裂へ',
+    subtitle:
+      '中世ののち、科学は哲学から分かれ出る。自然科学はまず天文学として自立する',
   },
   nav: {
     greece: 'ギリシア',
@@ -13,6 +14,7 @@ const ja = {
     classical: '古典',
     split: '分裂',
     political: '政治',
+    astronomy: '天文学',
   },
   lang: {
     zh: '中文',
@@ -36,6 +38,7 @@ const ja = {
     deconstruction: 'ポスト構造主義',
     analytic: '分析哲学',
     political: '政治哲学',
+    astronomy: '天文学',
   },
   schoolTag: {
     greece: 'ギリシア',
@@ -52,6 +55,11 @@ const ja = {
     existentialism: 'フランス',
     deconstruction: 'フランス',
     analytic: 'イギリス',
+    astronomy: '欧州 · 米',
+  },
+  domain: {
+    philosophy: '哲学',
+    science: '自然科学',
   },
   branch: {
     trunk: '本流',
@@ -65,6 +73,7 @@ const ja = {
     mergeAt: 'カントにおいて合流する',
     split: '分裂',
     afterHegel: 'ヘーゲルのあと、思想史はいくつかの大河に裂ける',
+    scienceBranch: '中世哲学から分岐 · 自然科学の最初の独立した支流',
   },
   epoch: {
     ontology: '存在論',
@@ -117,6 +126,10 @@ const ja = {
     machiavelli: 'ニッコロ・マキャヴェッリ',
     hobbes: 'トマス・ホッブズ',
     rousseau: 'ジャン＝ジャック・ルソー',
+    copernicus: 'ニコラウス・コペルニクス',
+    galileo: 'ガリレオ・ガリレイ',
+    kepler: 'ヨハネス・ケプラー',
+    hubble: 'エドウィン・ハッブル',
   },
   // person と同じキーを使用。未記載の哲学者には、まだ名言を表示しない。
   quote: {
@@ -176,6 +189,14 @@ const ja = {
     avignon: 'アヴィニョン',
     baltimore: 'ボルチモア',
     lexington: 'レキシントン',
+    torun: 'トルン',
+    frombork: 'フロムボルク',
+    pisa: 'ピサ',
+    arcetri: 'アルチェトリ',
+    weilDerStadt: 'ヴァイル・デア・シュタット',
+    regensburg: 'レーゲンスブルク',
+    marshfield: 'マーシュフィールド',
+    sanMarino: 'サンマリノ',
   },
   region: {
     greece: 'ギリシア',
@@ -202,6 +223,7 @@ const ja = {
     rome: 'ローマ',
     switzerland: 'スイス',
     america: 'アメリカ',
+    poland: 'ポーランド',
   },
 }
 

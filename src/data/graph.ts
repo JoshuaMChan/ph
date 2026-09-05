@@ -33,4 +33,11 @@ export const graphEdges: GraphEdge[] = [
     fromSide: 'bottom',
     toSide: 'left',
   },
+  {
+    from: 'scholasticism',
+    to: 'astronomy',
+    color: 'var(--c-astronomy)',
+    fromSide: 'right',
+    toSide: 'left',
+  },
 ]
