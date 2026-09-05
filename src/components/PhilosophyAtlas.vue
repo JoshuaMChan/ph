@@ -112,16 +112,9 @@ function captureSlotGeom(rootEl: HTMLElement) {
     const barWidth = sciBar
       ? Math.round((sciBar as HTMLElement).offsetWidth)
       : 0
-    const scienceWidth = Math.max(
-      slotGeom.value.scienceWidth,
-      barWidth,
-      treeRight - scienceLeft,
-    )
+    const scienceWidth = Math.max(barWidth, treeRight - scienceLeft)
     const philosophyLeft = Math.max(0, Math.round(relLeft(tree)))
-    const philosophyWidth = Math.max(
-      slotGeom.value.philosophyWidth,
-      Math.round((tree as HTMLElement).offsetWidth),
-    )
+    const philosophyWidth = Math.round((tree as HTMLElement).offsetWidth)
 
     const next = {
       scienceLeft,
@@ -305,6 +298,10 @@ function measureLinks() {
     const toSide = edge.toSide ?? 'left'
     const start = point(from, fromSide)
     const end = point(to, toSide)
+    // Keep the science↔philosophy fork vertical so it meets astronomy from below.
+    if (edge.from === 'philosophy-bar' && edge.to === 'astronomy') {
+      start[0] = end[0]
+    }
     if (edge.viaCluster) {
       const cluster = rootEl.querySelector(`[data-node="${edge.viaCluster}"]`)
       if (cluster) start[0] = box(cluster, root).right
@@ -556,23 +553,22 @@ watch(activeDomain, () => void nextTick(measure))
         </template>
 
         <template v-else>
-          <section
-            class="science-stack"
-            :style="{ marginLeft: 'var(--science-left, 0px)' }"
+          <article
+            id="astronomy"
+            data-node="astronomy"
+            class="node science-panel"
           >
-            <article id="astronomy" data-node="astronomy" class="node">
-              <SchoolBlock school-id="astronomy" />
-            </article>
-            <button
-              id="philosophy-bar"
-              type="button"
-              data-node="philosophy-bar"
-              class="domain-bar philosophy-bar"
-              @click="openDomain('philosophy')"
-            >
-              <span class="domain-bar-label">{{ t('domain.philosophy') }}</span>
-            </button>
-          </section>
+            <SchoolBlock school-id="astronomy" />
+          </article>
+          <button
+            id="philosophy-bar"
+            type="button"
+            data-node="philosophy-bar"
+            class="domain-bar philosophy-bar"
+            @click="openDomain('philosophy')"
+          >
+            <span class="domain-bar-label">{{ t('domain.philosophy') }}</span>
+          </button>
         </template>
       </main>
     </div>
@@ -650,6 +646,7 @@ watch(activeDomain, () => void nextTick(measure))
   flex: 1 1 auto;
   min-height: 0;
   width: max-content;
+  margin-left: var(--philosophy-left, 0px);
   align-items: center;
   box-sizing: border-box;
 }
@@ -671,28 +668,20 @@ watch(activeDomain, () => void nextTick(measure))
   justify-content: flex-start;
 }
 
-.science-stack {
-  position: relative;
-  z-index: 3;
-  display: inline-flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 8px;
+.graph.domain-science .science-panel {
+  margin-left: var(--science-left, 0px);
   width: fit-content;
-  max-width: 100%;
-  flex: 0 0 auto;
+  flex: 1 1 auto;
+  align-self: flex-start;
   margin-top: auto;
   margin-bottom: auto;
-  box-sizing: border-box;
 }
 
-.science-stack > .node {
-  width: fit-content;
-}
-
-.science-stack .philosophy-bar {
-  align-self: stretch;
-  width: auto;
+.graph.domain-science .philosophy-bar {
+  margin-left: var(--philosophy-left, 0px);
+  width: var(--philosophy-width, max-content);
+  min-width: var(--philosophy-width, 0px);
+  flex: 0 0 auto;
   box-sizing: border-box;
 }
 
