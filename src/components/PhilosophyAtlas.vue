@@ -26,7 +26,6 @@ function openDomain(domain: Domain) {
   const scrollLeft = viewport.value?.scrollLeft ?? 0
   const scrollTop = viewport.value?.scrollTop ?? 0
   activeDomain.value = domain
-  dismissScrollHint()
 
   const restoreScroll = () => {
     const el = viewport.value
@@ -48,17 +47,6 @@ function openDomain(domain: Domain) {
       measure()
       restoreScroll()
     })
-    if (
-      domain === 'philosophy' &&
-      viewport.value &&
-      viewport.value.scrollWidth > viewport.value.clientWidth + 24
-    ) {
-      showScrollHint.value = true
-      hintTimer = window.setTimeout(() => {
-        showScrollHint.value = false
-        hintTimer = null
-      }, 4200)
-    }
   })
 }
 
@@ -75,7 +63,6 @@ const graph = ref<HTMLElement | null>(null)
 const viewport = ref<HTMLElement | null>(null)
 const canvas = ref({ w: 0, h: 0 })
 const links = ref<Link[]>([])
-const showScrollHint = ref(false)
 const polLayout = ref({
   hobbes: 0,
   rousseau: 0,
@@ -427,19 +414,6 @@ function measure() {
 }
 
 let observer: ResizeObserver | null = null
-let hintTimer: number | null = null
-
-function dismissScrollHint() {
-  showScrollHint.value = false
-  if (hintTimer !== null) {
-    window.clearTimeout(hintTimer)
-    hintTimer = null
-  }
-}
-
-function onViewportScroll() {
-  dismissScrollHint()
-}
 
 onMounted(() => {
   observer = new ResizeObserver(() => measure())
@@ -452,20 +426,11 @@ onMounted(() => {
   void nextTick(() => {
     measure()
     requestAnimationFrame(measure)
-    const el = viewport.value
-    if (el && el.scrollWidth > el.clientWidth + 24) {
-      showScrollHint.value = true
-      hintTimer = window.setTimeout(() => {
-        showScrollHint.value = false
-        hintTimer = null
-      }, 4200)
-    }
   })
 })
 
 onBeforeUnmount(() => {
   observer?.disconnect()
-  dismissScrollHint()
 })
 
 watch(locale, () => void nextTick(measure))
@@ -475,8 +440,7 @@ watch(activeDomain, () => void nextTick(measure))
 <template>
   <div class="shell">
     <SiteHeader />
-    <div ref="viewport" class="viewport" @scroll.passive="onViewportScroll">
-      <p v-if="showScrollHint" class="scroll-hint">{{ t('ui.scroll') }}</p>
+    <div ref="viewport" class="viewport">
       <main
         id="top"
         ref="graph"
@@ -720,25 +684,6 @@ watch(activeDomain, () => void nextTick(measure))
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
   touch-action: pan-x pan-y;
-}
-
-.scroll-hint {
-  position: sticky;
-  top: 10px;
-  left: 0;
-  z-index: 8;
-  width: max-content;
-  max-width: calc(100% - 28px);
-  margin: 0 0 -28px 14px;
-  padding: 7px 12px;
-  border: 1px solid rgba(212, 184, 122, 0.35);
-  border-radius: 999px;
-  background: rgba(14, 16, 22, 0.88);
-  color: var(--gold-2);
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-  pointer-events: none;
-  backdrop-filter: blur(10px);
 }
 
 .graph {
@@ -1180,11 +1125,6 @@ watch(activeDomain, () => void nextTick(measure))
 }
 
 @media (max-width: 900px) {
-  .scroll-hint {
-    top: 8px;
-    margin-left: max(12px, env(safe-area-inset-left));
-  }
-
   .graph {
     --gutter-x: 22px;
     --card-w: 46px;
