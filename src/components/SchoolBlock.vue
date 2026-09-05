@@ -108,8 +108,8 @@ const dirac = computed(() => people.value.find((item) => item.id === 'dirac'))
       <PhilosopherCard v-if="planck" class="slot-planck" :person="planck" />
       <PhilosopherCard v-if="born" class="slot-born" :person="born" />
       <PhilosopherCard v-if="bohr" class="slot-bohr" :person="bohr" />
-      <PhilosopherCard v-if="debroglie" class="slot-debroglie" :person="debroglie" />
       <PhilosopherCard v-if="schrodinger" class="slot-schrodinger" :person="schrodinger" />
+      <PhilosopherCard v-if="debroglie" class="slot-debroglie" :person="debroglie" />
       <PhilosopherCard v-if="pauli" class="slot-pauli" :person="pauli" />
       <PhilosopherCard v-if="fermi" class="slot-fermi" :person="fermi" />
       <PhilosopherCard v-if="heisenberg" class="slot-heisenberg" :person="heisenberg" />
@@ -299,7 +299,7 @@ h2 {
   display: grid;
   grid-template-columns: max-content max-content max-content max-content max-content;
   grid-template-areas:
-    'planck born bohr debroglie schrodinger'
+    'planck born bohr schrodinger debroglie'
     'pauli fermi heisenberg dirac .';
   justify-content: start;
   align-items: start;

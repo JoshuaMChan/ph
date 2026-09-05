@@ -1754,8 +1754,8 @@ export const schools: Record<string, School> = {
       'planck',
       'born',
       'bohr',
-      'debroglie',
       'schrodinger',
+      'debroglie',
       'pauli',
       'fermi',
       'heisenberg',
@@ -1777,24 +1777,24 @@ export const schools: Record<string, School> = {
     countryIds: ['840', '156'],
     accent: 'var(--c-qft)',
   },
-  // Fixed order: Lavoisier → Dalton → Mendeleev → Curie
+  // Fixed order: Lavoisier → Dalton → Mendeleev → Curie → Pauling
   chemistry: {
     id: 'chemistry',
-    people: ['lavoisier', 'dalton', 'mendeleev', 'curie'],
+    people: ['lavoisier', 'dalton', 'mendeleev', 'curie', 'pauling'],
     yearStart: 1743,
-    yearEnd: 1934,
-    regionKeys: ['europe'],
-    countryIds: ['250', '826', '643', '616'],
+    yearEnd: 1994,
+    regionKeys: ['europe', 'america'],
+    countryIds: ['250', '826', '643', '616', '840'],
     accent: 'var(--c-chemistry)',
   },
-  // Fixed order for now: Darwin → Mendel
+  // Fixed order: Darwin → Mendel → Pasteur → Crick → Watson
   biology: {
     id: 'biology',
-    people: ['darwin', 'mendel'],
+    people: ['darwin', 'mendel', 'pasteur', 'crick', 'watson'],
     yearStart: 1809,
-    yearEnd: 1884,
-    regionKeys: ['europe'],
-    countryIds: ['826', '040', '203'],
+    yearEnd: 2004,
+    regionKeys: ['europe', 'america'],
+    countryIds: ['826', '040', '203', '250', '840'],
     accent: 'var(--c-biology)',
   },
 }
