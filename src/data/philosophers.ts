@@ -1035,6 +1035,28 @@ export const philosophers: Record<string, Philosopher> = {
       countryId: '276',
     },
   },
+  born: {
+    id: 'born',
+    nativeName: 'Max Born',
+    country: 'germany',
+    portrait: '/portraits/born.jpg',
+    birth: { year: 1882, month: 12, day: 11 },
+    death: { year: 1970, month: 1, day: 5 },
+    born: {
+      city: 'breslau',
+      region: 'germany',
+      lat: 51.1079,
+      lng: 17.0385,
+      countryId: '276',
+    },
+    died: {
+      city: 'gottingen',
+      region: 'germany',
+      lat: 51.541,
+      lng: 9.915,
+      countryId: '276',
+    },
+  },
   bohr: {
     id: 'bohr',
     nativeName: 'Niels Bohr',
@@ -1540,6 +1562,7 @@ export const schools: Record<string, School> = {
     id: 'quantumMechanics',
     people: [
       'planck',
+      'born',
       'bohr',
       'schrodinger',
       'pauli',

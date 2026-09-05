@@ -224,12 +224,18 @@ function curve(
       const up = Math.min(y1, y2) - 28
       return `M ${x1} ${y1} C ${x1} ${up}, ${x2} ${up}, ${x2} ${y2}`
     }
-    // From below into a box's left edge (philosophy-bar → astronomy):
-    // climb beside the target, then enter horizontally from the left.
+    // From below into a box's left edge (scholasticism → science-bar, etc.):
+    // soft quarter-turn instead of a sharp elbow.
     if (y2 < y1) {
+      const r = Math.min(56, Math.abs(dx) * 0.5, Math.abs(dy) * 0.45)
+      const cornerY = y2 + r
+      const cornerX = x1 + Math.min(r, Math.max(0, dx))
+      // Prefer rising near the start, then sweeping right into the target.
+      if (x2 >= x1) {
+        return `M ${x1} ${y1} L ${x1} ${cornerY} C ${x1} ${y2}, ${x1} ${y2}, ${cornerX} ${y2} L ${x2} ${y2}`
+      }
       const elbowX = x2 - 28
-      const midY = y1 + (y2 - y1) * 0.55
-      return `M ${x1} ${y1} C ${x1} ${midY}, ${elbowX} ${midY}, ${elbowX} ${y2} L ${x2} ${y2}`
+      return `M ${x1} ${y1} C ${x1} ${y1 + dy * 0.45}, ${elbowX} ${y2 + r}, ${elbowX} ${y2} L ${x2} ${y2}`
     }
     const midY = y1 + (y2 - y1) * 0.55
     return `M ${x1} ${y1} C ${x1} ${midY}, ${x1} ${y2}, ${x2} ${y2}`
@@ -765,8 +771,8 @@ watch(activeDomain, () => void nextTick(measure))
   grid-template-areas:
     'astronomy classicalMechanics electrodynamics relativity .'
     '. . statisticalPhysics quantumMechanics quantumFieldTheory'
-    '. chemistry . . .'
-    '. biology . . .';
+    '. . chemistry . .'
+    '. . biology . .';
   gap: 16px var(--gutter-x);
   margin-left: var(--science-left, 0px);
   width: max-content;

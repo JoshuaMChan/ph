@@ -59,6 +59,7 @@ const aquinas = computed(() => people.value.find((item) => item.id === 'aquinas'
 const ockham = computed(() => people.value.find((item) => item.id === 'ockham'))
 
 const planck = computed(() => people.value.find((item) => item.id === 'planck'))
+const born = computed(() => people.value.find((item) => item.id === 'born'))
 const bohr = computed(() => people.value.find((item) => item.id === 'bohr'))
 const schrodinger = computed(() => people.value.find((item) => item.id === 'schrodinger'))
 const pauli = computed(() => people.value.find((item) => item.id === 'pauli'))
@@ -104,6 +105,7 @@ const dirac = computed(() => people.value.find((item) => item.id === 'dirac'))
     </div>
     <div v-else-if="schoolId === 'quantumMechanics'" class="people quantum-grid">
       <PhilosopherCard v-if="planck" class="slot-planck" :person="planck" />
+      <PhilosopherCard v-if="born" class="slot-born" :person="born" />
       <PhilosopherCard v-if="bohr" class="slot-bohr" :person="bohr" />
       <PhilosopherCard v-if="schrodinger" class="slot-schrodinger" :person="schrodinger" />
       <PhilosopherCard v-if="pauli" class="slot-pauli" :person="pauli" />
@@ -294,7 +296,7 @@ h2 {
   display: grid;
   grid-template-columns: max-content max-content max-content max-content;
   grid-template-areas:
-    'planck bohr schrodinger .'
+    'planck born bohr schrodinger'
     'pauli fermi heisenberg dirac';
   justify-content: start;
   align-items: start;
@@ -303,6 +305,10 @@ h2 {
 
 .slot-planck {
   grid-area: planck;
+}
+
+.slot-born {
+  grid-area: born;
 }
 
 .slot-bohr {
