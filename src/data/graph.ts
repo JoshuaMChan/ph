@@ -33,11 +33,21 @@ export const graphEdges: GraphEdge[] = [
     fromSide: 'bottom',
     toSide: 'left',
   },
+  // Philosophy expanded: fork from medieval philosophy up into the science summary bar
   {
     from: 'scholasticism',
+    to: 'science-bar',
+    color: 'var(--c-astronomy)',
+    fromSide: 'top',
+    toSide: 'left',
+  },
+  // Science expanded: fork from the philosophy summary bar down into astronomy
+  // (same approach as greece → political)
+  {
+    from: 'philosophy-bar',
     to: 'astronomy',
     color: 'var(--c-astronomy)',
-    fromSide: 'right',
+    fromSide: 'bottom',
     toSide: 'left',
   },
 ]

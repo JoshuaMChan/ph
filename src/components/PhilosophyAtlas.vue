@@ -75,16 +75,14 @@ const scienceIndent = ref(0)
 
 function captureScienceIndent(rootEl: HTMLElement) {
   const modern = rootEl.querySelector('#modern') as HTMLElement | null
-  const scholasticism = rootEl.querySelector(
-    '#scholasticism',
-  ) as HTMLElement | null
-  if (!modern || !scholasticism) return
+  if (!modern) return
   const root = rootEl.getBoundingClientRect()
-  const modernLeft = modern.getBoundingClientRect().left - root.left
-  const scholW = scholasticism.offsetWidth
-  const styles = getComputedStyle(rootEl)
-  const gutter = Number.parseFloat(styles.columnGap || styles.gap) || 40
-  const next = Math.max(0, Math.round(modernLeft - scholW - gutter))
+  const padLeft =
+    Number.parseFloat(getComputedStyle(rootEl).paddingLeft) || 0
+  const next = Math.max(
+    0,
+    Math.round(modern.getBoundingClientRect().left - root.left - padLeft),
+  )
   if (Math.abs(scienceIndent.value - next) > 0.5) scienceIndent.value = next
 }
 
@@ -374,36 +372,40 @@ watch(activeDomain, () => void nextTick(measure))
           />
         </svg>
 
-        <!-- Science collapsed / expanded -->
-        <button
-          v-if="activeDomain !== 'science'"
-          type="button"
-          class="domain-bar science-bar"
-          @click="openDomain('science')"
-        >
-          <span class="domain-bar-label">{{ t('domain.science') }}</span>
-        </button>
-
-        <template v-else>
-          <article id="scholasticism" data-node="scholasticism" class="node">
-            <SchoolBlock school-id="scholasticism" />
-          </article>
-          <article id="astronomy" data-node="astronomy" class="node">
-            <SchoolBlock school-id="astronomy" />
-          </article>
-        </template>
-
         <!-- Philosophy collapsed / expanded -->
         <button
           v-if="activeDomain !== 'philosophy'"
+          id="philosophy-bar"
           type="button"
+          data-node="philosophy-bar"
           class="domain-bar philosophy-bar"
           @click="openDomain('philosophy')"
         >
           <span class="domain-bar-label">{{ t('domain.philosophy') }}</span>
         </button>
 
-        <template v-else>
+        <!-- Science collapsed / expanded -->
+        <button
+          v-if="activeDomain !== 'science'"
+          id="science-bar"
+          type="button"
+          data-node="science-bar"
+          class="domain-bar science-bar"
+          @click="openDomain('science')"
+        >
+          <span class="domain-bar-label">{{ t('domain.science') }}</span>
+        </button>
+
+        <article
+          v-else
+          id="astronomy"
+          data-node="astronomy"
+          class="node"
+        >
+          <SchoolBlock school-id="astronomy" />
+        </article>
+
+        <template v-if="activeDomain === 'philosophy'">
           <p class="epoch epoch-onto">{{ t('epoch.ontology') }}</p>
           <p class="epoch epoch-epist">{{ t('epoch.epistemology') }}</p>
           <p class="epoch epoch-contemp">{{ t('epoch.contemporary') }}</p>
@@ -575,18 +577,18 @@ watch(activeDomain, () => void nextTick(measure))
 .graph.domain-philosophy {
   grid-template-rows: auto auto minmax(0, 1fr) auto;
   grid-template-areas:
-    'sciBar sciBar sciBar sciBar sciBar sciBar sciBar sciBar'
+    '. . . . sciBar sciBar sciBar sciBar'
     'epochOnto epochOnto epochOnto epochOnto epochEpist epochEpist epochContemp epochContemp'
     'presocratic greece hellenistic scholasticism modern classical lifeCol existCol'
     '. . . . political political political political';
 }
 
 .graph.domain-science {
-  grid-template-columns: max-content max-content;
-  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-columns: max-content;
+  grid-template-rows: auto minmax(0, 1fr);
   grid-template-areas:
-    'scholasticism astronomy'
-    'philBar philBar';
+    'philBar'
+    'astronomy';
   width: max-content;
   min-width: 100%;
   justify-content: start;
@@ -594,8 +596,8 @@ watch(activeDomain, () => void nextTick(measure))
   padding-left: max(40px, env(safe-area-inset-left));
 }
 
-/* Nudge science branch so astronomy sits where rationalism starts on the philosophy map */
-.graph.domain-science #scholasticism {
+.graph.domain-science #astronomy,
+.graph.domain-science .philosophy-bar {
   margin-left: var(--science-indent, 0px);
 }
 
@@ -637,6 +639,8 @@ watch(activeDomain, () => void nextTick(measure))
 
 .science-bar {
   grid-area: sciBar;
+  justify-self: stretch;
+  width: 100%;
   border: 1px solid rgba(74, 155, 184, 0.4);
   background: rgba(74, 155, 184, 0.1);
   color: #9ecfe0;
@@ -644,6 +648,8 @@ watch(activeDomain, () => void nextTick(measure))
 
 .philosophy-bar {
   grid-area: philBar;
+  justify-self: stretch;
+  width: 100%;
   border: 1px solid var(--line);
   background: rgba(212, 184, 122, 0.08);
   color: var(--gold-2);
