@@ -147,8 +147,45 @@ function captureSlotGeom(rootEl: HTMLElement) {
     return
   }
 
+  // Science domain: keep left edges stable; stretch philosophy bar to QFT's right edge.
+  const atlas = rootEl.querySelector('.science-atlas') as HTMLElement | null
   const astronomy = rootEl.querySelector('#astronomy') as HTMLElement | null
-  if (!astronomy) return
+  const qft = rootEl.querySelector('#quantumFieldTheory') as HTMLElement | null
+  if (!atlas || !astronomy) return
+
+  const scienceLeft =
+    slotGeom.value.scienceLeft > 0
+      ? slotGeom.value.scienceLeft
+      : Math.max(0, Math.round(relLeft(astronomy)))
+  const atlasRight = Math.round(relRight(atlas))
+  const qftRight = qft ? Math.round(relRight(qft)) : atlasRight
+  const scienceWidth = Math.max(
+    slotGeom.value.scienceWidth,
+    atlasRight - scienceLeft,
+    qftRight - scienceLeft,
+  )
+
+  const philosophyLeft =
+    slotGeom.value.philosophyLeft > 0
+      ? slotGeom.value.philosophyLeft
+      : 0
+  const philosophyWidth = Math.max(0, qftRight - philosophyLeft)
+
+  const next = {
+    scienceLeft,
+    scienceWidth,
+    philosophyLeft,
+    philosophyWidth,
+  }
+  const prev = slotGeom.value
+  if (
+    Math.abs(prev.scienceLeft - next.scienceLeft) > 0.5 ||
+    Math.abs(prev.scienceWidth - next.scienceWidth) > 0.5 ||
+    Math.abs(prev.philosophyLeft - next.philosophyLeft) > 0.5 ||
+    Math.abs(prev.philosophyWidth - next.philosophyWidth) > 0.5
+  ) {
+    slotGeom.value = next
+  }
 }
 
 function box(el: Element, root: DOMRect) {
