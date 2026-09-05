@@ -16,9 +16,7 @@ const props = withDefaults(
 const { t } = useI18n()
 const school = computed(() => schools[props.schoolId])
 const people = computed(() => peopleOf(props.schoolId))
-const years = computed(() =>
-  formatEraYears(school.value.yearStart, school.value.yearEnd),
-)
+
 const scienceSchoolIds = new Set([
   'astronomy',
   'classicalMechanics',
@@ -29,10 +27,17 @@ const scienceSchoolIds = new Set([
   'quantumFieldTheory',
 ])
 
+const years = computed(() => {
+  if (scienceSchoolIds.has(props.schoolId)) return ''
+  return formatEraYears(school.value.yearStart, school.value.yearEnd)
+})
+
 const countries = computed(() => {
   if (scienceSchoolIds.has(props.schoolId)) return ''
   return school.value.regionKeys.map((key) => t(`region.${key}`)).join(' · ')
 })
+
+const showMeta = computed(() => Boolean(years.value || countries.value))
 
 const nietzsche = computed(() => people.value.find((item) => item.id === 'nietzsche'))
 const schopenhauer = computed(() => people.value.find((item) => item.id === 'schopenhauer'))
@@ -61,8 +66,8 @@ const ockham = computed(() => people.value.find((item) => item.id === 'ockham'))
   >
     <header class="head">
       <h2>{{ t(`school.${schoolId}`) }}</h2>
-      <p class="meta">
-        <span class="when">{{ years }}</span>
+      <p v-if="showMeta" class="meta">
+        <span v-if="years" class="when">{{ years }}</span>
         <span v-if="countries" class="where">{{ countries }}</span>
       </p>
     </header>

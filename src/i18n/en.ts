@@ -256,6 +256,7 @@ const en = {
     newYork: 'New York',
     losAngeles: 'Los Angeles',
     hefei: 'Hefei',
+    beijing: 'Beijing',
   },
   region: {
     greece: 'Greece',

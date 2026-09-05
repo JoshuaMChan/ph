@@ -261,6 +261,7 @@ const zh = {
     newYork: '纽约',
     losAngeles: '洛杉矶',
     hefei: '合肥',
+    beijing: '北京',
   },
   region: {
     greece: '希腊',

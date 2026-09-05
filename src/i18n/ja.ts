@@ -243,6 +243,7 @@ const ja = {
     newYork: 'ニューヨーク',
     losAngeles: 'ロサンゼルス',
     hefei: '合肥',
+    beijing: '北京',
   },
   region: {
     greece: 'ギリシア',
