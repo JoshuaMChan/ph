@@ -49,4 +49,39 @@ export const graphEdges: GraphEdge[] = [
     fromSide: 'top',
     toSide: 'bottom',
   },
+  // Natural science lineage
+  {
+    from: 'kepler',
+    to: 'classicalMechanics',
+    color: 'var(--c-classical-mech)',
+    fromSide: 'bottom',
+    toSide: 'left',
+  },
+  {
+    from: 'classicalMechanics',
+    to: 'electrodynamics',
+    color: 'var(--c-electro)',
+  },
+  {
+    from: 'classicalMechanics',
+    to: 'statisticalPhysics',
+    color: 'var(--c-statphys)',
+    fromSide: 'bottom',
+    toSide: 'left',
+  },
+  {
+    from: 'electrodynamics',
+    to: 'relativity',
+    color: 'var(--c-relativity)',
+  },
+  {
+    from: 'statisticalPhysics',
+    to: 'quantumMechanics',
+    color: 'var(--c-quantum)',
+  },
+  {
+    from: 'quantumMechanics',
+    to: 'quantumFieldTheory',
+    color: 'var(--c-qft)',
+  },
 ]

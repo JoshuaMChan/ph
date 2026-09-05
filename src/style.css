@@ -24,6 +24,12 @@
   --c-political: #c46b6b;
   --c-astronomy: #4a9bb8;
   --c-science: #3d7a8c;
+  --c-classical-mech: #6a9e7a;
+  --c-electro: #5a8fc4;
+  --c-statphys: #c49a5a;
+  --c-relativity: #8b7bc4;
+  --c-quantum: #5ab4a0;
+  --c-qft: #c47b9b;
   --serif: 'Cormorant Garamond', 'Songti SC', 'STSong', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
   --sans: 'Source Sans 3', 'PingFang SC', 'Hiragino Sans', 'Yu Gothic UI', sans-serif;
 }

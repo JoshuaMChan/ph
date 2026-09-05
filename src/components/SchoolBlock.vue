@@ -19,9 +19,20 @@ const people = computed(() => peopleOf(props.schoolId))
 const years = computed(() =>
   formatEraYears(school.value.yearStart, school.value.yearEnd),
 )
-const countries = computed(() =>
-  school.value.regionKeys.map((key) => t(`region.${key}`)).join(' · '),
-)
+const scienceSchoolIds = new Set([
+  'astronomy',
+  'classicalMechanics',
+  'electrodynamics',
+  'statisticalPhysics',
+  'relativity',
+  'quantumMechanics',
+  'quantumFieldTheory',
+])
+
+const countries = computed(() => {
+  if (scienceSchoolIds.has(props.schoolId)) return ''
+  return school.value.regionKeys.map((key) => t(`region.${key}`)).join(' · ')
+})
 
 const nietzsche = computed(() => people.value.find((item) => item.id === 'nietzsche'))
 const schopenhauer = computed(() => people.value.find((item) => item.id === 'schopenhauer'))
@@ -85,7 +96,9 @@ const ockham = computed(() => people.value.find((item) => item.id === 'ockham'))
           (people.length >= 3 &&
             schoolId !== 'greece' &&
             schoolId !== 'analytic' &&
-            schoolId !== 'astronomy'),
+            schoolId !== 'astronomy' &&
+            schoolId !== 'electrodynamics' &&
+            schoolId !== 'quantumMechanics'),
       }"
     >
       <PhilosopherCard v-for="item in people" :key="item.id" :person="item" />

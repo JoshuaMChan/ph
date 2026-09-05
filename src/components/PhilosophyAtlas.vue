@@ -149,7 +149,6 @@ function captureSlotGeom(rootEl: HTMLElement) {
 
   const astronomy = rootEl.querySelector('#astronomy') as HTMLElement | null
   if (!astronomy) return
-  // Keep science-slot left aligned; do not widen the reserved width from astronomy content.
 }
 
 function box(el: Element, root: DOMRect) {
@@ -566,13 +565,49 @@ watch(activeDomain, () => void nextTick(measure))
         </template>
 
         <template v-else>
-          <article
-            id="astronomy"
-            data-node="astronomy"
-            class="node science-panel"
-          >
-            <SchoolBlock school-id="astronomy" />
-          </article>
+          <div class="science-atlas">
+            <article id="astronomy" data-node="astronomy" class="node">
+              <SchoolBlock school-id="astronomy" />
+            </article>
+            <article
+              id="classicalMechanics"
+              data-node="classicalMechanics"
+              class="node"
+            >
+              <SchoolBlock school-id="classicalMechanics" />
+            </article>
+            <article
+              id="electrodynamics"
+              data-node="electrodynamics"
+              class="node"
+            >
+              <SchoolBlock school-id="electrodynamics" />
+            </article>
+            <article
+              id="statisticalPhysics"
+              data-node="statisticalPhysics"
+              class="node"
+            >
+              <SchoolBlock school-id="statisticalPhysics" />
+            </article>
+            <article id="relativity" data-node="relativity" class="node">
+              <SchoolBlock school-id="relativity" />
+            </article>
+            <article
+              id="quantumMechanics"
+              data-node="quantumMechanics"
+              class="node"
+            >
+              <SchoolBlock school-id="quantumMechanics" />
+            </article>
+            <article
+              id="quantumFieldTheory"
+              data-node="quantumFieldTheory"
+              class="node"
+            >
+              <SchoolBlock school-id="quantumFieldTheory" />
+            </article>
+          </div>
           <button
             id="philosophy-bar"
             type="button"
@@ -681,11 +716,51 @@ watch(activeDomain, () => void nextTick(measure))
   justify-content: flex-start;
 }
 
-.graph.domain-science .science-panel {
+.science-atlas {
+  --gutter-x: 40px;
+  position: relative;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: max-content max-content max-content max-content max-content;
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    'astronomy classicalMechanics electrodynamics relativity .'
+    '. . statisticalPhysics quantumMechanics quantumFieldTheory';
+  gap: 16px var(--gutter-x);
   margin-left: var(--science-left, 0px);
-  width: fit-content;
-  flex: 0 0 auto;
-  align-self: center;
+  width: max-content;
+  flex: 1 1 auto;
+  align-content: center;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.science-atlas #astronomy {
+  grid-area: astronomy;
+}
+
+.science-atlas #classicalMechanics {
+  grid-area: classicalMechanics;
+}
+
+.science-atlas #electrodynamics {
+  grid-area: electrodynamics;
+}
+
+.science-atlas #statisticalPhysics {
+  grid-area: statisticalPhysics;
+}
+
+.science-atlas #relativity {
+  grid-area: relativity;
+}
+
+.science-atlas #quantumMechanics {
+  grid-area: quantumMechanics;
+}
+
+.science-atlas #quantumFieldTheory {
+  grid-area: quantumFieldTheory;
 }
 
 .graph.domain-science .philosophy-bar {
@@ -1038,6 +1113,12 @@ watch(activeDomain, () => void nextTick(measure))
     height: auto;
     gap: 10px var(--gutter-x);
     align-items: start;
+  }
+
+  .science-atlas {
+    --gutter-x: 22px;
+    gap: 12px var(--gutter-x);
+    align-content: start;
   }
 
   .epoch {

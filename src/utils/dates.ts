@@ -6,7 +6,8 @@ export function formatYear(year: number): string {
   return `${n} BC`
 }
 
-export function formatLifespan(birth: DateMark, death: DateMark): string {
+export function formatLifespan(birth: DateMark, death?: DateMark): string {
+  if (!death) return `${formatYear(birth.year)}–`
   return formatRange(birth.year, death.year)
 }
 

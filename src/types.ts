@@ -21,9 +21,9 @@ export type Philosopher = {
   country: string
   portrait: string
   birth: DateMark
-  death: DateMark
+  death?: DateMark
   born: Place
-  died: Place
+  died?: Place
 }
 
 export type School = {
