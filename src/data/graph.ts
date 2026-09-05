@@ -51,7 +51,7 @@ export const graphEdges: GraphEdge[] = [
   },
   // Natural science lineage
   {
-    from: 'kepler',
+    from: 'galileo',
     to: 'classicalMechanics',
     color: 'var(--c-classical-mech)',
     fromSide: 'bottom',

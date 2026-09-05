@@ -208,7 +208,7 @@ function curve(
 
   // Approach the political box from the left
   if (fromSide === 'bottom' && toSide === 'left') {
-    // Same-row rightward (e.g. Kepler → Newton): drop below, then across into left
+    // Same-row rightward (e.g. Galileo → Newton): drop below, then across into left
     if (x2 > x1) {
       const down = Math.max(y1, y2) + 28
       return `M ${x1} ${y1} C ${x1} ${down}, ${x2} ${down}, ${x2} ${y2}`
