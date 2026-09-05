@@ -61,6 +61,7 @@ const ockham = computed(() => people.value.find((item) => item.id === 'ockham'))
 const planck = computed(() => people.value.find((item) => item.id === 'planck'))
 const born = computed(() => people.value.find((item) => item.id === 'born'))
 const bohr = computed(() => people.value.find((item) => item.id === 'bohr'))
+const debroglie = computed(() => people.value.find((item) => item.id === 'debroglie'))
 const schrodinger = computed(() => people.value.find((item) => item.id === 'schrodinger'))
 const pauli = computed(() => people.value.find((item) => item.id === 'pauli'))
 const fermi = computed(() => people.value.find((item) => item.id === 'fermi'))
@@ -107,6 +108,7 @@ const dirac = computed(() => people.value.find((item) => item.id === 'dirac'))
       <PhilosopherCard v-if="planck" class="slot-planck" :person="planck" />
       <PhilosopherCard v-if="born" class="slot-born" :person="born" />
       <PhilosopherCard v-if="bohr" class="slot-bohr" :person="bohr" />
+      <PhilosopherCard v-if="debroglie" class="slot-debroglie" :person="debroglie" />
       <PhilosopherCard v-if="schrodinger" class="slot-schrodinger" :person="schrodinger" />
       <PhilosopherCard v-if="pauli" class="slot-pauli" :person="pauli" />
       <PhilosopherCard v-if="fermi" class="slot-fermi" :person="fermi" />
@@ -125,6 +127,7 @@ const dirac = computed(() => people.value.find((item) => item.id === 'dirac'))
             schoolId !== 'analytic' &&
             schoolId !== 'astronomy' &&
             schoolId !== 'electrodynamics' &&
+            schoolId !== 'statisticalPhysics' &&
             schoolId !== 'chemistry' &&
             schoolId !== 'biology'),
       }"
@@ -294,10 +297,10 @@ h2 {
 
 .quantum-grid {
   display: grid;
-  grid-template-columns: max-content max-content max-content max-content;
+  grid-template-columns: max-content max-content max-content max-content max-content;
   grid-template-areas:
-    'planck born bohr schrodinger'
-    'pauli fermi heisenberg dirac';
+    'planck born bohr debroglie schrodinger'
+    'pauli fermi heisenberg dirac .';
   justify-content: start;
   align-items: start;
   gap: 8px 14px;
@@ -313,6 +316,10 @@ h2 {
 
 .slot-bohr {
   grid-area: bohr;
+}
+
+.slot-debroglie {
+  grid-area: debroglie;
 }
 
 .slot-schrodinger {
