@@ -41,13 +41,13 @@ export const graphEdges: GraphEdge[] = [
     fromSide: 'top',
     toSide: 'left',
   },
-  // Science expanded: philosophy summary sits below; arrow grows up into astronomy
+  // Science expanded: philosophy summary sits below; arrow into astronomy's left edge
   {
     from: 'philosophy-bar',
     to: 'astronomy',
     color: 'var(--c-astronomy)',
     fromSide: 'top',
-    toSide: 'bottom',
+    toSide: 'left',
   },
   // Natural science lineage
   {

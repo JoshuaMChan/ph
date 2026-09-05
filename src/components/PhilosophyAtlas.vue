@@ -208,12 +208,22 @@ function curve(
 
   // Approach the political box from the left
   if (fromSide === 'bottom' && toSide === 'left') {
+    // Same-row rightward (e.g. Kepler → Newton): drop below, then across into left
+    if (x2 > x1) {
+      const down = Math.max(y1, y2) + 28
+      return `M ${x1} ${y1} C ${x1} ${down}, ${x2} ${down}, ${x2} ${y2}`
+    }
     const midY = y1 + (y2 - y1) * 0.65
     return `M ${x1} ${y1} C ${x1} ${midY}, ${x1} ${y2}, ${x2} ${y2}`
   }
 
   // Branch upward into the science lane: go up, then across into the left edge
   if (fromSide === 'top' && toSide === 'left') {
+    // Same-row rightward from a portrait top: rise above, then into left
+    if (x2 > x1 && y2 >= y1 - 40) {
+      const up = Math.min(y1, y2) - 28
+      return `M ${x1} ${y1} C ${x1} ${up}, ${x2} ${up}, ${x2} ${y2}`
+    }
     const midY = y1 + (y2 - y1) * 0.55
     return `M ${x1} ${y1} C ${x1} ${midY}, ${x1} ${y2}, ${x2} ${y2}`
   }
