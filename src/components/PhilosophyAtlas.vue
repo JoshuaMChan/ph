@@ -23,8 +23,18 @@ const activeDomain = ref<Domain>('philosophy')
 
 function openDomain(domain: Domain) {
   if (activeDomain.value === domain) return
+  const scrollLeft = viewport.value?.scrollLeft ?? 0
+  const scrollTop = viewport.value?.scrollTop ?? 0
   activeDomain.value = domain
   dismissScrollHint()
+
+  const restoreScroll = () => {
+    const el = viewport.value
+    if (!el) return
+    el.scrollLeft = scrollLeft
+    el.scrollTop = scrollTop
+  }
+
   void nextTick(() => {
     const rootEl = graph.value
     if (rootEl && observer) {
@@ -32,9 +42,12 @@ function openDomain(domain: Domain) {
         if (!img.complete) img.addEventListener('load', measure, { once: true })
       })
     }
+    restoreScroll()
     measure()
-    requestAnimationFrame(measure)
-    viewport.value?.scrollTo({ left: 0, top: 0 })
+    requestAnimationFrame(() => {
+      measure()
+      restoreScroll()
+    })
     if (
       domain === 'philosophy' &&
       viewport.value &&
