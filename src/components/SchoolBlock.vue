@@ -55,6 +55,14 @@ const bacon = computed(() => people.value.find((item) => item.id === 'bacon'))
 const augustine = computed(() => people.value.find((item) => item.id === 'augustine'))
 const aquinas = computed(() => people.value.find((item) => item.id === 'aquinas'))
 const ockham = computed(() => people.value.find((item) => item.id === 'ockham'))
+
+const planck = computed(() => people.value.find((item) => item.id === 'planck'))
+const bohr = computed(() => people.value.find((item) => item.id === 'bohr'))
+const schrodinger = computed(() => people.value.find((item) => item.id === 'schrodinger'))
+const pauli = computed(() => people.value.find((item) => item.id === 'pauli'))
+const fermi = computed(() => people.value.find((item) => item.id === 'fermi'))
+const heisenberg = computed(() => people.value.find((item) => item.id === 'heisenberg'))
+const dirac = computed(() => people.value.find((item) => item.id === 'dirac'))
 </script>
 
 <template>
@@ -92,18 +100,27 @@ const ockham = computed(() => people.value.find((item) => item.id === 'ockham'))
       <PhilosopherCard v-if="locke" class="slot-locke" :person="locke" />
       <PhilosopherCard v-if="berkeley" class="slot-berkeley" :person="berkeley" />
     </div>
+    <div v-else-if="schoolId === 'quantumMechanics'" class="people quantum-grid">
+      <PhilosopherCard v-if="planck" class="slot-planck" :person="planck" />
+      <PhilosopherCard v-if="bohr" class="slot-bohr" :person="bohr" />
+      <PhilosopherCard v-if="schrodinger" class="slot-schrodinger" :person="schrodinger" />
+      <PhilosopherCard v-if="pauli" class="slot-pauli" :person="pauli" />
+      <PhilosopherCard v-if="fermi" class="slot-fermi" :person="fermi" />
+      <PhilosopherCard v-if="heisenberg" class="slot-heisenberg" :person="heisenberg" />
+      <PhilosopherCard v-if="dirac" class="slot-dirac" :person="dirac" />
+    </div>
     <div
       v-else
       class="people"
       :class="{
         stacked:
           schoolId === 'presocratic' ||
+          schoolId === 'quantumFieldTheory' ||
           (people.length >= 3 &&
             schoolId !== 'greece' &&
             schoolId !== 'analytic' &&
             schoolId !== 'astronomy' &&
-            schoolId !== 'electrodynamics' &&
-            schoolId !== 'quantumMechanics'),
+            schoolId !== 'electrodynamics'),
       }"
     >
       <PhilosopherCard v-for="item in people" :key="item.id" :person="item" />
@@ -269,6 +286,45 @@ h2 {
   grid-area: berkeley;
 }
 
+.quantum-grid {
+  display: grid;
+  grid-template-columns: max-content max-content max-content max-content;
+  grid-template-areas:
+    'planck bohr schrodinger .'
+    'pauli fermi heisenberg dirac';
+  justify-content: start;
+  align-items: start;
+  gap: 8px 14px;
+}
+
+.slot-planck {
+  grid-area: planck;
+}
+
+.slot-bohr {
+  grid-area: bohr;
+}
+
+.slot-schrodinger {
+  grid-area: schrodinger;
+}
+
+.slot-pauli {
+  grid-area: pauli;
+}
+
+.slot-fermi {
+  grid-area: fermi;
+}
+
+.slot-heisenberg {
+  grid-area: heisenberg;
+}
+
+.slot-dirac {
+  grid-area: dirac;
+}
+
 .nested {
   gap: 6px;
   padding-top: 0;
@@ -306,7 +362,8 @@ h2 {
   .life-grid,
   .medieval-grid,
   .reason-grid,
-  .experience-grid {
+  .experience-grid,
+  .quantum-grid {
     gap: 8px 10px;
   }
 }

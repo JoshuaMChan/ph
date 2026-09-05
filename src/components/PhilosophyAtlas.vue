@@ -224,6 +224,13 @@ function curve(
       const up = Math.min(y1, y2) - 28
       return `M ${x1} ${y1} C ${x1} ${up}, ${x2} ${up}, ${x2} ${y2}`
     }
+    // From below into a box's left edge (philosophy-bar → astronomy):
+    // climb beside the target, then enter horizontally from the left.
+    if (y2 < y1) {
+      const elbowX = x2 - 28
+      const midY = y1 + (y2 - y1) * 0.55
+      return `M ${x1} ${y1} C ${x1} ${midY}, ${elbowX} ${midY}, ${elbowX} ${y2} L ${x2} ${y2}`
+    }
     const midY = y1 + (y2 - y1) * 0.55
     return `M ${x1} ${y1} C ${x1} ${midY}, ${x1} ${y2}, ${x2} ${y2}`
   }
@@ -320,10 +327,6 @@ function measureLinks() {
     const toSide = edge.toSide ?? 'left'
     const start = point(from, fromSide)
     const end = point(to, toSide)
-    // Keep the science↔philosophy fork vertical so it meets astronomy from below.
-    if (edge.from === 'philosophy-bar' && edge.to === 'astronomy') {
-      start[0] = end[0]
-    }
     if (edge.viaCluster) {
       const cluster = rootEl.querySelector(`[data-node="${edge.viaCluster}"]`)
       if (cluster) start[0] = box(cluster, root).right
