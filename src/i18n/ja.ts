@@ -45,6 +45,7 @@ const ja = {
     relativity: '相対性理論',
     quantumMechanics: '量子力学',
     quantumFieldTheory: '場の量子論',
+    chemistry: '化学',
   },
   schoolTag: {
     greece: 'ギリシア',
@@ -68,6 +69,7 @@ const ja = {
     relativity: '独 · 米',
     quantumMechanics: '欧 · 米',
     quantumFieldTheory: '米 · 中',
+    chemistry: '欧州',
   },
   domain: {
     philosophy: '哲学',
@@ -155,6 +157,10 @@ const ja = {
     dirac: 'ポール・ディラック',
     feynman: 'リチャード・ファインマン',
     yang: '楊振寧',
+    lavoisier: 'アントワーヌ・ラヴォアジエ',
+    dalton: 'ジョン・ドルトン',
+    mendeleev: 'ドミトリ・メンデレーエフ',
+    curie: 'マリ・キュリー',
   },
   // person と同じキーを使用。未記載の哲学者には、まだ名言を表示しない。
   quote: {
@@ -238,6 +244,12 @@ const ja = {
     losAngeles: 'ロサンゼルス',
     hefei: '合肥',
     beijing: '北京',
+    eaglesfield: 'イーグルスフィールド',
+    manchester: 'マンチェスター',
+    tobolsk: 'トボリスク',
+    saintPetersburg: 'サンクトペテルブルク',
+    warsaw: 'ワルシャワ',
+    sancellemoz: 'サンセルモズ',
   },
   region: {
     greece: 'ギリシア',
@@ -266,6 +278,7 @@ const ja = {
     america: 'アメリカ',
     poland: 'ポーランド',
     china: '中国',
+    russia: 'ロシア',
   },
 }
 

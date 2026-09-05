@@ -82,4 +82,12 @@ export const graphEdges: GraphEdge[] = [
     to: 'quantumFieldTheory',
     color: 'var(--c-qft)',
   },
+  // Chemistry forks from philosophy, left-aligned with electrodynamics
+  {
+    from: 'philosophy-bar',
+    to: 'chemistry',
+    color: 'var(--c-chemistry)',
+    fromSide: 'top',
+    toSide: 'left',
+  },
 ]

@@ -44,6 +44,7 @@ const zh = {
     relativity: '相对论',
     quantumMechanics: '量子力学',
     quantumFieldTheory: '量子场论',
+    chemistry: '化学',
   },
   schoolTag: {
     greece: '希腊',
@@ -67,6 +68,7 @@ const zh = {
     relativity: '德 · 美',
     quantumMechanics: '欧 · 美',
     quantumFieldTheory: '美 · 中',
+    chemistry: '欧',
   },
   domain: {
     philosophy: '哲学',
@@ -154,6 +156,10 @@ const zh = {
     dirac: '保罗·狄拉克',
     feynman: '理查德·费曼',
     yang: '杨振宁',
+    lavoisier: '安托万·拉瓦锡',
+    dalton: '约翰·道尔顿',
+    mendeleev: '德米特里·门捷列夫',
+    curie: '玛丽·居里',
   },
   // 与 person 使用相同的键；未列出的哲学家暂不显示名言。
   quote: {
@@ -256,6 +262,12 @@ const zh = {
     losAngeles: '洛杉矶',
     hefei: '合肥',
     beijing: '北京',
+    eaglesfield: '伊格尔斯菲尔德',
+    manchester: '曼彻斯特',
+    tobolsk: '托博尔斯克',
+    saintPetersburg: '圣彼得堡',
+    warsaw: '华沙',
+    sancellemoz: '桑塞勒莫',
   },
   region: {
     greece: '希腊',
@@ -284,6 +296,7 @@ const zh = {
     america: '美国',
     poland: '波兰',
     china: '中国',
+    russia: '俄国',
   },
 }
 

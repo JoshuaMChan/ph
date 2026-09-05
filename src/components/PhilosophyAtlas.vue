@@ -620,6 +620,9 @@ watch(activeDomain, () => void nextTick(measure))
             >
               <SchoolBlock school-id="quantumFieldTheory" />
             </article>
+            <article id="chemistry" data-node="chemistry" class="node">
+              <SchoolBlock school-id="chemistry" />
+            </article>
           </div>
           <button
             id="philosophy-bar"
@@ -735,10 +738,11 @@ watch(activeDomain, () => void nextTick(measure))
   z-index: 3;
   display: grid;
   grid-template-columns: max-content max-content max-content max-content max-content;
-  grid-template-rows: auto auto;
+  grid-template-rows: auto auto auto;
   grid-template-areas:
     'astronomy classicalMechanics electrodynamics relativity .'
-    '. . statisticalPhysics quantumMechanics quantumFieldTheory';
+    '. . statisticalPhysics quantumMechanics quantumFieldTheory'
+    '. . chemistry . .';
   gap: 16px var(--gutter-x);
   margin-left: var(--science-left, 0px);
   width: max-content;
@@ -774,6 +778,10 @@ watch(activeDomain, () => void nextTick(measure))
 
 .science-atlas #quantumFieldTheory {
   grid-area: quantumFieldTheory;
+}
+
+.science-atlas #chemistry {
+  grid-area: chemistry;
 }
 
 .graph.domain-science .philosophy-bar {

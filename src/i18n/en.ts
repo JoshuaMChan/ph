@@ -45,6 +45,7 @@ const en = {
     relativity: 'Relativity',
     quantumMechanics: 'Quantum Mechanics',
     quantumFieldTheory: 'Quantum Field Theory',
+    chemistry: 'Chemistry',
   },
   schoolTag: {
     greece: 'Greece',
@@ -68,6 +69,7 @@ const en = {
     relativity: 'Germany · U.S.',
     quantumMechanics: 'Europe · U.S.',
     quantumFieldTheory: 'U.S. · China',
+    chemistry: 'Europe',
   },
   domain: {
     philosophy: 'Philosophy',
@@ -156,6 +158,10 @@ const en = {
     dirac: 'Paul Dirac',
     feynman: 'Richard Feynman',
     yang: 'Chen-Ning Yang',
+    lavoisier: 'Antoine Lavoisier',
+    dalton: 'John Dalton',
+    mendeleev: 'Dmitri Mendeleev',
+    curie: 'Marie Curie',
   },
   // Keys mirror person; philosophers omitted here do not show a quote yet.
   quote: {
@@ -251,6 +257,12 @@ const en = {
     losAngeles: 'Los Angeles',
     hefei: 'Hefei',
     beijing: 'Beijing',
+    eaglesfield: 'Eaglesfield',
+    manchester: 'Manchester',
+    tobolsk: 'Tobolsk',
+    saintPetersburg: 'Saint Petersburg',
+    warsaw: 'Warsaw',
+    sancellemoz: 'Sancellemoz',
   },
   region: {
     greece: 'Greece',
@@ -279,6 +291,7 @@ const en = {
     america: 'United States',
     poland: 'Poland',
     china: 'China',
+    russia: 'Russia',
   },
 }
 
