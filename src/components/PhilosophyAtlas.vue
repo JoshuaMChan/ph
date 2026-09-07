@@ -357,7 +357,7 @@ function measureLinks() {
     const toSide = edge.toSide ?? 'left'
     const start = point(from, fromSide)
     const end = point(to, toSide)
-    // Philosophy → science: physics first; chemistry & physiology share one later x;
+    // Philosophy → science: physics first; quantitative chemistry & physiology share one later x;
     // evolution forks on its own x (independent of Harvey).
     const forkNudge = 28
     if (edge.from === 'philosophy-bar' && edge.to === 'astronomy') {
@@ -365,9 +365,9 @@ function measureLinks() {
     }
     if (
       edge.from === 'philosophy-bar' &&
-      (edge.to === 'chemistry' || edge.to === 'physiology')
+      (edge.to === 'quantitativeChemistry' || edge.to === 'physiology')
     ) {
-      const chem = rootEl.querySelector('[data-node="chemistry"]')
+      const chem = rootEl.querySelector('[data-node="quantitativeChemistry"]')
       const physio = rootEl.querySelector('[data-node="physiology"]')
       if (chem && physio) {
         const edgeLeft = Math.min(box(chem, root).left, box(physio, root).left)
@@ -631,6 +631,13 @@ watch(activeDomain, () => void nextTick(measure))
               <SchoolBlock school-id="electrodynamics" />
             </article>
             <article
+              id="thermodynamics"
+              data-node="thermodynamics"
+              class="node"
+            >
+              <SchoolBlock school-id="thermodynamics" />
+            </article>
+            <article
               id="statisticalPhysics"
               data-node="statisticalPhysics"
               class="node"
@@ -653,6 +660,13 @@ watch(activeDomain, () => void nextTick(measure))
               class="node"
             >
               <SchoolBlock school-id="quantumFieldTheory" />
+            </article>
+            <article
+              id="quantitativeChemistry"
+              data-node="quantitativeChemistry"
+              class="node"
+            >
+              <SchoolBlock school-id="quantitativeChemistry" />
             </article>
             <article id="chemistry" data-node="chemistry" class="node">
               <SchoolBlock school-id="chemistry" />
@@ -836,8 +850,8 @@ watch(activeDomain, () => void nextTick(measure))
   grid-template-rows: auto auto auto auto auto;
   grid-template-areas:
     'astronomy classicalMechanics electrodynamics relativity .'
-    '. . statisticalPhysics quantumMechanics quantumFieldTheory'
-    '. . chemistry chemicalPhysics .'
+    '. thermodynamics statisticalPhysics quantumMechanics quantumFieldTheory'
+    '. . quantitativeChemistry chemistry chemicalPhysics'
     '. . physiology microbiology .'
     '. . evolution molecularBiology .';
   gap: 6px var(--gutter-x);
@@ -862,6 +876,10 @@ watch(activeDomain, () => void nextTick(measure))
   grid-area: electrodynamics;
 }
 
+.science-atlas #thermodynamics {
+  grid-area: thermodynamics;
+}
+
 .science-atlas #statisticalPhysics {
   grid-area: statisticalPhysics;
 }
@@ -876,6 +894,10 @@ watch(activeDomain, () => void nextTick(measure))
 
 .science-atlas #quantumFieldTheory {
   grid-area: quantumFieldTheory;
+}
+
+.science-atlas #quantitativeChemistry {
+  grid-area: quantitativeChemistry;
 }
 
 .science-atlas #chemistry {

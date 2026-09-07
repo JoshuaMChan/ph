@@ -21,11 +21,13 @@ const scienceSchoolIds = new Set([
   'astronomy',
   'classicalMechanics',
   'electrodynamics',
+  'thermodynamics',
   'statisticalPhysics',
   'relativity',
   'quantumMechanics',
   'quantumFieldTheory',
   'chemistry',
+  'quantitativeChemistry',
   'chemicalPhysics',
   'physiology',
   'microbiology',
@@ -133,6 +135,7 @@ const dirac = computed(() => people.value.find((item) => item.id === 'dirac'))
             schoolId !== 'electrodynamics' &&
             schoolId !== 'statisticalPhysics' &&
             schoolId !== 'chemistry' &&
+            schoolId !== 'quantitativeChemistry' &&
             schoolId !== 'chemicalPhysics' &&
             schoolId !== 'physiology' &&
             schoolId !== 'microbiology' &&

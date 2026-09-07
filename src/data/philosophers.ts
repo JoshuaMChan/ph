@@ -67,7 +67,7 @@ export const philosophers: Record<string, Philosopher> = {
     id: 'plato',
     nativeName: 'Πλάτων',
     country: 'greece',
-    portrait: '/portraits/plato.png',
+    portrait: '/portraits/plato.jpg',
     birth: { year: -428, circa: true },
     death: { year: -347, circa: true },
     born: { ...athens },
@@ -225,7 +225,7 @@ export const philosophers: Record<string, Philosopher> = {
     id: 'ockham',
     nativeName: 'William of Ockham',
     country: 'england',
-    portrait: '/portraits/ockham.png',
+    portrait: '/portraits/ockham.jpg',
     birth: { year: 1287, circa: true },
     death: { year: 1347, circa: true },
     born: {
@@ -621,7 +621,7 @@ export const philosophers: Record<string, Philosopher> = {
     id: 'derrida',
     nativeName: 'Jacques Derrida',
     country: 'france',
-    portrait: '/portraits/derrida.png',
+    portrait: '/portraits/derrida.jpg',
     birth: { year: 1930, month: 7, day: 15 },
     death: { year: 2004, month: 10, day: 9 },
     born: {
@@ -775,7 +775,7 @@ export const philosophers: Record<string, Philosopher> = {
     id: 'marx',
     nativeName: 'Karl Marx',
     country: 'germany',
-    portrait: '/portraits/marx.png',
+    portrait: '/portraits/marx.jpg',
     birth: { year: 1818, month: 5, day: 5 },
     death: { year: 1883, month: 3, day: 14 },
     born: {
@@ -1387,6 +1387,28 @@ export const philosophers: Record<string, Philosopher> = {
       countryId: '826',
     },
   },
+  avogadro: {
+    id: 'avogadro',
+    nativeName: 'Amedeo Avogadro',
+    country: 'italy',
+    portrait: '/portraits/avogadro.jpg',
+    birth: { year: 1776, month: 8, day: 9 },
+    death: { year: 1856, month: 7, day: 9 },
+    born: {
+      city: 'turin',
+      region: 'italy',
+      lat: 45.0703,
+      lng: 7.6869,
+      countryId: '380',
+    },
+    died: {
+      city: 'turin',
+      region: 'italy',
+      lat: 45.0703,
+      lng: 7.6869,
+      countryId: '380',
+    },
+  },
   mendeleev: {
     id: 'mendeleev',
     nativeName: 'Dmitri Mendeleev',
@@ -1839,13 +1861,22 @@ export const schools: Record<string, School> = {
     countryIds: ['826', '528'],
     accent: 'var(--c-electro)',
   },
+  thermodynamics: {
+    id: 'thermodynamics',
+    people: ['carnot', 'clausius'],
+    yearStart: 1796,
+    yearEnd: 1888,
+    regionKeys: ['europe'],
+    countryIds: ['250', '276'],
+    accent: 'var(--c-thermodynamics)',
+  },
   statisticalPhysics: {
     id: 'statisticalPhysics',
-    people: ['carnot', 'clausius', 'gibbs', 'boltzmann'],
-    yearStart: 1796,
+    people: ['gibbs', 'boltzmann'],
+    yearStart: 1839,
     yearEnd: 1906,
     regionKeys: ['europe', 'america'],
-    countryIds: ['250', '276', '840', '040'],
+    countryIds: ['840', '040'],
     accent: 'var(--c-statphys)',
   },
   relativity: {
@@ -1887,15 +1918,35 @@ export const schools: Record<string, School> = {
     countryIds: ['840', '156'],
     accent: 'var(--c-qft)',
   },
-  // Fixed order: Boyle → Lavoisier → Dalton → Mendeleev
-  chemistry: {
-    id: 'chemistry',
-    people: ['boyle', 'lavoisier', 'dalton', 'mendeleev'],
+  // Boyle · Lavoisier
+  quantitativeChemistry: {
+    id: 'quantitativeChemistry',
+    people: ['boyle', 'lavoisier'],
     yearStart: 1627,
+    yearEnd: 1794,
+    regionKeys: ['europe'],
+    countryIds: ['372', '250'],
+    accent: 'var(--c-quant-chem)',
+  },
+  // Dalton · Avogadro
+  microscopicMatter: {
+    id: 'microscopicMatter',
+    people: ['dalton', 'avogadro'],
+    yearStart: 1766,
+    yearEnd: 1856,
+    regionKeys: ['europe'],
+    countryIds: ['826', '380'],
+    accent: 'var(--c-micro-matter)',
+  },
+  // Mendeleev
+  periodicTable: {
+    id: 'periodicTable',
+    people: ['mendeleev'],
+    yearStart: 1834,
     yearEnd: 1907,
     regionKeys: ['europe'],
-    countryIds: ['372', '250', '826', '643'],
-    accent: 'var(--c-chemistry)',
+    countryIds: ['643'],
+    accent: 'var(--c-periodic)',
   },
   // Fixed order: Curie → Rutherford → Pauling
   chemicalPhysics: {

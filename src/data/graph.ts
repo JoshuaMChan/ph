@@ -41,7 +41,7 @@ export const graphEdges: GraphEdge[] = [
     fromSide: 'top',
     toSide: 'left',
   },
-  // Science forks: physics (astronomy) earlier; chemistry / physiology / evolution later
+  // Science forks: physics (astronomy) earlier; quantitative chemistry / physiology / evolution later
   {
     from: 'philosophy-bar',
     to: 'astronomy',
@@ -62,10 +62,15 @@ export const graphEdges: GraphEdge[] = [
   },
   {
     from: 'classicalMechanics',
-    to: 'statisticalPhysics',
-    color: 'var(--c-statphys)',
+    to: 'thermodynamics',
+    color: 'var(--c-thermodynamics)',
     fromSide: 'bottom',
     toSide: 'left',
+  },
+  {
+    from: 'thermodynamics',
+    to: 'statisticalPhysics',
+    color: 'var(--c-statphys)',
   },
   {
     from: 'electrodynamics',
@@ -84,13 +89,23 @@ export const graphEdges: GraphEdge[] = [
   },
   {
     from: 'philosophy-bar',
-    to: 'chemistry',
-    color: 'var(--c-chemistry)',
+    to: 'quantitativeChemistry',
+    color: 'var(--c-quant-chem)',
     fromSide: 'top',
     toSide: 'left',
   },
   {
-    from: 'chemistry',
+    from: 'quantitativeChemistry',
+    to: 'microscopicMatter',
+    color: 'var(--c-micro-matter)',
+  },
+  {
+    from: 'microscopicMatter',
+    to: 'periodicTable',
+    color: 'var(--c-periodic)',
+  },
+  {
+    from: 'periodicTable',
     to: 'chemicalPhysics',
     color: 'var(--c-chem-phys)',
   },
