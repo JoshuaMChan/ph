@@ -46,6 +46,7 @@ const ja = {
     quantumMechanics: '量子力学',
     quantumFieldTheory: '場の量子論',
     chemistry: '化学',
+    chemicalPhysics: '化学物理',
     biology: '生物学',
   },
   schoolTag: {
@@ -71,6 +72,7 @@ const ja = {
     quantumMechanics: '欧 · 米',
     quantumFieldTheory: '米 · 中',
     chemistry: '欧州',
+    chemicalPhysics: '欧州 · 米',
     biology: '欧州',
   },
   domain: {

@@ -93,6 +93,11 @@ export const graphEdges: GraphEdge[] = [
     toSide: 'left',
   },
   {
+    from: 'chemistry',
+    to: 'chemicalPhysics',
+    color: 'var(--c-chem-phys)',
+  },
+  {
     from: 'philosophy-bar',
     to: 'biology',
     color: 'var(--c-biology)',

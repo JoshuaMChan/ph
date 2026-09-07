@@ -45,6 +45,7 @@ const zh = {
     quantumMechanics: '量子力学',
     quantumFieldTheory: '量子场论',
     chemistry: '化学',
+    chemicalPhysics: '化学物理',
     biology: '生物学',
   },
   schoolTag: {
@@ -70,6 +71,7 @@ const zh = {
     quantumMechanics: '欧 · 美',
     quantumFieldTheory: '美 · 中',
     chemistry: '欧',
+    chemicalPhysics: '欧 · 美',
     biology: '欧',
   },
   domain: {

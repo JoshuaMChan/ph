@@ -1909,15 +1909,25 @@ export const schools: Record<string, School> = {
     countryIds: ['840', '156'],
     accent: 'var(--c-qft)',
   },
-  // Fixed order: Boyle → Lavoisier → Dalton → Mendeleev → Curie → Rutherford → Pauling
+  // Fixed order: Boyle → Lavoisier → Dalton → Mendeleev
   chemistry: {
     id: 'chemistry',
-    people: ['boyle', 'lavoisier', 'dalton', 'mendeleev', 'curie', 'rutherford', 'pauling'],
+    people: ['boyle', 'lavoisier', 'dalton', 'mendeleev'],
     yearStart: 1627,
+    yearEnd: 1907,
+    regionKeys: ['europe'],
+    countryIds: ['372', '250', '826', '643'],
+    accent: 'var(--c-chemistry)',
+  },
+  // Fixed order: Curie → Rutherford → Pauling
+  chemicalPhysics: {
+    id: 'chemicalPhysics',
+    people: ['curie', 'rutherford', 'pauling'],
+    yearStart: 1867,
     yearEnd: 1994,
     regionKeys: ['europe', 'america'],
-    countryIds: ['372', '250', '826', '643', '616', '840', '554'],
-    accent: 'var(--c-chemistry)',
+    countryIds: ['616', '840', '554'],
+    accent: 'var(--c-chem-phys)',
   },
   // Fixed order: Harvey → Hooke → Leeuwenhoek → Darwin → Mendel → Pasteur → Fleming → Crick → Watson
   biology: {

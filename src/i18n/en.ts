@@ -46,6 +46,7 @@ const en = {
     quantumMechanics: 'Quantum Mechanics',
     quantumFieldTheory: 'Quantum Field Theory',
     chemistry: 'Chemistry',
+    chemicalPhysics: 'Chemical Physics',
     biology: 'Biology',
   },
   schoolTag: {
@@ -71,6 +72,7 @@ const en = {
     quantumMechanics: 'Europe · U.S.',
     quantumFieldTheory: 'U.S. · China',
     chemistry: 'Europe',
+    chemicalPhysics: 'Europe · U.S.',
     biology: 'Europe',
   },
   domain: {

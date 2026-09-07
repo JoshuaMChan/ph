@@ -650,6 +650,13 @@ watch(activeDomain, () => void nextTick(measure))
             <article id="chemistry" data-node="chemistry" class="node">
               <SchoolBlock school-id="chemistry" />
             </article>
+            <article
+              id="chemicalPhysics"
+              data-node="chemicalPhysics"
+              class="node"
+            >
+              <SchoolBlock school-id="chemicalPhysics" />
+            </article>
             <article id="biology" data-node="biology" class="node">
               <SchoolBlock school-id="biology" />
             </article>
@@ -749,11 +756,12 @@ watch(activeDomain, () => void nextTick(measure))
   z-index: 3;
   display: grid;
   grid-template-columns: max-content max-content max-content max-content;
-  grid-template-rows: auto auto auto auto;
+  grid-template-rows: auto auto auto auto auto;
   grid-template-areas:
     'astronomy classicalMechanics electrodynamics relativity'
     '. . statisticalPhysics quantumMechanics'
-    '. . chemistry quantumFieldTheory'
+    '. . . quantumFieldTheory'
+    '. . chemistry chemicalPhysics'
     '. . biology .';
   gap: 16px var(--gutter-x);
   margin-left: var(--science-left, 0px);
@@ -794,6 +802,10 @@ watch(activeDomain, () => void nextTick(measure))
 
 .science-atlas #chemistry {
   grid-area: chemistry;
+}
+
+.science-atlas #chemicalPhysics {
+  grid-area: chemicalPhysics;
 }
 
 .science-atlas #biology {
