@@ -668,8 +668,19 @@ watch(activeDomain, () => void nextTick(measure))
             >
               <SchoolBlock school-id="quantitativeChemistry" />
             </article>
-            <article id="chemistry" data-node="chemistry" class="node">
-              <SchoolBlock school-id="chemistry" />
+            <article
+              id="microscopicMatter"
+              data-node="microscopicMatter"
+              class="node"
+            >
+              <SchoolBlock school-id="microscopicMatter" />
+            </article>
+            <article
+              id="periodicTable"
+              data-node="periodicTable"
+              class="node"
+            >
+              <SchoolBlock school-id="periodicTable" />
             </article>
             <article
               id="chemicalPhysics"
@@ -851,7 +862,7 @@ watch(activeDomain, () => void nextTick(measure))
   grid-template-areas:
     'astronomy classicalMechanics electrodynamics relativity .'
     '. thermodynamics statisticalPhysics quantumMechanics quantumFieldTheory'
-    '. . quantitativeChemistry chemistry chemicalPhysics'
+    '. quantitativeChemistry microscopicMatter periodicTable chemicalPhysics'
     '. . physiology microbiology .'
     '. . evolution molecularBiology .';
   gap: 6px var(--gutter-x);
@@ -900,8 +911,12 @@ watch(activeDomain, () => void nextTick(measure))
   grid-area: quantitativeChemistry;
 }
 
-.science-atlas #chemistry {
-  grid-area: chemistry;
+.science-atlas #microscopicMatter {
+  grid-area: microscopicMatter;
+}
+
+.science-atlas #periodicTable {
+  grid-area: periodicTable;
 }
 
 .science-atlas #chemicalPhysics {
