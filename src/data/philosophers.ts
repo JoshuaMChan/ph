@@ -1880,7 +1880,7 @@ export const schools: Record<string, School> = {
   // Feynman (QED, Nobel 1965) before Yang (Yang–Mills 1954 / Nobel 1957) by birth & QED priority
   quantumFieldTheory: {
     id: 'quantumFieldTheory',
-    people: ['feynman', 'yang'],
+    people: ['yang', 'feynman'],
     yearStart: 1918,
     yearEnd: 2025,
     regionKeys: ['america', 'china'],
@@ -1907,15 +1907,25 @@ export const schools: Record<string, School> = {
     countryIds: ['616', '840', '554'],
     accent: 'var(--c-chem-phys)',
   },
-  // Harvey · Hooke · Leeuwenhoek · Pasteur
+  // Harvey · Hooke
   physiology: {
     id: 'physiology',
-    people: ['harvey', 'hooke', 'leeuwenhoek', 'pasteur'],
+    people: ['harvey', 'hooke'],
     yearStart: 1578,
+    yearEnd: 1703,
+    regionKeys: ['europe'],
+    countryIds: ['826'],
+    accent: 'var(--c-physiology)',
+  },
+  // Leeuwenhoek · Pasteur
+  microbiology: {
+    id: 'microbiology',
+    people: ['leeuwenhoek', 'pasteur'],
+    yearStart: 1632,
     yearEnd: 1895,
     regionKeys: ['europe'],
-    countryIds: ['826', '528', '250'],
-    accent: 'var(--c-physiology)',
+    countryIds: ['528', '250'],
+    accent: 'var(--c-microbiology)',
   },
   evolution: {
     id: 'evolution',

@@ -48,8 +48,9 @@ const ja = {
     chemistry: '化学',
     chemicalPhysics: '物理化学',
     physiology: '生理学',
+    microbiology: '微生物学',
     evolution: '進化学',
-    molecularBiology: '分子生物学',
+    molecularBiology: '遺伝学',
   },
   schoolTag: {
     greece: 'ギリシア',
@@ -76,6 +77,7 @@ const ja = {
     chemistry: '欧州',
     chemicalPhysics: '欧州 · 米',
     physiology: '欧州',
+    microbiology: '欧州',
     evolution: '欧州',
     molecularBiology: '欧州 · 米',
   },

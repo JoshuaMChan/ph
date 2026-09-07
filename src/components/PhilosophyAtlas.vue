@@ -667,6 +667,9 @@ watch(activeDomain, () => void nextTick(measure))
             <article id="physiology" data-node="physiology" class="node">
               <SchoolBlock school-id="physiology" />
             </article>
+            <article id="microbiology" data-node="microbiology" class="node">
+              <SchoolBlock school-id="microbiology" />
+            </article>
             <article id="evolution" data-node="evolution" class="node">
               <SchoolBlock school-id="evolution" />
             </article>
@@ -835,7 +838,7 @@ watch(activeDomain, () => void nextTick(measure))
     'astronomy classicalMechanics electrodynamics relativity .'
     '. . statisticalPhysics quantumMechanics quantumFieldTheory'
     '. . chemistry chemicalPhysics .'
-    '. . physiology . .'
+    '. . physiology microbiology .'
     '. . evolution molecularBiology .';
   gap: 6px var(--gutter-x);
   margin-left: var(--science-left, 0px);
@@ -885,6 +888,10 @@ watch(activeDomain, () => void nextTick(measure))
 
 .science-atlas #physiology {
   grid-area: physiology;
+}
+
+.science-atlas #microbiology {
+  grid-area: microbiology;
 }
 
 .science-atlas #evolution {

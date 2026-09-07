@@ -47,8 +47,9 @@ const zh = {
     chemistry: '化学',
     chemicalPhysics: '物理化学',
     physiology: '生理学',
+    microbiology: '微生物学',
     evolution: '演化学',
-    molecularBiology: '分子生物学',
+    molecularBiology: '遗传学',
   },
   schoolTag: {
     greece: '希腊',
@@ -75,6 +76,7 @@ const zh = {
     chemistry: '欧',
     chemicalPhysics: '欧 · 美',
     physiology: '欧',
+    microbiology: '欧',
     evolution: '欧',
     molecularBiology: '欧 · 美',
   },

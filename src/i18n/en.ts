@@ -48,8 +48,9 @@ const en = {
     chemistry: 'Chemistry',
     chemicalPhysics: 'Physical Chemistry',
     physiology: 'Physiology',
+    microbiology: 'Microbiology',
     evolution: 'Evolution',
-    molecularBiology: 'Molecular Biology',
+    molecularBiology: 'Genetics',
   },
   schoolTag: {
     greece: 'Greece',
@@ -76,6 +77,7 @@ const en = {
     chemistry: 'Europe',
     chemicalPhysics: 'Europe · U.S.',
     physiology: 'Europe',
+    microbiology: 'Europe',
     evolution: 'Europe',
     molecularBiology: 'Europe · U.S.',
   },
