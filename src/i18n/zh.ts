@@ -45,7 +45,7 @@ const zh = {
     quantumMechanics: '量子力学',
     quantumFieldTheory: '量子场论',
     chemistry: '化学',
-    chemicalPhysics: '化学物理',
+    chemicalPhysics: '物理化学',
     physiology: '生理学',
     microbiology: '微生物学',
     evolution: '演化学',

@@ -46,7 +46,7 @@ const en = {
     quantumMechanics: 'Quantum Mechanics',
     quantumFieldTheory: 'Quantum Field Theory',
     chemistry: 'Chemistry',
-    chemicalPhysics: 'Chemical Physics',
+    chemicalPhysics: 'Physical Chemistry',
     physiology: 'Physiology',
     microbiology: 'Microbiology',
     evolution: 'Evolution',
