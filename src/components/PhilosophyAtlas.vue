@@ -357,20 +357,19 @@ function measureLinks() {
     const toSide = edge.toSide ?? 'left'
     const start = point(from, fromSide)
     const end = point(to, toSide)
-    // Philosophy → science: physics first (astronomy); chemistry & biology share one later x.
-    // Nudge fork slightly left of each box's left edge.
+    // Philosophy → science: physics first (astronomy); chemistry & physiology share one later x.
     const forkNudge = 28
     if (edge.from === 'philosophy-bar' && edge.to === 'astronomy') {
       start[0] = end[0] - forkNudge
     }
     if (
       edge.from === 'philosophy-bar' &&
-      (edge.to === 'chemistry' || edge.to === 'biology')
+      (edge.to === 'chemistry' || edge.to === 'physiology')
     ) {
       const chem = rootEl.querySelector('[data-node="chemistry"]')
-      const bio = rootEl.querySelector('[data-node="biology"]')
-      if (chem && bio) {
-        const edgeLeft = Math.min(box(chem, root).left, box(bio, root).left)
+      const physio = rootEl.querySelector('[data-node="physiology"]')
+      if (chem && physio) {
+        const edgeLeft = Math.min(box(chem, root).left, box(physio, root).left)
         start[0] = edgeLeft - forkNudge
         end[0] = edgeLeft
       } else {
@@ -657,8 +656,21 @@ watch(activeDomain, () => void nextTick(measure))
             >
               <SchoolBlock school-id="chemicalPhysics" />
             </article>
-            <article id="biology" data-node="biology" class="node">
-              <SchoolBlock school-id="biology" />
+            <article id="physiology" data-node="physiology" class="node">
+              <SchoolBlock school-id="physiology" />
+            </article>
+            <article id="microbiology" data-node="microbiology" class="node">
+              <SchoolBlock school-id="microbiology" />
+            </article>
+            <article id="evolution" data-node="evolution" class="node">
+              <SchoolBlock school-id="evolution" />
+            </article>
+            <article
+              id="molecularBiology"
+              data-node="molecularBiology"
+              class="node"
+            >
+              <SchoolBlock school-id="molecularBiology" />
             </article>
           </div>
           <button
@@ -751,18 +763,19 @@ watch(activeDomain, () => void nextTick(measure))
 }
 
 .science-atlas {
-  --gutter-x: 40px;
+  --gutter-x: 28px;
   position: relative;
   z-index: 3;
   display: grid;
-  grid-template-columns: max-content max-content max-content max-content;
-  grid-template-rows: auto auto auto auto auto;
+  grid-template-columns: max-content max-content max-content max-content max-content;
+  grid-template-rows: auto auto auto auto auto auto;
   grid-template-areas:
-    'astronomy classicalMechanics electrodynamics relativity'
-    '. . statisticalPhysics quantumMechanics'
-    '. . . quantumFieldTheory'
-    '. . chemistry chemicalPhysics'
-    '. . biology .';
+    'astronomy classicalMechanics electrodynamics relativity .'
+    '. . statisticalPhysics quantumMechanics quantumFieldTheory'
+    '. . chemistry chemicalPhysics .'
+    '. . physiology . .'
+    '. . microbiology evolution .'
+    '. . molecularBiology . .';
   gap: 16px var(--gutter-x);
   margin-left: var(--science-left, 0px);
   width: max-content;
@@ -808,8 +821,20 @@ watch(activeDomain, () => void nextTick(measure))
   grid-area: chemicalPhysics;
 }
 
-.science-atlas #biology {
-  grid-area: biology;
+.science-atlas #physiology {
+  grid-area: physiology;
+}
+
+.science-atlas #microbiology {
+  grid-area: microbiology;
+}
+
+.science-atlas #evolution {
+  grid-area: evolution;
+}
+
+.science-atlas #molecularBiology {
+  grid-area: molecularBiology;
 }
 
 .graph.domain-science .philosophy-bar {

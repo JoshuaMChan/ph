@@ -1665,28 +1665,6 @@ export const philosophers: Record<string, Philosopher> = {
       countryId: '528',
     },
   },
-  fleming: {
-    id: 'fleming',
-    nativeName: 'Alexander Fleming',
-    country: 'scotland',
-    portrait: '/portraits/fleming.jpg',
-    birth: { year: 1881, month: 8, day: 6 },
-    death: { year: 1955, month: 3, day: 11 },
-    born: {
-      city: 'lochfield',
-      region: 'scotland',
-      lat: 55.4,
-      lng: -4.5,
-      countryId: '826',
-    },
-    died: {
-      city: 'london',
-      region: 'england',
-      lat: 51.5074,
-      lng: -0.1278,
-      countryId: '826',
-    },
-  },
 }
 
 function byBirth(ids: string[]): string[] {
@@ -1929,25 +1907,41 @@ export const schools: Record<string, School> = {
     countryIds: ['616', '840', '554'],
     accent: 'var(--c-chem-phys)',
   },
-  // Fixed order: Harvey → Hooke → Leeuwenhoek → Darwin → Mendel → Pasteur → Fleming → Crick → Watson
-  biology: {
-    id: 'biology',
-    people: [
-      'harvey',
-      'hooke',
-      'leeuwenhoek',
-      'darwin',
-      'mendel',
-      'pasteur',
-      'fleming',
-      'crick',
-      'watson',
-    ],
+  physiology: {
+    id: 'physiology',
+    people: ['harvey'],
     yearStart: 1578,
+    yearEnd: 1657,
+    regionKeys: ['europe'],
+    countryIds: ['826'],
+    accent: 'var(--c-physiology)',
+  },
+  microbiology: {
+    id: 'microbiology',
+    people: ['hooke', 'leeuwenhoek', 'pasteur'],
+    yearStart: 1632,
+    yearEnd: 1895,
+    regionKeys: ['europe'],
+    countryIds: ['826', '528', '250'],
+    accent: 'var(--c-microbiology)',
+  },
+  evolution: {
+    id: 'evolution',
+    people: ['darwin'],
+    yearStart: 1809,
+    yearEnd: 1882,
+    regionKeys: ['europe'],
+    countryIds: ['826'],
+    accent: 'var(--c-evolution)',
+  },
+  molecularBiology: {
+    id: 'molecularBiology',
+    people: ['mendel', 'crick', 'watson'],
+    yearStart: 1822,
     yearEnd: 2004,
     regionKeys: ['europe', 'america'],
-    countryIds: ['826', '528', '040', '203', '250', '840'],
-    accent: 'var(--c-biology)',
+    countryIds: ['203', '826', '840'],
+    accent: 'var(--c-mol-bio)',
   },
 }
 

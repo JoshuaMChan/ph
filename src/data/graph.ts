@@ -42,7 +42,7 @@ export const graphEdges: GraphEdge[] = [
     toSide: 'left',
   },
   // Science forks: physics (astronomy) earlier on the x-axis;
-  // chemistry & biology share a later node (stacked, same time).
+  // chemistry & physiology share a later node (stacked, same time).
   {
     from: 'philosophy-bar',
     to: 'astronomy',
@@ -82,8 +82,6 @@ export const graphEdges: GraphEdge[] = [
     from: 'quantumMechanics',
     to: 'quantumFieldTheory',
     color: 'var(--c-qft)',
-    fromSide: 'bottom',
-    toSide: 'top',
   },
   {
     from: 'philosophy-bar',
@@ -99,9 +97,37 @@ export const graphEdges: GraphEdge[] = [
   },
   {
     from: 'philosophy-bar',
-    to: 'biology',
-    color: 'var(--c-biology)',
+    to: 'physiology',
+    color: 'var(--c-physiology)',
     fromSide: 'top',
     toSide: 'left',
+  },
+  {
+    from: 'physiology',
+    to: 'microbiology',
+    color: 'var(--c-microbiology)',
+    fromSide: 'bottom',
+    toSide: 'top',
+  },
+  {
+    from: 'physiology',
+    to: 'evolution',
+    color: 'var(--c-evolution)',
+    fromSide: 'bottom',
+    toSide: 'left',
+  },
+  {
+    from: 'microbiology',
+    to: 'molecularBiology',
+    color: 'var(--c-mol-bio)',
+    fromSide: 'bottom',
+    toSide: 'top',
+  },
+  {
+    from: 'evolution',
+    to: 'molecularBiology',
+    color: 'var(--c-mol-bio)',
+    fromSide: 'bottom',
+    toSide: 'right',
   },
 ]

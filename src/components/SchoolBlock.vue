@@ -27,7 +27,10 @@ const scienceSchoolIds = new Set([
   'quantumFieldTheory',
   'chemistry',
   'chemicalPhysics',
-  'biology',
+  'physiology',
+  'microbiology',
+  'evolution',
+  'molecularBiology',
 ])
 
 const years = computed(() => {
@@ -131,7 +134,8 @@ const dirac = computed(() => people.value.find((item) => item.id === 'dirac'))
             schoolId !== 'statisticalPhysics' &&
             schoolId !== 'chemistry' &&
             schoolId !== 'chemicalPhysics' &&
-            schoolId !== 'biology'),
+            schoolId !== 'microbiology' &&
+            schoolId !== 'molecularBiology'),
       }"
     >
       <PhilosopherCard v-for="item in people" :key="item.id" :person="item" />
