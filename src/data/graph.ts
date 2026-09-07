@@ -106,8 +106,6 @@ export const graphEdges: GraphEdge[] = [
     from: 'physiology',
     to: 'microbiology',
     color: 'var(--c-microbiology)',
-    fromSide: 'bottom',
-    toSide: 'top',
   },
   {
     from: 'physiology',
@@ -120,14 +118,10 @@ export const graphEdges: GraphEdge[] = [
     from: 'microbiology',
     to: 'molecularBiology',
     color: 'var(--c-mol-bio)',
-    fromSide: 'bottom',
-    toSide: 'top',
   },
   {
     from: 'evolution',
     to: 'molecularBiology',
     color: 'var(--c-mol-bio)',
-    fromSide: 'bottom',
-    toSide: 'right',
   },
 ]

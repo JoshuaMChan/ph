@@ -768,14 +768,13 @@ watch(activeDomain, () => void nextTick(measure))
   z-index: 3;
   display: grid;
   grid-template-columns: max-content max-content max-content max-content max-content;
-  grid-template-rows: auto auto auto auto auto auto;
+  grid-template-rows: auto auto auto auto auto;
   grid-template-areas:
     'astronomy classicalMechanics electrodynamics relativity .'
     '. . statisticalPhysics quantumMechanics quantumFieldTheory'
     '. . chemistry chemicalPhysics .'
-    '. . physiology . .'
-    '. . microbiology evolution .'
-    '. . molecularBiology . .';
+    '. . physiology microbiology molecularBiology'
+    '. . physiology evolution molecularBiology';
   gap: 16px var(--gutter-x);
   margin-left: var(--science-left, 0px);
   width: max-content;
