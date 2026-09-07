@@ -683,11 +683,18 @@ watch(activeDomain, () => void nextTick(measure))
               <SchoolBlock school-id="periodicTable" />
             </article>
             <article
-              id="chemicalPhysics"
-              data-node="chemicalPhysics"
+              id="nuclearPhysics"
+              data-node="nuclearPhysics"
               class="node"
             >
-              <SchoolBlock school-id="chemicalPhysics" />
+              <SchoolBlock school-id="nuclearPhysics" />
+            </article>
+            <article
+              id="quantumChemistry"
+              data-node="quantumChemistry"
+              class="node"
+            >
+              <SchoolBlock school-id="quantumChemistry" />
             </article>
             <article id="physiology" data-node="physiology" class="node">
               <SchoolBlock school-id="physiology" />
@@ -857,14 +864,15 @@ watch(activeDomain, () => void nextTick(measure))
   position: relative;
   z-index: 3;
   display: grid;
-  grid-template-columns: max-content max-content max-content max-content max-content max-content;
-  grid-template-rows: auto auto auto auto auto;
+  grid-template-columns: max-content max-content max-content max-content max-content max-content max-content;
+  grid-template-rows: auto auto auto auto auto auto;
   grid-template-areas:
-    'astronomy classicalMechanics electrodynamics . relativity .'
-    '. . thermodynamics statisticalPhysics quantumMechanics quantumFieldTheory'
-    '. . quantitativeChemistry microscopicMatter periodicTable chemicalPhysics'
-    '. . physiology microbiology . .'
-    '. . evolution molecularBiology . .';
+    'astronomy classicalMechanics electrodynamics . relativity . .'
+    '. . thermodynamics statisticalPhysics quantumMechanics quantumFieldTheory .'
+    '. . quantitativeChemistry microscopicMatter periodicTable . .'
+    '. . . nuclearPhysics quantumChemistry . .'
+    '. . physiology microbiology . . .'
+    '. . evolution molecularBiology . . .';
   gap: 6px var(--gutter-x);
   margin-left: var(--science-left, 0px);
   width: max-content;
@@ -919,8 +927,12 @@ watch(activeDomain, () => void nextTick(measure))
   grid-area: periodicTable;
 }
 
-.science-atlas #chemicalPhysics {
-  grid-area: chemicalPhysics;
+.science-atlas #nuclearPhysics {
+  grid-area: nuclearPhysics;
+}
+
+.science-atlas #quantumChemistry {
+  grid-area: quantumChemistry;
 }
 
 .science-atlas #physiology {

@@ -1948,15 +1948,25 @@ export const schools: Record<string, School> = {
     countryIds: ['643'],
     accent: 'var(--c-periodic)',
   },
-  // Fixed order: Curie → Rutherford → Pauling
-  chemicalPhysics: {
-    id: 'chemicalPhysics',
-    people: ['curie', 'rutherford', 'pauling'],
+  // Curie · Rutherford
+  nuclearPhysics: {
+    id: 'nuclearPhysics',
+    people: ['curie', 'rutherford'],
     yearStart: 1867,
+    yearEnd: 1937,
+    regionKeys: ['europe'],
+    countryIds: ['616', '554'],
+    accent: 'var(--c-nuclear)',
+  },
+  // Pauling
+  quantumChemistry: {
+    id: 'quantumChemistry',
+    people: ['pauling'],
+    yearStart: 1901,
     yearEnd: 1994,
-    regionKeys: ['europe', 'america'],
-    countryIds: ['616', '840', '554'],
-    accent: 'var(--c-chem-phys)',
+    regionKeys: ['america'],
+    countryIds: ['840'],
+    accent: 'var(--c-quant-chem-pauling)',
   },
   // Harvey · Hooke
   physiology: {
