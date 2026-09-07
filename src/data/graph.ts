@@ -41,8 +41,7 @@ export const graphEdges: GraphEdge[] = [
     fromSide: 'top',
     toSide: 'left',
   },
-  // Science forks: physics (astronomy) earlier on the x-axis;
-  // chemistry & physiology share a later node (stacked, same time).
+  // Science forks: physics (astronomy) earlier; chemistry / physiology / evolution later
   {
     from: 'philosophy-bar',
     to: 'astronomy',
@@ -103,19 +102,14 @@ export const graphEdges: GraphEdge[] = [
     toSide: 'left',
   },
   {
-    from: 'physiology',
-    to: 'microbiology',
-    color: 'var(--c-microbiology)',
-  },
-  {
-    from: 'physiology',
+    from: 'philosophy-bar',
     to: 'evolution',
     color: 'var(--c-evolution)',
-    fromSide: 'bottom',
+    fromSide: 'top',
     toSide: 'left',
   },
   {
-    from: 'microbiology',
+    from: 'physiology',
     to: 'molecularBiology',
     color: 'var(--c-mol-bio)',
   },

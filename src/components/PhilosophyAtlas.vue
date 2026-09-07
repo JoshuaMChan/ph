@@ -357,7 +357,8 @@ function measureLinks() {
     const toSide = edge.toSide ?? 'left'
     const start = point(from, fromSide)
     const end = point(to, toSide)
-    // Philosophy → science: physics first (astronomy); chemistry & physiology share one later x.
+    // Philosophy → science: physics first; chemistry & physiology share one later x;
+    // evolution forks on its own x (independent of Harvey).
     const forkNudge = 28
     if (edge.from === 'philosophy-bar' && edge.to === 'astronomy') {
       start[0] = end[0] - forkNudge
@@ -375,6 +376,9 @@ function measureLinks() {
       } else {
         start[0] = end[0] - forkNudge
       }
+    }
+    if (edge.from === 'philosophy-bar' && edge.to === 'evolution') {
+      start[0] = end[0] - forkNudge
     }
     if (edge.viaCluster) {
       const cluster = rootEl.querySelector(`[data-node="${edge.viaCluster}"]`)
@@ -439,7 +443,11 @@ watch(activeDomain, () => void nextTick(measure))
 <template>
   <div class="shell">
     <SiteHeader />
-    <div ref="viewport" class="viewport">
+    <div
+      ref="viewport"
+      class="viewport"
+      :class="`viewport-${activeDomain}`"
+    >
       <main
         id="top"
         ref="graph"
@@ -659,9 +667,6 @@ watch(activeDomain, () => void nextTick(measure))
             <article id="physiology" data-node="physiology" class="node">
               <SchoolBlock school-id="physiology" />
             </article>
-            <article id="microbiology" data-node="microbiology" class="node">
-              <SchoolBlock school-id="microbiology" />
-            </article>
             <article id="evolution" data-node="evolution" class="node">
               <SchoolBlock school-id="evolution" />
             </article>
@@ -705,10 +710,28 @@ watch(activeDomain, () => void nextTick(measure))
   touch-action: pan-x pan-y;
 }
 
+.viewport-science {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
 .graph {
   --gutter-x: 40px;
-  --card-w: 56px;
-  --info-h: 1.55rem;
+  /* Per-domain max card width that still fits one viewport; shared size = min. */
+  --card-w-cap: 56px;
+  --card-w-floor: 32px;
+  --fit-science: clamp(
+    var(--card-w-floor),
+    calc((100dvh - 12.5rem) / 16),
+    var(--card-w-cap)
+  );
+  --fit-philosophy: clamp(
+    var(--card-w-floor),
+    calc((100dvh - 11rem) / 14),
+    var(--card-w-cap)
+  );
+  --card-w: min(var(--fit-science), var(--fit-philosophy));
+  --info-h: 1.2rem;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -723,6 +746,41 @@ watch(activeDomain, () => void nextTick(measure))
   width: max-content;
   min-width: 100%;
   box-sizing: border-box;
+}
+
+/* Shared person-card chrome (domain switch must not resize cards). */
+.graph :deep(.school) {
+  gap: 3px;
+  border-top-width: 2px;
+}
+
+.graph :deep(.school h2) {
+  font-size: 0.92rem;
+}
+
+.graph :deep(.people) {
+  gap: 4px 10px;
+}
+
+.graph :deep(.quantum-grid) {
+  gap: 3px 10px;
+}
+
+.graph .node {
+  padding: 4px 6px 2px;
+}
+
+.graph :deep(.info) {
+  margin-top: 2px;
+}
+
+.graph :deep(.card h3) {
+  font-size: 0.68rem;
+}
+
+.graph :deep(.dates),
+.graph :deep(.country) {
+  font-size: 0.58rem;
 }
 
 .philosophy-atlas {
@@ -759,7 +817,12 @@ watch(activeDomain, () => void nextTick(measure))
 }
 
 .graph.domain-science {
+  --gutter-x: 28px;
+  gap: 4px;
+  padding-top: 6px;
+  padding-bottom: max(8px, env(safe-area-inset-bottom));
   justify-content: flex-start;
+  overflow: hidden;
 }
 
 .science-atlas {
@@ -773,13 +836,14 @@ watch(activeDomain, () => void nextTick(measure))
     'astronomy classicalMechanics electrodynamics relativity .'
     '. . statisticalPhysics quantumMechanics quantumFieldTheory'
     '. . chemistry chemicalPhysics .'
-    '. . physiology microbiology molecularBiology'
-    '. . physiology evolution molecularBiology';
-  gap: 16px var(--gutter-x);
+    '. . physiology . .'
+    '. . evolution molecularBiology .';
+  gap: 6px var(--gutter-x);
   margin-left: var(--science-left, 0px);
   width: max-content;
   flex: 1 1 auto;
-  align-content: start;
+  min-height: 0;
+  align-content: space-evenly;
   align-items: start;
   box-sizing: border-box;
 }
@@ -824,10 +888,6 @@ watch(activeDomain, () => void nextTick(measure))
   grid-area: physiology;
 }
 
-.science-atlas #microbiology {
-  grid-area: microbiology;
-}
-
 .science-atlas #evolution {
   grid-area: evolution;
 }
@@ -853,7 +913,7 @@ watch(activeDomain, () => void nextTick(measure))
   gap: 16px;
   width: 100%;
   margin: 0;
-  padding: 10px 14px;
+  padding: 6px 12px;
   border-radius: 10px;
   font: inherit;
   cursor: pointer;
@@ -879,7 +939,7 @@ watch(activeDomain, () => void nextTick(measure))
   left: max(40px, env(safe-area-inset-left));
   z-index: 1;
   font-family: var(--serif);
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   font-weight: 600;
   letter-spacing: 0.12em;
 }
@@ -1149,13 +1209,31 @@ watch(activeDomain, () => void nextTick(measure))
 
 @media (max-height: 760px) {
   .graph {
-    --card-w: 48px;
-    --info-h: 1.4rem;
+    --card-w-cap: 48px;
+    --card-w-floor: 30px;
+    --fit-science: clamp(
+      var(--card-w-floor),
+      calc((100dvh - 11rem) / 16),
+      var(--card-w-cap)
+    );
+    --fit-philosophy: clamp(
+      var(--card-w-floor),
+      calc((100dvh - 9.5rem) / 14),
+      var(--card-w-cap)
+    );
+    --card-w: min(var(--fit-science), var(--fit-philosophy));
+    --info-h: 1.1rem;
     padding: 10px 32px 12px;
     padding-bottom: max(12px, env(safe-area-inset-bottom));
     padding-left: max(32px, env(safe-area-inset-left));
     padding-right: max(32px, env(safe-area-inset-right));
     gap: 8px;
+  }
+
+  .graph.domain-science {
+    gap: 3px;
+    padding-top: 4px;
+    padding-bottom: max(6px, env(safe-area-inset-bottom));
   }
 
   .philosophy-atlas {
@@ -1170,8 +1248,20 @@ watch(activeDomain, () => void nextTick(measure))
 @media (max-width: 900px) {
   .graph {
     --gutter-x: 22px;
-    --card-w: 46px;
-    --info-h: 1.45rem;
+    --card-w-cap: 46px;
+    --card-w-floor: 30px;
+    --fit-science: clamp(
+      var(--card-w-floor),
+      calc((100dvh - 11rem) / 16),
+      var(--card-w-cap)
+    );
+    --fit-philosophy: clamp(
+      var(--card-w-floor),
+      calc((100dvh - 9.5rem) / 14),
+      var(--card-w-cap)
+    );
+    --card-w: min(var(--fit-science), var(--fit-philosophy));
+    --info-h: 1.15rem;
     height: auto;
     min-height: 100%;
     gap: 12px;
@@ -1180,6 +1270,19 @@ watch(activeDomain, () => void nextTick(measure))
     padding-left: max(18px, env(safe-area-inset-left));
     padding-right: max(18px, env(safe-area-inset-right));
     align-items: flex-start;
+  }
+
+  .graph.domain-science {
+    height: 100%;
+    min-height: 0;
+    gap: 4px;
+    padding-top: 4px;
+    padding-bottom: max(6px, env(safe-area-inset-bottom));
+  }
+
+  .viewport-science {
+    overflow-x: auto;
+    overflow-y: hidden;
   }
 
   .domain-bar-label {
@@ -1234,8 +1337,9 @@ watch(activeDomain, () => void nextTick(measure))
 @media (max-width: 600px) {
   .graph {
     --gutter-x: 16px;
-    --card-w: 42px;
-    --info-h: 1.35rem;
+    --card-w-cap: 42px;
+    --card-w: min(var(--fit-science), var(--fit-philosophy));
+    --info-h: 1.1rem;
     gap: 10px;
   }
 

@@ -1907,23 +1907,15 @@ export const schools: Record<string, School> = {
     countryIds: ['616', '840', '554'],
     accent: 'var(--c-chem-phys)',
   },
+  // Harvey · Hooke · Leeuwenhoek · Pasteur
   physiology: {
     id: 'physiology',
-    people: ['harvey'],
+    people: ['harvey', 'hooke', 'leeuwenhoek', 'pasteur'],
     yearStart: 1578,
-    yearEnd: 1657,
-    regionKeys: ['europe'],
-    countryIds: ['826'],
-    accent: 'var(--c-physiology)',
-  },
-  microbiology: {
-    id: 'microbiology',
-    people: ['hooke', 'leeuwenhoek', 'pasteur'],
-    yearStart: 1632,
     yearEnd: 1895,
     regionKeys: ['europe'],
     countryIds: ['826', '528', '250'],
-    accent: 'var(--c-microbiology)',
+    accent: 'var(--c-physiology)',
   },
   evolution: {
     id: 'evolution',
