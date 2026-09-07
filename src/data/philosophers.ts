@@ -949,7 +949,7 @@ export const philosophers: Record<string, Philosopher> = {
   },
   maxwell: {
     id: 'maxwell',
-    nativeName: 'James Clerk Maxwell',
+    nativeName: 'James Maxwell',
     country: 'scotland',
     portrait: '/portraits/maxwell.jpg',
     birth: { year: 1831, month: 6, day: 13 },

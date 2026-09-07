@@ -152,7 +152,7 @@ const zh = {
     kepler: '约翰内斯·开普勒',
     newton: '艾萨克·牛顿',
     faraday: '迈克尔·法拉第',
-    maxwell: '詹姆斯·克拉克·麦克斯韦',
+    maxwell: '詹姆斯·麦克斯韦',
     lorentz: '亨德里克·洛伦兹',
     carnot: '萨迪·卡诺',
     clausius: '鲁道夫·克劳修斯',

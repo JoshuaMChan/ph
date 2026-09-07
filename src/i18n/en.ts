@@ -154,7 +154,7 @@ const en = {
     kepler: 'Johannes Kepler',
     newton: 'Isaac Newton',
     faraday: 'Michael Faraday',
-    maxwell: 'James Clerk Maxwell',
+    maxwell: 'James Maxwell',
     lorentz: 'Hendrik Lorentz',
     carnot: 'Sadi Carnot',
     clausius: 'Rudolf Clausius',

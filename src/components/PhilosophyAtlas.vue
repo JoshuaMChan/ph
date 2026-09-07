@@ -822,7 +822,6 @@ watch(activeDomain, () => void nextTick(measure))
   padding-top: 6px;
   padding-bottom: max(8px, env(safe-area-inset-bottom));
   justify-content: flex-start;
-  overflow: hidden;
 }
 
 .science-atlas {
