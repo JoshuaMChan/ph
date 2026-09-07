@@ -82,6 +82,8 @@ export const graphEdges: GraphEdge[] = [
     from: 'quantumMechanics',
     to: 'quantumFieldTheory',
     color: 'var(--c-qft)',
+    fromSide: 'bottom',
+    toSide: 'top',
   },
   {
     from: 'philosophy-bar',

@@ -748,13 +748,13 @@ watch(activeDomain, () => void nextTick(measure))
   position: relative;
   z-index: 3;
   display: grid;
-  grid-template-columns: max-content max-content max-content max-content max-content;
+  grid-template-columns: max-content max-content max-content max-content;
   grid-template-rows: auto auto auto auto;
   grid-template-areas:
-    'astronomy classicalMechanics electrodynamics relativity .'
-    '. . statisticalPhysics quantumMechanics quantumFieldTheory'
-    '. . chemistry . .'
-    '. . biology . .';
+    'astronomy classicalMechanics electrodynamics relativity'
+    '. . statisticalPhysics quantumMechanics'
+    '. . chemistry quantumFieldTheory'
+    '. . biology .';
   gap: 16px var(--gutter-x);
   margin-left: var(--science-left, 0px);
   width: max-content;
