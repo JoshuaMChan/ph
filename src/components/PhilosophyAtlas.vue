@@ -865,12 +865,11 @@ watch(activeDomain, () => void nextTick(measure))
   z-index: 3;
   display: grid;
   grid-template-columns: max-content max-content max-content max-content max-content max-content max-content;
-  grid-template-rows: auto auto auto auto auto auto;
+  grid-template-rows: auto auto auto auto auto;
   grid-template-areas:
-    'astronomy classicalMechanics electrodynamics . relativity . .'
-    '. . thermodynamics statisticalPhysics quantumMechanics quantumFieldTheory .'
-    '. . quantitativeChemistry microscopicMatter periodicTable . .'
-    '. . . nuclearPhysics quantumChemistry . .'
+    'astronomy classicalMechanics electrodynamics . . relativity .'
+    '. . thermodynamics statisticalPhysics . quantumMechanics quantumFieldTheory'
+    '. . quantitativeChemistry microscopicMatter periodicTable nuclearPhysics quantumChemistry'
     '. . physiology microbiology . . .'
     '. . evolution molecularBiology . . .';
   gap: 6px var(--gutter-x);
