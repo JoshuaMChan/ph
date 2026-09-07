@@ -857,14 +857,14 @@ watch(activeDomain, () => void nextTick(measure))
   position: relative;
   z-index: 3;
   display: grid;
-  grid-template-columns: max-content max-content max-content max-content max-content;
+  grid-template-columns: max-content max-content max-content max-content max-content max-content;
   grid-template-rows: auto auto auto auto auto;
   grid-template-areas:
-    'astronomy classicalMechanics electrodynamics relativity .'
-    '. thermodynamics statisticalPhysics quantumMechanics quantumFieldTheory'
-    '. quantitativeChemistry microscopicMatter periodicTable chemicalPhysics'
-    '. . physiology microbiology .'
-    '. . evolution molecularBiology .';
+    'astronomy classicalMechanics electrodynamics . relativity .'
+    '. . thermodynamics statisticalPhysics quantumMechanics quantumFieldTheory'
+    '. . quantitativeChemistry microscopicMatter periodicTable chemicalPhysics'
+    '. . physiology microbiology . .'
+    '. . evolution molecularBiology . .';
   gap: 6px var(--gutter-x);
   margin-left: var(--science-left, 0px);
   width: max-content;
