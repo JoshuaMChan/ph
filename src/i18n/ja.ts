@@ -40,7 +40,7 @@ const ja = {
     political: '政治哲学',
     astronomy: '天文学',
     classicalMechanics: '古典力学',
-    electrodynamics: '電磁気学',
+    electrodynamics: '電磁学',
     statisticalPhysics: '統計物理学',
     relativity: '相対性理論',
     quantumMechanics: '量子力学',

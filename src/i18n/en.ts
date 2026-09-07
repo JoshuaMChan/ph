@@ -40,7 +40,7 @@ const en = {
     political: 'Political Philosophy',
     astronomy: 'Astronomy',
     classicalMechanics: 'Classical Mechanics',
-    electrodynamics: 'Electrodynamics',
+    electrodynamics: 'Electromagnetism',
     statisticalPhysics: 'Statistical Physics',
     relativity: 'Relativity',
     quantumMechanics: 'Quantum Mechanics',

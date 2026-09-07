@@ -39,7 +39,7 @@ const zh = {
     political: '政治哲学',
     astronomy: '天文学',
     classicalMechanics: '经典力学',
-    electrodynamics: '电动力学',
+    electrodynamics: '电磁学',
     statisticalPhysics: '统计物理',
     relativity: '相对论',
     quantumMechanics: '量子力学',

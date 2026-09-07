@@ -813,7 +813,7 @@ watch(activeDomain, () => void nextTick(measure))
   z-index: 4;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 16px;
   width: 100%;
   margin: 0;
@@ -821,7 +821,7 @@ watch(activeDomain, () => void nextTick(measure))
   border-radius: 10px;
   font: inherit;
   cursor: pointer;
-  text-align: center;
+  text-align: left;
   box-sizing: border-box;
   transition:
     background 0.15s ease,
@@ -839,6 +839,9 @@ watch(activeDomain, () => void nextTick(measure))
 }
 
 .domain-bar-label {
+  position: sticky;
+  left: max(40px, env(safe-area-inset-left));
+  z-index: 1;
   font-family: var(--serif);
   font-size: 0.95rem;
   font-weight: 600;
@@ -1122,6 +1125,10 @@ watch(activeDomain, () => void nextTick(measure))
   .philosophy-atlas {
     gap: 6px var(--gutter-x);
   }
+
+  .domain-bar-label {
+    left: max(32px, env(safe-area-inset-left));
+  }
 }
 
 @media (max-width: 900px) {
@@ -1137,6 +1144,10 @@ watch(activeDomain, () => void nextTick(measure))
     padding-left: max(18px, env(safe-area-inset-left));
     padding-right: max(18px, env(safe-area-inset-right));
     align-items: flex-start;
+  }
+
+  .domain-bar-label {
+    left: max(18px, env(safe-area-inset-left));
   }
 
   .philosophy-atlas {
