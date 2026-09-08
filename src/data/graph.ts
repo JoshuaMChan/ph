@@ -91,7 +91,7 @@ export const graphEdges: GraphEdge[] = [
     from: 'quantumMechanics',
     to: 'quantumChemistry',
     color: 'var(--c-quant-chem-pauling)',
-    fromSide: 'bottom',
+    fromSide: 'right',
     toSide: 'left',
   },
   {
