@@ -115,15 +115,11 @@ export const graphEdges: GraphEdge[] = [
     from: 'periodicTable',
     to: 'nuclearPhysics',
     color: 'var(--c-nuclear)',
-    fromSide: 'top',
-    toSide: 'left',
   },
   {
     from: 'nuclearPhysics',
     to: 'quantumChemistry',
     color: 'var(--c-quant-chem-pauling)',
-    fromSide: 'bottom',
-    toSide: 'left',
   },
   {
     from: 'philosophy-bar',
