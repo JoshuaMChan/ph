@@ -867,9 +867,9 @@ watch(activeDomain, () => void nextTick(measure))
   grid-template-columns: max-content max-content max-content max-content max-content max-content max-content max-content;
   grid-template-rows: auto auto auto auto auto;
   grid-template-areas:
-    'astronomy classicalMechanics electrodynamics . . . relativity .'
-    '. . thermodynamics statisticalPhysics . . quantumMechanics quantumFieldTheory'
-    '. . quantitativeChemistry microscopicMatter periodicTable nuclearPhysics . quantumChemistry'
+    'astronomy classicalMechanics electrodynamics . . . . .'
+    '. . thermodynamics statisticalPhysics relativity quantumMechanics nuclearPhysics quantumFieldTheory'
+    '. . quantitativeChemistry microscopicMatter periodicTable . . quantumChemistry'
     '. . physiology microbiology . . . .'
     '. . evolution molecularBiology . . . .';
   gap: 6px var(--gutter-x);

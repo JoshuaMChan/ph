@@ -83,13 +83,6 @@ export const graphEdges: GraphEdge[] = [
     color: 'var(--c-quantum)',
   },
   {
-    from: 'nuclearPhysics',
-    to: 'quantumMechanics',
-    color: 'var(--c-quantum)',
-    fromSide: 'right',
-    toSide: 'left',
-  },
-  {
     from: 'quantumMechanics',
     to: 'quantumFieldTheory',
     color: 'var(--c-qft)',
@@ -98,7 +91,7 @@ export const graphEdges: GraphEdge[] = [
     from: 'quantumMechanics',
     to: 'quantumChemistry',
     color: 'var(--c-quant-chem-pauling)',
-    fromSide: 'right',
+    fromSide: 'bottom',
     toSide: 'left',
   },
   {
@@ -122,11 +115,15 @@ export const graphEdges: GraphEdge[] = [
     from: 'periodicTable',
     to: 'nuclearPhysics',
     color: 'var(--c-nuclear)',
+    fromSide: 'top',
+    toSide: 'left',
   },
   {
     from: 'nuclearPhysics',
     to: 'quantumChemistry',
     color: 'var(--c-quant-chem-pauling)',
+    fromSide: 'bottom',
+    toSide: 'left',
   },
   {
     from: 'philosophy-bar',

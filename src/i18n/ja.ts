@@ -276,6 +276,7 @@ const ja = {
     zurich: 'チューリッヒ',
     rome: 'ローマ',
     chicago: 'シカゴ',
+    eastNorthport: 'イーストノースポート',
     wurzburg: 'ヴュルツブルク',
     bristol: 'ブリストル',
     tallahassee: 'タラハシー',

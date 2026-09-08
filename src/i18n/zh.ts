@@ -294,6 +294,7 @@ const zh = {
     zurich: '苏黎世',
     rome: '罗马',
     chicago: '芝加哥',
+    eastNorthport: '东诺斯波特',
     wurzburg: '维尔茨堡',
     bristol: '布里斯托尔',
     tallahassee: '塔拉哈西',

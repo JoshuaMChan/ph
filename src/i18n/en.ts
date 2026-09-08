@@ -289,6 +289,7 @@ const en = {
     zurich: 'Zurich',
     rome: 'Rome',
     chicago: 'Chicago',
+    eastNorthport: 'East Northport',
     wurzburg: 'Würzburg',
     bristol: 'Bristol',
     tallahassee: 'Tallahassee',
