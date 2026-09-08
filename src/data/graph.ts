@@ -86,8 +86,8 @@ export const graphEdges: GraphEdge[] = [
     from: 'nuclearPhysics',
     to: 'quantumMechanics',
     color: 'var(--c-quantum)',
-    fromSide: 'top',
-    toSide: 'bottom',
+    fromSide: 'right',
+    toSide: 'left',
   },
   {
     from: 'quantumMechanics',
@@ -98,7 +98,7 @@ export const graphEdges: GraphEdge[] = [
     from: 'quantumMechanics',
     to: 'quantumChemistry',
     color: 'var(--c-quant-chem-pauling)',
-    fromSide: 'bottom',
+    fromSide: 'right',
     toSide: 'left',
   },
   {
