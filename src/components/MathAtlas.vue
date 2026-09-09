@@ -125,9 +125,10 @@ function onLeave() {
               class="era-break"
               :aria-label="t(`mathEra.${eraBefore(person)!.key}`)"
             >
-              <span class="era-label">{{
-                t(`mathEra.${eraBefore(person)!.key}`)
-              }}</span>
+              <p class="era-epoch">
+                {{ t(`mathEra.${eraBefore(person)!.key}`) }}
+              </p>
+              <span class="era-rule" aria-hidden="true" />
             </div>
 
             <article
@@ -338,38 +339,58 @@ function onLeave() {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 36px;
-  flex: 0 0 36px;
+  align-self: stretch;
+  width: max-content;
+  flex: 0 0 auto;
   position: relative;
-  margin: 0 2px;
-  padding-top: 2px;
+  margin: 0 4px;
+  min-width: 5.5rem;
 }
 
-.era-break::before {
+.era-epoch {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin: 0;
+  padding: 0 2px;
+  font-family: var(--serif);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  color: var(--gold-2);
+  white-space: nowrap;
+  opacity: 0.9;
+}
+
+.era-epoch::before,
+.era-epoch::after {
   content: '';
-  position: absolute;
-  top: 1.4rem;
-  bottom: var(--card-block-h);
-  left: 50%;
-  width: 1px;
+  flex: 1 1 0.8rem;
+  height: 1px;
+  min-width: 8px;
   background: linear-gradient(
-    180deg,
-    rgba(212, 184, 122, 0.35),
-    rgba(212, 184, 122, 0.1),
+    90deg,
+    transparent,
+    rgba(212, 184, 122, 0.45),
     transparent
   );
 }
 
-.era-label {
-  position: relative;
-  z-index: 1;
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  white-space: nowrap;
-  font-size: 0.62rem;
-  letter-spacing: 0.22em;
-  color: rgba(212, 184, 122, 0.7);
-  padding: 4px 0;
+.era-rule {
+  flex: 1 1 auto;
+  width: 1px;
+  margin: 8px 0 var(--card-block-h);
+  min-height: var(--marks-h);
+  background: linear-gradient(
+    180deg,
+    rgba(212, 184, 122, 0.4),
+    rgba(212, 184, 122, 0.12),
+    transparent
+  );
 }
 
 .math-col {

@@ -563,7 +563,12 @@ watch(activeDomain, () => void nextTick(measure))
               @click="openDomain('math')"
             >
               <span class="domain-bar-label">{{ t('domain.math') }}</span>
-              <span class="domain-bar-hint" aria-hidden="true">↓</span>
+              <span class="domain-bar-hint" aria-hidden="true">
+                <svg class="domain-bar-icon" viewBox="0 0 12 14" width="11" height="13">
+                  <path d="M6 1.2 L10.2 6.2 H1.8 Z" />
+                  <path d="M6 12.8 L1.8 7.8 H10.2 Z" />
+                </svg>
+              </span>
             </button>
 
             <button
@@ -576,7 +581,12 @@ watch(activeDomain, () => void nextTick(measure))
               @click="openDomain('science')"
             >
               <span class="domain-bar-label">{{ t('domain.science') }}</span>
-              <span class="domain-bar-hint" aria-hidden="true">↓</span>
+              <span class="domain-bar-hint" aria-hidden="true">
+                <svg class="domain-bar-icon" viewBox="0 0 12 14" width="11" height="13">
+                  <path d="M6 1.2 L10.2 6.2 H1.8 Z" />
+                  <path d="M6 12.8 L1.8 7.8 H10.2 Z" />
+                </svg>
+              </span>
             </button>
 
             <article id="presocratic" data-node="presocratic" class="node">
@@ -796,7 +806,12 @@ watch(activeDomain, () => void nextTick(measure))
             @click="openDomain('philosophy')"
           >
             <span class="domain-bar-label">{{ t('domain.philosophy') }}</span>
-            <span class="domain-bar-hint" aria-hidden="true">↑</span>
+            <span class="domain-bar-hint" aria-hidden="true">
+              <svg class="domain-bar-icon" viewBox="0 0 12 14" width="11" height="13">
+                <path d="M6 1.2 L10.2 6.2 H1.8 Z" />
+                <path d="M6 12.8 L1.8 7.8 H10.2 Z" />
+              </svg>
+            </span>
           </button>
         </template>
 
@@ -812,7 +827,12 @@ watch(activeDomain, () => void nextTick(measure))
             @click="openDomain('philosophy')"
           >
             <span class="domain-bar-label">{{ t('domain.philosophy') }}</span>
-            <span class="domain-bar-hint" aria-hidden="true">↑</span>
+            <span class="domain-bar-hint" aria-hidden="true">
+              <svg class="domain-bar-icon" viewBox="0 0 12 14" width="11" height="13">
+                <path d="M6 1.2 L10.2 6.2 H1.8 Z" />
+                <path d="M6 12.8 L1.8 7.8 H10.2 Z" />
+              </svg>
+            </span>
           </button>
         </template>
       </main>
@@ -1110,9 +1130,9 @@ watch(activeDomain, () => void nextTick(measure))
   position: relative;
   z-index: 4;
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: flex-start;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
   margin: 0;
   padding: 6px 12px;
@@ -1151,15 +1171,19 @@ watch(activeDomain, () => void nextTick(measure))
   position: sticky;
   left: calc(max(40px, env(safe-area-inset-left)) + 4.5em);
   z-index: 1;
-  font-size: 0.95rem;
-  line-height: 1;
-  letter-spacing: 0;
-  opacity: 0.75;
-  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  opacity: 0.78;
+  line-height: 0;
 }
 
 .domain-bar:hover .domain-bar-hint {
   opacity: 1;
+}
+
+.domain-bar-icon {
+  display: block;
+  fill: currentColor;
 }
 
 .math-bar {
