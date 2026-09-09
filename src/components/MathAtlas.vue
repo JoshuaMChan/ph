@@ -19,6 +19,30 @@ const hoveredId = ref<string | null>(null)
 const domains = mathDomainOrder
 const people = mathematicians
 
+type EraSection = {
+  key: string
+  people: Mathematician[]
+}
+
+/** Same band idea as philosophy epochs: label sits above its stretch of people. */
+const eraSections = computed<EraSection[]>(() => {
+  const starts: { key: string; id: string }[] = [
+    { key: 'ancient', id: 'euclid' },
+    { key: 'earlyModern', id: 'descartes' },
+    { key: 'foundations', id: 'euler' },
+    { key: 'modern', id: 'hilbert' },
+  ]
+  const indexes = starts.map((s) => people.findIndex((p) => p.id === s.id))
+  return starts.map((s, i) => {
+    const from = indexes[i] < 0 ? people.length : indexes[i]
+    const to =
+      i + 1 < indexes.length && indexes[i + 1] >= 0
+        ? indexes[i + 1]
+        : people.length
+    return { key: s.key, people: people.slice(from, to) }
+  })
+})
+
 const hoveredPerson = computed(() =>
   people.find((p) => p.id === hoveredId.value) ?? null,
 )
@@ -27,16 +51,6 @@ const focusDomains = computed(() => {
   const person = hoveredPerson.value
   if (!person) return new Set<MathDomainId>()
   return new Set(person.domains)
-})
-
-const eraBreaks = computed(() => {
-  const marks: { beforeId: string; key: string }[] = [
-    { beforeId: 'descartes', key: 'ancient' },
-    { beforeId: 'euler', key: 'earlyModern' },
-    { beforeId: 'gauss', key: 'foundations' },
-    { beforeId: 'hilbert', key: 'modern' },
-  ]
-  return marks
 })
 
 const stubBorn = {
@@ -57,10 +71,6 @@ function asCardPerson(person: Mathematician): Philosopher {
     death: person.death,
     born: stubBorn,
   }
-}
-
-function eraBefore(person: Mathematician) {
-  return eraBreaks.value.find((m) => m.beforeId === person.id)
 }
 
 function active(person: Mathematician, domain: MathDomainId) {
@@ -87,12 +97,9 @@ function onLeave() {
     data-node="math-atlas"
     aria-label="Mathematics"
   >
-    <header class="math-head">
-      <h2>{{ t('domain.math') }}</h2>
-    </header>
-
     <div class="math-board">
       <div class="math-labels" aria-hidden="true">
+        <div class="math-label-epoch-spacer" />
         <div
           v-for="d in domains"
           :key="d"
@@ -107,64 +114,73 @@ function onLeave() {
       </div>
 
       <div class="math-scroll">
-        <!-- Continuous domain rails — length is horizontal (time), not vertical. -->
-        <div class="rail-layer" aria-hidden="true">
-          <div
-            v-for="d in domains"
-            :key="d"
-            class="rail"
-            :class="{ 'is-focus': domainFocused(d) }"
-            :style="{ '--lane': mathDomainAccent[d] }"
-          />
+        <!-- Epoch row: same UI language as philosophy Ontology / Epistemology. -->
+        <div class="math-epochs">
+          <p
+            v-for="sec in eraSections"
+            :key="sec.key"
+            class="epoch"
+            :style="{ flex: Math.max(sec.people.length, 1) }"
+          >
+            {{ t(`mathEra.${sec.key}`) }}
+          </p>
         </div>
 
-        <div class="math-track">
-          <template v-for="person in people" :key="person.id">
+        <div class="math-people">
+          <div class="rail-layer" aria-hidden="true">
             <div
-              v-if="eraBefore(person)"
-              class="era-break"
-              :aria-label="t(`mathEra.${eraBefore(person)!.key}`)"
-            >
-              <p class="era-epoch">
-                {{ t(`mathEra.${eraBefore(person)!.key}`) }}
-              </p>
-              <span class="era-rule" aria-hidden="true" />
-            </div>
+              v-for="d in domains"
+              :key="d"
+              class="rail"
+              :class="{ 'is-focus': domainFocused(d) }"
+              :style="{ '--lane': mathDomainAccent[d] }"
+            />
+          </div>
 
-            <article
-              class="math-col"
-              :class="{ 'is-hovered': hoveredId === person.id }"
-              @pointerenter="onEnter(person.id)"
-              @pointerleave="onLeave"
+          <div class="math-track">
+            <div
+              v-for="sec in eraSections"
+              :key="sec.key"
+              class="math-segment"
+              :style="{ flex: Math.max(sec.people.length, 1) }"
             >
-              <div class="marks">
-                <div
-                  v-for="d in domains"
-                  :key="d"
-                  class="lane"
-                  :style="{ '--lane': mathDomainAccent[d] }"
-                >
-                  <span
-                    v-if="active(person, d)"
-                    class="mark lit"
-                    :class="{
-                      'in-focus': domainFocused(d),
-                      'is-own': hoveredId === person.id,
-                    }"
-                    :title="t(`mathDomain.${d}`)"
+              <article
+                v-for="person in sec.people"
+                :key="person.id"
+                class="math-col"
+                :class="{ 'is-hovered': hoveredId === person.id }"
+                @pointerenter="onEnter(person.id)"
+                @pointerleave="onLeave"
+              >
+                <div class="marks">
+                  <div
+                    v-for="d in domains"
+                    :key="d"
+                    class="lane"
+                    :style="{ '--lane': mathDomainAccent[d] }"
+                  >
+                    <span
+                      v-if="active(person, d)"
+                      class="mark lit"
+                      :class="{
+                        'in-focus': domainFocused(d),
+                        'is-own': hoveredId === person.id,
+                      }"
+                      :title="t(`mathDomain.${d}`)"
+                    />
+                  </div>
+                </div>
+
+                <div class="who">
+                  <PhilosopherCard
+                    :person="asCardPerson(person)"
+                    :quotes="false"
+                    stacked
                   />
                 </div>
-              </div>
-
-              <div class="who">
-                <PhilosopherCard
-                  :person="asCardPerson(person)"
-                  :quotes="false"
-                  stacked
-                />
-              </div>
-            </article>
-          </template>
+              </article>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -174,18 +190,16 @@ function onLeave() {
 <style scoped>
 .math-atlas {
   --col-w: var(--card-w, 56px);
-  --card-block-h: calc(
-    var(--card-w, 56px) * 4 / 3 + 2.6rem
-  );
+  --card-block-h: calc(var(--card-w, 56px) * 4 / 3 + 2.6rem);
   --marks-h: 148px;
+  --epoch-h: 1.6rem;
   position: relative;
   z-index: 3;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 14px;
+  gap: 0;
   margin-left: var(--math-left, 0px);
-  /* At least as wide as the philosophy tree; grow if people need more room. */
   width: max(var(--math-width, 0px), max-content);
   min-width: var(--math-width, max-content);
   max-width: none;
@@ -193,19 +207,6 @@ function onLeave() {
   min-height: 0;
   padding: 8px 0;
   box-sizing: border-box;
-}
-
-.math-head {
-  padding: 0 4px;
-}
-
-.math-head h2 {
-  margin: 0;
-  font-family: var(--serif);
-  font-size: 1.35rem;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  color: var(--cream);
 }
 
 .math-board {
@@ -220,46 +221,99 @@ function onLeave() {
 
 .math-labels {
   display: grid;
-  grid-template-rows: repeat(4, 1fr) auto;
+  grid-template-rows: var(--epoch-h) repeat(4, 1fr) auto;
   gap: 0;
-  height: calc(var(--marks-h) + var(--card-block-h));
-  padding-top: 0;
+  height: calc(var(--epoch-h) + var(--marks-h) + var(--card-block-h));
   position: sticky;
   left: 0;
   z-index: 2;
-  background: var(--bg);
-  box-shadow: 8px 0 16px rgba(11, 12, 16, 0.55);
-  padding-right: 10px;
+  padding: 0 2.75rem 0 2px;
+  pointer-events: none;
+  isolation: isolate;
+  background:
+    linear-gradient(
+      90deg,
+      var(--bg) 0%,
+      var(--bg) 42%,
+      color-mix(in srgb, var(--bg) 88%, transparent) 68%,
+      color-mix(in srgb, var(--bg) 35%, transparent) 86%,
+      transparent 100%
+    );
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    #000 0%,
+    #000 58%,
+    rgba(0, 0, 0, 0.55) 82%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    #000 0%,
+    #000 58%,
+    rgba(0, 0, 0, 0.55) 82%,
+    transparent 100%
+  );
+}
+
+.math-labels::before {
+  content: '';
+  position: absolute;
+  inset: 8% auto 18% 0;
+  width: 2px;
+  border-radius: 2px;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba(212, 184, 122, 0.28),
+    transparent
+  );
+  opacity: 0.9;
+}
+
+.math-label-epoch-spacer {
+  min-height: var(--epoch-h);
 }
 
 .math-label {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   min-height: 0;
   white-space: nowrap;
   transition:
     color 0.18s ease,
-    filter 0.18s ease;
+    filter 0.18s ease,
+    transform 0.18s ease;
+}
+
+.math-label.is-focus {
+  transform: translateX(2px);
 }
 
 .math-label.is-focus .lane-name {
   color: var(--cream);
+  text-shadow:
+    0 0 18px color-mix(in srgb, var(--lane) 35%, transparent),
+    0 1px 10px rgba(11, 12, 16, 0.95);
 }
 
 .math-label.is-focus .lane-tick {
   opacity: 1;
-  width: 14px;
-  box-shadow: 0 0 10px color-mix(in srgb, var(--lane) 55%, transparent);
+  width: 16px;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--lane) 35%, transparent),
+    0 0 14px color-mix(in srgb, var(--lane) 60%, transparent);
 }
 
 .lane-tick {
-  width: 10px;
+  width: 11px;
   height: 2px;
-  border-radius: 1px;
+  border-radius: 999px;
   background: var(--lane);
-  opacity: 0.85;
+  opacity: 0.9;
   flex: 0 0 auto;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--lane) 40%, transparent);
   transition:
     width 0.18s ease,
     opacity 0.18s ease,
@@ -268,11 +322,14 @@ function onLeave() {
 
 .lane-name {
   font-family: var(--serif);
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   font-weight: 500;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   color: var(--gold-2);
-  transition: color 0.18s ease;
+  text-shadow: 0 1px 12px rgba(11, 12, 16, 0.95);
+  transition:
+    color 0.18s ease,
+    text-shadow 0.18s ease;
 }
 
 .math-label-spacer {
@@ -281,9 +338,62 @@ function onLeave() {
 
 .math-scroll {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
   min-width: 0;
   width: 100%;
   overflow: visible;
+}
+
+.math-epochs {
+  display: flex;
+  align-items: end;
+  gap: var(--gutter-x, 28px);
+  height: var(--epoch-h);
+  width: 100%;
+  min-width: max-content;
+  box-sizing: border-box;
+}
+
+/* Match PhilosophyAtlas `.epoch` (Ontology / Epistemology / Contemporary). */
+.epoch {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 0;
+  padding: 0 2px;
+  min-width: 0;
+  font-family: var(--serif);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  color: var(--gold-2);
+  white-space: nowrap;
+  opacity: 0.9;
+}
+
+.epoch::before,
+.epoch::after {
+  content: '';
+  flex: 1 1 1.5rem;
+  height: 1px;
+  min-width: 12px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(212, 184, 122, 0.45),
+    transparent
+  );
+}
+
+.math-people {
+  position: relative;
+  width: 100%;
+  min-width: max-content;
 }
 
 .rail-layer {
@@ -327,70 +437,18 @@ function onLeave() {
   z-index: 1;
   display: flex;
   align-items: stretch;
-  justify-content: space-between;
-  gap: 8px;
+  gap: var(--gutter-x, 28px);
   width: 100%;
   min-width: max-content;
-  min-height: 100%;
   box-sizing: border-box;
 }
 
-.era-break {
+.math-segment {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  align-self: stretch;
-  width: max-content;
-  flex: 0 0 auto;
-  position: relative;
-  margin: 0 4px;
-  min-width: 5.5rem;
-}
-
-.era-epoch {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: stretch;
+  justify-content: space-evenly;
   gap: 8px;
-  width: 100%;
-  margin: 0;
-  padding: 0 2px;
-  font-family: var(--serif);
-  font-size: 0.72rem;
-  font-weight: 500;
-  letter-spacing: 0.22em;
-  color: var(--gold-2);
-  white-space: nowrap;
-  opacity: 0.9;
-}
-
-.era-epoch::before,
-.era-epoch::after {
-  content: '';
-  flex: 1 1 0.8rem;
-  height: 1px;
-  min-width: 8px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(212, 184, 122, 0.45),
-    transparent
-  );
-}
-
-.era-rule {
-  flex: 1 1 auto;
-  width: 1px;
-  margin: 8px 0 var(--card-block-h);
-  min-height: var(--marks-h);
-  background: linear-gradient(
-    180deg,
-    rgba(212, 184, 122, 0.4),
-    rgba(212, 184, 122, 0.12),
-    transparent
-  );
+  min-width: 0;
 }
 
 .math-col {
@@ -401,6 +459,7 @@ function onLeave() {
   width: max-content;
   flex: 0 0 auto;
   padding: 0;
+  overflow: visible;
 }
 
 .marks {
@@ -456,6 +515,7 @@ function onLeave() {
   border-top: 1px solid rgba(212, 184, 122, 0.12);
   min-height: var(--card-block-h);
   box-sizing: border-box;
+  overflow: visible;
   transition: border-top-color 0.16s ease;
 }
 
@@ -466,6 +526,12 @@ function onLeave() {
 @media (max-width: 720px) {
   .math-atlas {
     --marks-h: 128px;
+  }
+
+  .epoch {
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    gap: 8px;
   }
 }
 </style>

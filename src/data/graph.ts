@@ -41,6 +41,14 @@ export const graphEdges: GraphEdge[] = [
     fromSide: 'top',
     toSide: 'left',
   },
+  // Math expanded: collapsed philosophy still forks mid-way into the science bar
+  {
+    from: 'philosophy-bar',
+    to: 'science-bar',
+    color: 'var(--c-astronomy)',
+    fromSide: 'top',
+    toSide: 'left',
+  },
   // Science forks: physics (astronomy) earlier; quantitative chemistry / physiology / evolution later
   {
     from: 'philosophy-bar',

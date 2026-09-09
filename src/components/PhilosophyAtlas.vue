@@ -5,6 +5,7 @@ import { graphEdges } from '../data/graph'
 import { philosophers, schools } from '../data/philosophers'
 import { formatEraYears } from '../utils/dates'
 import MathAtlas from './MathAtlas.vue'
+import DomainBar from './DomainBar.vue'
 import PhilosopherCard from './PhilosopherCard.vue'
 import SchoolBlock from './SchoolBlock.vue'
 import SiteHeader from './SiteHeader.vue'
@@ -414,6 +415,10 @@ function measureLinks() {
     if (edge.from === 'philosophy-bar' && edge.to === 'astronomy') {
       start[0] = end[0] - forkNudge
     }
+    if (edge.from === 'philosophy-bar' && edge.to === 'science-bar') {
+      // Mid-way fork: leave philosophy bar under the science bar's left edge.
+      start[0] = end[0] - forkNudge
+    }
     if (
       edge.from === 'philosophy-bar' &&
       (edge.to === 'quantitativeChemistry' || edge.to === 'physiology')
@@ -452,7 +457,7 @@ function measure() {
   if (activeDomain.value === 'math') {
     captureSlotGeom(rootEl)
     canvas.value = { w: rootEl.offsetWidth, h: rootEl.offsetHeight }
-    links.value = []
+    measureLinks()
     return
   }
   if (activeDomain.value === 'science') {
@@ -553,41 +558,17 @@ watch(activeDomain, () => void nextTick(measure))
             <p class="epoch epoch-epist">{{ t('epoch.epistemology') }}</p>
             <p class="epoch epoch-contemp">{{ t('epoch.contemporary') }}</p>
 
-            <button
-              id="math-bar"
-              type="button"
-              data-node="math-bar"
-              class="domain-bar math-bar"
-              :title="t('domain.math')"
-              :aria-label="t('domain.math')"
-              @click="openDomain('math')"
-            >
-              <span class="domain-bar-label">{{ t('domain.math') }}</span>
-              <span class="domain-bar-hint" aria-hidden="true">
-                <svg class="domain-bar-icon" viewBox="0 0 12 14" width="11" height="13">
-                  <path d="M6 1.2 L10.2 6.2 H1.8 Z" />
-                  <path d="M6 12.8 L1.8 7.8 H10.2 Z" />
-                </svg>
-              </span>
-            </button>
+            <DomainBar
+              domain="math"
+              :label="t('domain.math')"
+              @open="openDomain('math')"
+            />
 
-            <button
-              id="science-bar"
-              type="button"
-              data-node="science-bar"
-              class="domain-bar science-bar"
-              :title="t('domain.science')"
-              :aria-label="t('domain.science')"
-              @click="openDomain('science')"
-            >
-              <span class="domain-bar-label">{{ t('domain.science') }}</span>
-              <span class="domain-bar-hint" aria-hidden="true">
-                <svg class="domain-bar-icon" viewBox="0 0 12 14" width="11" height="13">
-                  <path d="M6 1.2 L10.2 6.2 H1.8 Z" />
-                  <path d="M6 12.8 L1.8 7.8 H10.2 Z" />
-                </svg>
-              </span>
-            </button>
+            <DomainBar
+              domain="science"
+              :label="t('domain.science')"
+              @open="openDomain('science')"
+            />
 
             <article id="presocratic" data-node="presocratic" class="node">
               <SchoolBlock school-id="presocratic" />
@@ -695,6 +676,11 @@ watch(activeDomain, () => void nextTick(measure))
         </template>
 
         <template v-else-if="activeDomain === 'science'">
+          <DomainBar
+            domain="math"
+            :label="t('domain.math')"
+            @open="openDomain('math')"
+          />
           <div class="science-atlas">
             <article id="astronomy" data-node="astronomy" class="node">
               <SchoolBlock school-id="astronomy" />
@@ -796,44 +782,25 @@ watch(activeDomain, () => void nextTick(measure))
               <SchoolBlock school-id="molecularBiology" />
             </article>
           </div>
-          <button
-            id="philosophy-bar"
-            type="button"
-            data-node="philosophy-bar"
-            class="domain-bar philosophy-bar"
-            :title="t('domain.philosophy')"
-            :aria-label="t('domain.philosophy')"
-            @click="openDomain('philosophy')"
-          >
-            <span class="domain-bar-label">{{ t('domain.philosophy') }}</span>
-            <span class="domain-bar-hint" aria-hidden="true">
-              <svg class="domain-bar-icon" viewBox="0 0 12 14" width="11" height="13">
-                <path d="M6 1.2 L10.2 6.2 H1.8 Z" />
-                <path d="M6 12.8 L1.8 7.8 H10.2 Z" />
-              </svg>
-            </span>
-          </button>
+          <DomainBar
+            domain="philosophy"
+            :label="t('domain.philosophy')"
+            @open="openDomain('philosophy')"
+          />
         </template>
 
         <template v-else>
           <MathAtlas />
-          <button
-            id="philosophy-bar"
-            type="button"
-            data-node="philosophy-bar"
-            class="domain-bar philosophy-bar"
-            :title="t('domain.philosophy')"
-            :aria-label="t('domain.philosophy')"
-            @click="openDomain('philosophy')"
-          >
-            <span class="domain-bar-label">{{ t('domain.philosophy') }}</span>
-            <span class="domain-bar-hint" aria-hidden="true">
-              <svg class="domain-bar-icon" viewBox="0 0 12 14" width="11" height="13">
-                <path d="M6 1.2 L10.2 6.2 H1.8 Z" />
-                <path d="M6 12.8 L1.8 7.8 H10.2 Z" />
-              </svg>
-            </span>
-          </button>
+          <DomainBar
+            domain="science"
+            :label="t('domain.science')"
+            @open="openDomain('science')"
+          />
+          <DomainBar
+            domain="philosophy"
+            :label="t('domain.philosophy')"
+            @open="openDomain('philosophy')"
+          />
         </template>
       </main>
     </div>
@@ -987,7 +954,7 @@ watch(activeDomain, () => void nextTick(measure))
 }
 
 .graph.domain-math {
-  gap: 10px;
+  gap: 8px;
   padding-top: 8px;
   padding-bottom: max(10px, env(safe-area-inset-bottom));
 }
@@ -1117,8 +1084,24 @@ watch(activeDomain, () => void nextTick(measure))
   grid-column: 4;
 }
 
-.graph.domain-science .philosophy-bar,
-.graph.domain-math .philosophy-bar {
+.graph.domain-science :deep(.math-bar) {
+  margin-left: var(--math-left, 0px);
+  width: var(--math-width, max-content);
+  min-width: var(--math-width, 0px);
+  flex: 0 0 auto;
+  box-sizing: border-box;
+}
+
+.graph.domain-math :deep(.science-bar) {
+  margin-left: var(--science-left, 0px);
+  width: var(--science-width, max-content);
+  min-width: var(--science-width, 0px);
+  flex: 0 0 auto;
+  box-sizing: border-box;
+}
+
+.graph.domain-science :deep(.philosophy-bar),
+.graph.domain-math :deep(.philosophy-bar) {
   margin-left: var(--philosophy-left, 0px);
   width: var(--philosophy-width, max-content);
   min-width: var(--philosophy-width, 0px);
@@ -1126,88 +1109,16 @@ watch(activeDomain, () => void nextTick(measure))
   box-sizing: border-box;
 }
 
-.domain-bar {
-  position: relative;
-  z-index: 4;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 10px;
-  width: 100%;
-  margin: 0;
-  padding: 6px 12px;
-  border-radius: 10px;
-  font: inherit;
-  cursor: pointer;
-  text-align: left;
-  box-sizing: border-box;
-  transition:
-    background 0.15s ease,
-    border-color 0.15s ease,
-    color 0.15s ease,
-    filter 0.15s ease;
-}
-
-.domain-bar:hover {
-  filter: brightness(1.1);
-}
-
-.domain-bar:focus-visible {
-  outline: 2px solid var(--gold);
-  outline-offset: 2px;
-}
-
-.domain-bar-label {
-  position: sticky;
-  left: max(40px, env(safe-area-inset-left));
-  z-index: 1;
-  font-family: var(--serif);
-  font-size: 0.88rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-}
-
-.domain-bar-hint {
-  position: sticky;
-  left: calc(max(40px, env(safe-area-inset-left)) + 4.5em);
-  z-index: 1;
-  display: inline-flex;
-  align-items: center;
-  opacity: 0.78;
-  line-height: 0;
-}
-
-.domain-bar:hover .domain-bar-hint {
-  opacity: 1;
-}
-
-.domain-bar-icon {
-  display: block;
-  fill: currentColor;
-}
-
-.math-bar {
+.philosophy-atlas :deep(.math-bar) {
   grid-area: math;
   justify-self: stretch;
   align-self: center;
-  border: 1px solid rgba(142, 180, 196, 0.42);
-  background: rgba(142, 180, 196, 0.1);
-  color: #b7d4e0;
 }
 
-.science-bar {
+.philosophy-atlas :deep(.science-bar) {
   grid-area: science;
   justify-self: stretch;
   align-self: center;
-  border: 1px solid rgba(74, 155, 184, 0.4);
-  background: rgba(74, 155, 184, 0.1);
-  color: #9ecfe0;
-}
-
-.philosophy-bar {
-  border: 1px solid var(--line);
-  background: rgba(212, 184, 122, 0.08);
-  color: var(--gold-2);
 }
 
 .wires {
@@ -1488,7 +1399,7 @@ watch(activeDomain, () => void nextTick(measure))
     gap: 6px var(--gutter-x);
   }
 
-  .domain-bar-label {
+  :deep(.domain-bar-lead) {
     left: max(32px, env(safe-area-inset-left));
   }
 }
@@ -1540,7 +1451,7 @@ watch(activeDomain, () => void nextTick(measure))
     overflow-y: hidden;
   }
 
-  .domain-bar-label {
+  :deep(.domain-bar-lead) {
     left: max(18px, env(safe-area-inset-left));
   }
 

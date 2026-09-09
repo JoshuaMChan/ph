@@ -241,11 +241,13 @@ h3 {
   align-items: center;
   width: var(--card-w, 70px);
   height: auto;
+  overflow: visible;
 }
 
 .card.stacked .info {
   height: auto;
-  width: 100%;
+  width: max-content;
+  max-width: none;
   flex-direction: column;
   align-items: center;
   gap: 2px;
@@ -254,18 +256,21 @@ h3 {
 }
 
 .card.stacked h3 {
-  width: 100%;
+  width: max-content;
+  max-width: none;
   font-size: 0.7rem;
-  white-space: normal;
-  overflow-wrap: anywhere;
+  white-space: nowrap;
+  overflow: visible;
   line-height: 1.25;
 }
 
 .card.stacked .meta {
   justify-content: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  width: max-content;
   gap: 0 5px;
   line-height: 1.2;
+  white-space: nowrap;
 }
 
 .card.stacked .dates,
