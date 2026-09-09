@@ -135,6 +135,7 @@ const zh = {
     died: '卒',
     map: '地图',
     scroll: '滚动查看谱系树',
+    openDomain: '点击展开',
   },
   person: {
     heraclitus: '赫拉克利特',

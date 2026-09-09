@@ -554,9 +554,11 @@ watch(activeDomain, () => void nextTick(measure))
               type="button"
               data-node="math-bar"
               class="domain-bar math-bar"
+              :title="t('ui.openDomain')"
               @click="openDomain('math')"
             >
               <span class="domain-bar-label">{{ t('domain.math') }}</span>
+              <span class="domain-bar-hint">{{ t('ui.openDomain') }}</span>
             </button>
 
             <button
@@ -564,9 +566,11 @@ watch(activeDomain, () => void nextTick(measure))
               type="button"
               data-node="science-bar"
               class="domain-bar science-bar"
+              :title="t('ui.openDomain')"
               @click="openDomain('science')"
             >
               <span class="domain-bar-label">{{ t('domain.science') }}</span>
+              <span class="domain-bar-hint">{{ t('ui.openDomain') }}</span>
             </button>
 
             <article id="presocratic" data-node="presocratic" class="node">
@@ -781,9 +785,11 @@ watch(activeDomain, () => void nextTick(measure))
             type="button"
             data-node="philosophy-bar"
             class="domain-bar philosophy-bar"
+            :title="t('ui.openDomain')"
             @click="openDomain('philosophy')"
           >
             <span class="domain-bar-label">{{ t('domain.philosophy') }}</span>
+            <span class="domain-bar-hint">{{ t('ui.openDomain') }}</span>
           </button>
         </template>
 
@@ -794,9 +800,11 @@ watch(activeDomain, () => void nextTick(measure))
             type="button"
             data-node="philosophy-bar"
             class="domain-bar philosophy-bar"
+            :title="t('ui.openDomain')"
             @click="openDomain('philosophy')"
           >
             <span class="domain-bar-label">{{ t('domain.philosophy') }}</span>
+            <span class="domain-bar-hint">{{ t('ui.openDomain') }}</span>
           </button>
         </template>
       </main>
@@ -1094,9 +1102,9 @@ watch(activeDomain, () => void nextTick(measure))
   position: relative;
   z-index: 4;
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: flex-start;
-  gap: 16px;
+  gap: 12px;
   width: 100%;
   margin: 0;
   padding: 6px 12px;
@@ -1108,11 +1116,12 @@ watch(activeDomain, () => void nextTick(measure))
   transition:
     background 0.15s ease,
     border-color 0.15s ease,
-    color 0.15s ease;
+    color 0.15s ease,
+    filter 0.15s ease;
 }
 
 .domain-bar:hover {
-  filter: brightness(1.08);
+  filter: brightness(1.1);
 }
 
 .domain-bar:focus-visible {
@@ -1128,6 +1137,29 @@ watch(activeDomain, () => void nextTick(measure))
   font-size: 0.88rem;
   font-weight: 600;
   letter-spacing: 0.12em;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.28em;
+  text-decoration-color: color-mix(in srgb, currentColor 55%, transparent);
+  transition: text-decoration-color 0.15s ease;
+}
+
+.domain-bar:hover .domain-bar-label {
+  text-decoration-color: currentColor;
+}
+
+.domain-bar-hint {
+  position: sticky;
+  left: calc(max(40px, env(safe-area-inset-left)) + 4.5em);
+  z-index: 1;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  opacity: 0.72;
+  white-space: nowrap;
+}
+
+.domain-bar:hover .domain-bar-hint {
+  opacity: 0.95;
 }
 
 .math-bar {

@@ -9,8 +9,10 @@ const props = withDefaults(
     person: Philosopher
     /** Show quote tooltip when available (off in math atlas). */
     quotes?: boolean
+    /** Stack name above dates/country and center under the portrait. */
+    stacked?: boolean
   }>(),
-  { quotes: true },
+  { quotes: true, stacked: false },
 )
 
 const { t, te, locale } = useI18n()
@@ -105,7 +107,7 @@ onBeforeUnmount(() => {
 <template>
   <article
     class="card"
-    :class="{ 'has-quote': quote }"
+    :class="{ 'has-quote': quote, stacked }"
     :tabindex="quote ? 0 : undefined"
     :aria-describedby="quote ? tooltipId : undefined"
     @pointerenter="onPointerEnter"
@@ -233,6 +235,42 @@ h3 {
 
 .country {
   color: var(--muted);
+}
+
+.card.stacked {
+  align-items: center;
+  width: var(--card-w, 70px);
+  height: auto;
+}
+
+.card.stacked .info {
+  height: auto;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin-top: 6px;
+  text-align: center;
+}
+
+.card.stacked h3 {
+  width: 100%;
+  font-size: 0.7rem;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.25;
+}
+
+.card.stacked .meta {
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0 5px;
+  line-height: 1.2;
+}
+
+.card.stacked .dates,
+.card.stacked .country {
+  font-size: 0.56rem;
 }
 
 :global(.quote-tooltip) {

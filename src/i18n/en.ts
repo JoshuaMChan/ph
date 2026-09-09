@@ -136,6 +136,7 @@ const en = {
     died: 'd.',
     map: 'Map',
     scroll: 'Scroll the tree',
+    openDomain: 'Click to open',
   },
   person: {
     heraclitus: 'Heraclitus',

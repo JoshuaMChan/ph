@@ -14,11 +14,20 @@ import PhilosopherCard from './PhilosopherCard.vue'
 
 const { t } = useI18n()
 
-const hovered = ref<string | null>(null)
+const hoveredId = ref<string | null>(null)
 
 const domains = mathDomainOrder
-
 const people = mathematicians
+
+const hoveredPerson = computed(() =>
+  people.find((p) => p.id === hoveredId.value) ?? null,
+)
+
+const focusDomains = computed(() => {
+  const person = hoveredPerson.value
+  if (!person) return new Set<MathDomainId>()
+  return new Set(person.domains)
+})
 
 const eraBreaks = computed(() => {
   const marks: { beforeId: string; key: string }[] = [
@@ -58,31 +67,26 @@ function active(person: Mathematician, domain: MathDomainId) {
   return hasDomain(person, domain)
 }
 
-function spineStyle(person: Mathematician) {
-  const idxs = domains
-    .map((d, i) => (active(person, d) ? i : -1))
-    .filter((i) => i >= 0)
-  if (idxs.length < 2) return null
-  const first = idxs[0]
-  const last = idxs[idxs.length - 1]
-  const row = 100 / domains.length
-  return {
-    top: `${first * row + row / 2}%`,
-    height: `${(last - first) * row}%`,
-  }
+function domainFocused(domain: MathDomainId) {
+  return focusDomains.value.has(domain)
 }
 
 function onEnter(id: string) {
-  hovered.value = id
+  hoveredId.value = id
 }
 
 function onLeave() {
-  hovered.value = null
+  hoveredId.value = null
 }
 </script>
 
 <template>
-  <section class="math-atlas" data-node="math-atlas" aria-label="Mathematics">
+  <section
+    class="math-atlas"
+    :class="{ 'has-focus': hoveredId }"
+    data-node="math-atlas"
+    aria-label="Mathematics"
+  >
     <header class="math-head">
       <h2>{{ t('domain.math') }}</h2>
     </header>
@@ -93,6 +97,7 @@ function onLeave() {
           v-for="d in domains"
           :key="d"
           class="math-label"
+          :class="{ 'is-focus': domainFocused(d) }"
           :style="{ '--lane': mathDomainAccent[d] }"
         >
           <span class="lane-tick" />
@@ -102,6 +107,17 @@ function onLeave() {
       </div>
 
       <div class="math-scroll">
+        <!-- Continuous domain rails — length is horizontal (time), not vertical. -->
+        <div class="rail-layer" aria-hidden="true">
+          <div
+            v-for="d in domains"
+            :key="d"
+            class="rail"
+            :class="{ 'is-focus': domainFocused(d) }"
+            :style="{ '--lane': mathDomainAccent[d] }"
+          />
+        </div>
+
         <div class="math-track">
           <template v-for="person in people" :key="person.id">
             <div
@@ -116,39 +132,35 @@ function onLeave() {
 
             <article
               class="math-col"
-              :class="{
-                'is-hovered': hovered === person.id,
-                'is-dim': hovered && hovered !== person.id,
-              }"
+              :class="{ 'is-hovered': hoveredId === person.id }"
               @pointerenter="onEnter(person.id)"
               @pointerleave="onLeave"
             >
               <div class="marks">
-                <span
-                  v-if="spineStyle(person)"
-                  class="spine"
-                  :style="spineStyle(person)!"
-                />
                 <div
                   v-for="d in domains"
                   :key="d"
                   class="lane"
-                  :class="{ on: active(person, d) }"
                   :style="{ '--lane': mathDomainAccent[d] }"
                 >
-                  <span class="axis" />
                   <span
-                    class="mark"
-                    :class="{ lit: active(person, d) }"
-                    :title="
-                      active(person, d) ? t(`mathDomain.${d}`) : undefined
-                    "
+                    v-if="active(person, d)"
+                    class="mark lit"
+                    :class="{
+                      'in-focus': domainFocused(d),
+                      'is-own': hoveredId === person.id,
+                    }"
+                    :title="t(`mathDomain.${d}`)"
                   />
                 </div>
               </div>
 
               <div class="who">
-                <PhilosopherCard :person="asCardPerson(person)" :quotes="false" />
+                <PhilosopherCard
+                  :person="asCardPerson(person)"
+                  :quotes="false"
+                  stacked
+                />
               </div>
             </article>
           </template>
@@ -161,7 +173,10 @@ function onLeave() {
 <style scoped>
 .math-atlas {
   --col-w: var(--card-w, 56px);
-  --card-block-h: calc(var(--card-w, 56px) * 4 / 3 + var(--info-h, 1.2rem) + 8px);
+  --card-block-h: calc(
+    var(--card-w, 56px) * 4 / 3 + 2.6rem
+  );
+  --marks-h: 148px;
   position: relative;
   z-index: 3;
   display: flex;
@@ -202,7 +217,8 @@ function onLeave() {
   display: grid;
   grid-template-rows: repeat(4, 1fr) auto;
   gap: 0;
-  padding-top: 2px;
+  height: calc(var(--marks-h) + var(--card-block-h));
+  padding-top: 0;
   position: sticky;
   left: 0;
   z-index: 2;
@@ -215,8 +231,21 @@ function onLeave() {
   display: flex;
   align-items: center;
   gap: 8px;
-  min-height: 36px;
+  min-height: 0;
   white-space: nowrap;
+  transition:
+    color 0.18s ease,
+    filter 0.18s ease;
+}
+
+.math-label.is-focus .lane-name {
+  color: var(--cream);
+}
+
+.math-label.is-focus .lane-tick {
+  opacity: 1;
+  width: 14px;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--lane) 55%, transparent);
 }
 
 .lane-tick {
@@ -226,6 +255,10 @@ function onLeave() {
   background: var(--lane);
   opacity: 0.85;
   flex: 0 0 auto;
+  transition:
+    width 0.18s ease,
+    opacity 0.18s ease,
+    box-shadow 0.18s ease;
 }
 
 .lane-name {
@@ -234,6 +267,7 @@ function onLeave() {
   font-weight: 500;
   letter-spacing: 0.1em;
   color: var(--gold-2);
+  transition: color 0.18s ease;
 }
 
 .math-label-spacer {
@@ -241,11 +275,50 @@ function onLeave() {
 }
 
 .math-scroll {
+  position: relative;
   min-width: 0;
   overflow: visible;
 }
 
+.rail-layer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: var(--marks-h);
+  display: grid;
+  grid-template-rows: repeat(4, 1fr);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.rail {
+  position: relative;
+}
+
+.rail::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: color-mix(in srgb, var(--lane) 28%, transparent);
+  transition:
+    height 0.18s ease,
+    background 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.rail.is-focus::before {
+  height: 2px;
+  background: color-mix(in srgb, var(--lane) 78%, transparent);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--lane) 40%, transparent);
+}
+
 .math-track {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: stretch;
   gap: 10px;
@@ -273,8 +346,8 @@ function onLeave() {
   width: 1px;
   background: linear-gradient(
     180deg,
-    rgba(212, 184, 122, 0.45),
-    rgba(212, 184, 122, 0.12),
+    rgba(212, 184, 122, 0.35),
+    rgba(212, 184, 122, 0.1),
     transparent
   );
 }
@@ -292,59 +365,22 @@ function onLeave() {
 }
 
 .math-col {
-  --mark: 9px;
+  --mark: 10px;
   position: relative;
   display: grid;
-  grid-template-rows: 1fr auto;
+  grid-template-rows: var(--marks-h) auto;
   width: max-content;
   flex: 0 0 auto;
   padding: 0;
-  transition:
-    opacity 0.18s ease,
-    filter 0.18s ease;
-}
-
-.math-col.is-dim {
-  opacity: 0.38;
-}
-
-.math-col.is-hovered {
-  opacity: 1;
-  z-index: 1;
 }
 
 .marks {
   position: relative;
   display: grid;
   grid-template-rows: repeat(4, 1fr);
-  min-height: 148px;
+  height: var(--marks-h);
   width: var(--card-w, 56px);
   margin: 0 auto;
-}
-
-.spine {
-  position: absolute;
-  left: 50%;
-  width: 2px;
-  transform: translateX(-50%);
-  border-radius: 2px;
-  background: linear-gradient(
-    180deg,
-    rgba(232, 213, 163, 0.15),
-    rgba(232, 213, 163, 0.55),
-    rgba(232, 213, 163, 0.15)
-  );
-  pointer-events: none;
-  z-index: 0;
-}
-
-.math-col.is-hovered .spine {
-  background: linear-gradient(
-    180deg,
-    rgba(232, 213, 163, 0.25),
-    rgba(232, 213, 163, 0.85),
-    rgba(232, 213, 163, 0.25)
-  );
 }
 
 .lane {
@@ -352,21 +388,6 @@ function onLeave() {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1;
-}
-
-.axis {
-  position: absolute;
-  left: -6px;
-  right: -6px;
-  top: 50%;
-  height: 1px;
-  background: rgba(212, 184, 122, 0.14);
-  pointer-events: none;
-}
-
-.lane.on .axis {
-  background: color-mix(in srgb, var(--lane) 35%, transparent);
 }
 
 .mark {
@@ -374,26 +395,29 @@ function onLeave() {
   width: var(--mark);
   height: var(--mark);
   border-radius: 50%;
-  border: 1px solid rgba(212, 184, 122, 0.18);
-  background: transparent;
   box-sizing: border-box;
   transition:
-    transform 0.15s ease,
-    background 0.15s ease,
-    box-shadow 0.15s ease,
-    border-color 0.15s ease;
+    transform 0.16s ease,
+    box-shadow 0.16s ease,
+    opacity 0.16s ease;
 }
 
 .mark.lit {
-  border-color: color-mix(in srgb, var(--lane) 80%, white);
+  border: 1px solid color-mix(in srgb, var(--lane) 80%, white);
   background: var(--lane);
   box-shadow:
-    0 0 0 3px color-mix(in srgb, var(--lane) 22%, transparent),
-    0 0 12px color-mix(in srgb, var(--lane) 45%, transparent);
+    0 0 0 2px color-mix(in srgb, var(--lane) 18%, transparent),
+    0 0 10px color-mix(in srgb, var(--lane) 40%, transparent);
+}
+
+.math-atlas.has-focus .mark.lit.in-focus {
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--lane) 30%, transparent),
+    0 0 18px color-mix(in srgb, var(--lane) 58%, transparent);
 }
 
 .math-col.is-hovered .mark.lit {
-  transform: scale(1.18);
+  transform: scale(1.28);
 }
 
 .who {
@@ -403,15 +427,16 @@ function onLeave() {
   border-top: 1px solid rgba(212, 184, 122, 0.12);
   min-height: var(--card-block-h);
   box-sizing: border-box;
+  transition: border-top-color 0.16s ease;
 }
 
 .math-col.is-hovered .who {
-  border-top-color: rgba(212, 184, 122, 0.4);
+  border-top-color: rgba(212, 184, 122, 0.45);
 }
 
 @media (max-width: 720px) {
-  .marks {
-    min-height: 128px;
+  .math-atlas {
+    --marks-h: 128px;
   }
 }
 </style>
