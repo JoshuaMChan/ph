@@ -400,6 +400,8 @@ const zh = {
     china: '中国',
     russia: '俄国',
     newZealand: '新西兰',
+    norway: '挪威',
+    hungary: '匈牙利',
   },
 }
 

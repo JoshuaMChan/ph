@@ -395,6 +395,8 @@ const en = {
     china: 'China',
     russia: 'Russia',
     newZealand: 'New Zealand',
+    norway: 'Norway',
+    hungary: 'Hungary',
   },
 }
 

@@ -9,7 +9,9 @@ import {
   type MathDomainId,
   type Mathematician,
 } from '../data/mathematicians'
-import { formatLifespan, formatYear } from '../utils/dates'
+import type { Philosopher } from '../types'
+import { formatYear } from '../utils/dates'
+import PhilosopherCard from './PhilosopherCard.vue'
 
 const { t } = useI18n()
 
@@ -20,7 +22,6 @@ const domains = mathDomainOrder
 const people = mathematicians
 
 const eraBreaks = computed(() => {
-  /** Visual chapter ticks between columns (index = before this person). */
   const marks: { beforeId: string; key: string }[] = [
     { beforeId: 'descartes', key: 'ancient' },
     { beforeId: 'euler', key: 'earlyModern' },
@@ -29,6 +30,26 @@ const eraBreaks = computed(() => {
   ]
   return marks
 })
+
+const stubBorn = {
+  city: '',
+  region: '',
+  lat: 0,
+  lng: 0,
+  countryId: '',
+}
+
+function asCardPerson(person: Mathematician): Philosopher {
+  return {
+    id: person.id,
+    nativeName: person.nativeName,
+    country: person.country,
+    portrait: person.portrait,
+    birth: person.birth,
+    death: person.death,
+    born: stubBorn,
+  }
+}
 
 function eraBefore(person: Mathematician) {
   return eraBreaks.value.find((m) => m.beforeId === person.id)
@@ -112,7 +133,6 @@ function onLeave() {
                 'is-hovered': hovered === person.id,
                 'is-dim': hovered && hovered !== person.id,
               }"
-              :data-node="person.id"
               @pointerenter="onEnter(person.id)"
               @pointerleave="onLeave"
             >
@@ -141,12 +161,7 @@ function onLeave() {
               </div>
 
               <div class="who">
-                <p class="name">{{ t(`person.${person.id}`) }}</p>
-                <p class="years">
-                  <template v-if="person.birth.circa">c. </template
-                  >{{ formatLifespan(person.birth, person.death) }}
-                </p>
-                <p class="native">{{ person.nativeName }}</p>
+                <PhilosopherCard :person="asCardPerson(person)" />
               </div>
             </article>
           </template>
@@ -168,7 +183,8 @@ function onLeave() {
 
 <style scoped>
 .math-atlas {
-  --col-w: 72px;
+  --col-w: var(--card-w, 56px);
+  --card-block-h: calc(var(--card-w, 56px) * 4 / 3 + var(--info-h, 1.2rem) + 8px);
   position: relative;
   z-index: 3;
   display: flex;
@@ -289,7 +305,7 @@ function onLeave() {
 }
 
 .math-label-spacer {
-  height: 4.6rem;
+  height: var(--card-block-h);
 }
 
 .math-scroll {
@@ -300,7 +316,7 @@ function onLeave() {
 .math-track {
   display: flex;
   align-items: stretch;
-  gap: 0;
+  gap: 10px;
   width: max-content;
   min-height: 100%;
 }
@@ -312,7 +328,7 @@ function onLeave() {
   width: 36px;
   flex: 0 0 36px;
   position: relative;
-  margin: 0 4px;
+  margin: 0 2px;
   padding-top: 2px;
 }
 
@@ -320,7 +336,7 @@ function onLeave() {
   content: '';
   position: absolute;
   top: 1.4rem;
-  bottom: 5.2rem;
+  bottom: var(--card-block-h);
   left: 50%;
   width: 1px;
   background: linear-gradient(
@@ -348,9 +364,9 @@ function onLeave() {
   position: relative;
   display: grid;
   grid-template-rows: 1fr auto;
-  width: var(--col-w);
-  flex: 0 0 var(--col-w);
-  padding: 0 2px;
+  width: max-content;
+  flex: 0 0 auto;
+  padding: 0;
   transition:
     opacity 0.18s ease,
     filter 0.18s ease;
@@ -370,6 +386,8 @@ function onLeave() {
   display: grid;
   grid-template-rows: repeat(4, 1fr);
   min-height: 148px;
+  width: var(--card-w, 56px);
+  margin: 0 auto;
 }
 
 .spine {
@@ -407,8 +425,8 @@ function onLeave() {
 
 .axis {
   position: absolute;
-  left: 0;
-  right: 0;
+  left: -6px;
+  right: -6px;
   top: 50%;
   height: 1px;
   background: rgba(212, 184, 122, 0.14);
@@ -448,51 +466,15 @@ function onLeave() {
 
 .who {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  padding: 10px 2px 4px;
-  text-align: center;
+  justify-content: center;
+  padding: 10px 0 4px;
   border-top: 1px solid rgba(212, 184, 122, 0.12);
-  min-height: 4.6rem;
+  min-height: var(--card-block-h);
+  box-sizing: border-box;
 }
 
 .math-col.is-hovered .who {
   border-top-color: rgba(212, 184, 122, 0.4);
-}
-
-.name {
-  margin: 0;
-  font-family: var(--serif);
-  font-size: 0.72rem;
-  font-weight: 600;
-  line-height: 1.25;
-  letter-spacing: 0.02em;
-  color: var(--cream);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.years {
-  margin: 0;
-  font-size: 0.58rem;
-  letter-spacing: 0.02em;
-  color: var(--gold);
-  opacity: 0.9;
-}
-
-.native {
-  margin: 0;
-  font-size: 0.52rem;
-  line-height: 1.2;
-  color: var(--muted);
-  opacity: 0.75;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
 }
 
 .math-axis-caption {
@@ -519,15 +501,6 @@ function onLeave() {
 }
 
 @media (max-width: 720px) {
-  .math-atlas {
-    --col-w: 64px;
-  }
-
-  .math-label-spacer,
-  .who {
-    min-height: 5rem;
-  }
-
   .marks {
     min-height: 128px;
   }

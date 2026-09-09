@@ -382,6 +382,8 @@ const ja = {
     china: '中国',
     russia: 'ロシア',
     newZealand: 'ニュージーランド',
+    norway: 'ノルウェー',
+    hungary: 'ハンガリー',
   },
 }
 
