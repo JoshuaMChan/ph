@@ -1,10 +1,10 @@
 const en = {
   site: {
     title: 'How We Get Here',
-    chapter: 'Philosophy & Science',
+    chapter: 'Philosophy & Mathematics',
     kicker: 'A brief history you can walk',
     subtitle:
-      'After the Middle Ages, science branches off from philosophy; natural science begins with astronomy',
+      'Philosophy branches; mathematics runs four domain axes, people advancing left to right in time',
   },
   nav: {
     greece: 'Greece',
@@ -14,7 +14,7 @@ const en = {
     classical: 'Classical',
     split: 'Split',
     political: 'Politics',
-    astronomy: 'Astronomy',
+    math: 'Math',
   },
   lang: {
     zh: '中文',
@@ -92,6 +92,23 @@ const en = {
   domain: {
     philosophy: 'Philosophy',
     science: 'Natural Science',
+    math: 'Mathematics',
+  },
+  mathDomain: {
+    algebra: 'Algebra',
+    analysis: 'Analysis',
+    geometry: 'Geometry & Topology',
+    numberTheory: 'Number Theory',
+  },
+  mathEra: {
+    ancient: 'Classical',
+    earlyModern: 'Early modern',
+    foundations: 'Foundations',
+    modern: 'Modern',
+  },
+  math: {
+    hint: 'A lit point on an axis means that person advanced that field',
+    timeAxis: 'Time',
   },
   branch: {
     trunk: 'Main line',
@@ -107,6 +124,7 @@ const en = {
     afterHegel: 'After Hegel, the story divides into great rivers',
     scienceBranch:
       'Branches from medieval philosophy · the first independent line of natural science',
+    mathParallel: 'Parallel to philosophy · four domain number lines',
   },
   epoch: {
     ontology: 'Ontology',
@@ -198,6 +216,27 @@ const en = {
     pasteur: 'Louis Pasteur',
     crick: 'Francis Crick',
     watson: 'James Watson',
+    euclid: 'Euclid',
+    archimedes: 'Archimedes',
+    fermat: 'Pierre de Fermat',
+    euler: 'Leonhard Euler',
+    lagrange: 'Joseph-Louis Lagrange',
+    laplace: 'Pierre-Simon Laplace',
+    fourier: 'Joseph Fourier',
+    gauss: 'Carl F. Gauss',
+    cauchy: 'Augustin-Louis Cauchy',
+    abel: 'Niels Henrik Abel',
+    galois: 'Évariste Galois',
+    weierstrass: 'Karl Weierstrass',
+    riemann: 'Bernhard Riemann',
+    cantor: 'Georg Cantor',
+    poincare: 'Henri Poincaré',
+    hilbert: 'David Hilbert',
+    noether: 'Emmy Noether',
+    kolmogorov: 'Andrey Kolmogorov',
+    vonNeumann: 'John von Neumann',
+    godel: 'Kurt Gödel',
+    grothendieck: 'A. Grothendieck',
   },
   // Keys mirror person; philosophers omitted here do not show a quote yet.
   quote: {

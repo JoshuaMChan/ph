@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n'
 import { graphEdges } from '../data/graph'
 import { philosophers, schools } from '../data/philosophers'
 import { formatEraYears } from '../utils/dates'
+import MathAtlas from './MathAtlas.vue'
 import PhilosopherCard from './PhilosopherCard.vue'
 import SchoolBlock from './SchoolBlock.vue'
 import SiteHeader from './SiteHeader.vue'
@@ -18,7 +19,7 @@ const politicalRegion = computed(() =>
   political.regionKeys.map((key) => t(`region.${key}`)).join(' · '),
 )
 
-type Domain = 'philosophy' | 'science'
+type Domain = 'philosophy' | 'math'
 const activeDomain = ref<Domain>('philosophy')
 
 function openDomain(domain: Domain) {
@@ -74,17 +75,17 @@ const polLayout = ref({
 
 /** Stable domain-slot geometry so expand/collapse keeps the same left edge & width. */
 const slotGeom = ref({
-  scienceLeft: 0,
-  scienceWidth: 0,
+  mathLeft: 0,
+  mathWidth: 0,
   philosophyLeft: 0,
   philosophyWidth: 0,
 })
 
 const slotVars = computed(() => ({
-  '--science-left': `${slotGeom.value.scienceLeft}px`,
-  '--science-width':
-    slotGeom.value.scienceWidth > 0
-      ? `${slotGeom.value.scienceWidth}px`
+  '--math-left': `${slotGeom.value.mathLeft}px`,
+  '--math-width':
+    slotGeom.value.mathWidth > 0
+      ? `${slotGeom.value.mathWidth}px`
       : 'max-content',
   '--philosophy-left': `${slotGeom.value.philosophyLeft}px`,
   '--philosophy-width':
@@ -104,28 +105,28 @@ function captureSlotGeom(rootEl: HTMLElement) {
   if (activeDomain.value === 'philosophy') {
     const modern = rootEl.querySelector('#modern')
     const tree = rootEl.querySelector('.philosophy-atlas')
-    const sciBar = rootEl.querySelector('[data-node="science-bar"]')
+    const mathBar = rootEl.querySelector('[data-node="math-bar"]')
     if (!modern || !tree) return
 
-    const scienceLeft = Math.max(0, Math.round(relLeft(modern)))
+    const mathLeft = Math.max(0, Math.round(relLeft(modern)))
     const treeRight = Math.round(relRight(tree))
-    const barWidth = sciBar
-      ? Math.round((sciBar as HTMLElement).offsetWidth)
+    const barWidth = mathBar
+      ? Math.round((mathBar as HTMLElement).offsetWidth)
       : 0
-    const scienceWidth = Math.max(barWidth, treeRight - scienceLeft)
+    const mathWidth = Math.max(barWidth, treeRight - mathLeft)
     const philosophyLeft = Math.max(0, Math.round(relLeft(tree)))
     const philosophyWidth = Math.round((tree as HTMLElement).offsetWidth)
 
     const next = {
-      scienceLeft,
-      scienceWidth,
+      mathLeft,
+      mathWidth,
       philosophyLeft,
       philosophyWidth,
     }
     const prev = slotGeom.value
     if (
-      Math.abs(prev.scienceLeft - next.scienceLeft) > 0.5 ||
-      Math.abs(prev.scienceWidth - next.scienceWidth) > 0.5 ||
+      Math.abs(prev.mathLeft - next.mathLeft) > 0.5 ||
+      Math.abs(prev.mathWidth - next.mathWidth) > 0.5 ||
       Math.abs(prev.philosophyLeft - next.philosophyLeft) > 0.5 ||
       Math.abs(prev.philosophyWidth - next.philosophyWidth) > 0.5
     ) {
@@ -134,40 +135,37 @@ function captureSlotGeom(rootEl: HTMLElement) {
     return
   }
 
-  // Science domain: keep left edges stable; stretch philosophy bar to QFT's right edge.
-  const atlas = rootEl.querySelector('.science-atlas') as HTMLElement | null
-  const astronomy = rootEl.querySelector('#astronomy') as HTMLElement | null
-  const qft = rootEl.querySelector('#quantumFieldTheory') as HTMLElement | null
-  if (!atlas || !astronomy) return
+  // Math domain: keep left edges stable; stretch philosophy bar to atlas right.
+  const atlas = rootEl.querySelector('.math-atlas') as HTMLElement | null
+  if (!atlas) return
 
-  const scienceLeft =
-    slotGeom.value.scienceLeft > 0
-      ? slotGeom.value.scienceLeft
-      : Math.max(0, Math.round(relLeft(astronomy)))
+  const mathLeft =
+    slotGeom.value.mathLeft > 0
+      ? slotGeom.value.mathLeft
+      : Math.max(0, Math.round(relLeft(atlas)))
   const atlasRight = Math.round(relRight(atlas))
-  const qftRight = qft ? Math.round(relRight(qft)) : atlasRight
-  const scienceWidth = Math.max(
-    slotGeom.value.scienceWidth,
-    atlasRight - scienceLeft,
-    qftRight - scienceLeft,
+  const mathWidth = Math.max(
+    slotGeom.value.mathWidth,
+    atlasRight - mathLeft,
+    Math.round(atlas.offsetWidth),
   )
 
   const philosophyLeft =
     slotGeom.value.philosophyLeft > 0
       ? slotGeom.value.philosophyLeft
       : 0
-  const philosophyWidth = Math.max(0, qftRight - philosophyLeft)
+  const philosophyWidth = Math.max(0, atlasRight - philosophyLeft)
 
   const next = {
-    scienceLeft,
-    scienceWidth,
+    mathLeft,
+    mathWidth,
     philosophyLeft,
     philosophyWidth,
   }
   const prev = slotGeom.value
   if (
-    Math.abs(prev.scienceLeft - next.scienceLeft) > 0.5 ||
-    Math.abs(prev.scienceWidth - next.scienceWidth) > 0.5 ||
+    Math.abs(prev.mathLeft - next.mathLeft) > 0.5 ||
+    Math.abs(prev.mathWidth - next.mathWidth) > 0.5 ||
     Math.abs(prev.philosophyLeft - next.philosophyLeft) > 0.5 ||
     Math.abs(prev.philosophyWidth - next.philosophyWidth) > 0.5
   ) {
@@ -357,29 +355,6 @@ function measureLinks() {
     const toSide = edge.toSide ?? 'left'
     const start = point(from, fromSide)
     const end = point(to, toSide)
-    // Philosophy → science: physics first; quantitative chemistry & physiology share one later x;
-    // evolution forks on its own x (independent of Harvey).
-    const forkNudge = 28
-    if (edge.from === 'philosophy-bar' && edge.to === 'astronomy') {
-      start[0] = end[0] - forkNudge
-    }
-    if (
-      edge.from === 'philosophy-bar' &&
-      (edge.to === 'quantitativeChemistry' || edge.to === 'physiology')
-    ) {
-      const chem = rootEl.querySelector('[data-node="quantitativeChemistry"]')
-      const physio = rootEl.querySelector('[data-node="physiology"]')
-      if (chem && physio) {
-        const edgeLeft = Math.min(box(chem, root).left, box(physio, root).left)
-        start[0] = edgeLeft - forkNudge
-        end[0] = edgeLeft
-      } else {
-        start[0] = end[0] - forkNudge
-      }
-    }
-    if (edge.from === 'philosophy-bar' && edge.to === 'evolution') {
-      start[0] = end[0] - forkNudge
-    }
     if (edge.viaCluster) {
       const cluster = rootEl.querySelector(`[data-node="${edge.viaCluster}"]`)
       if (cluster) start[0] = box(cluster, root).right
@@ -398,10 +373,10 @@ function measureLinks() {
 function measure() {
   const rootEl = graph.value
   if (!rootEl) return
-  if (activeDomain.value === 'science') {
+  if (activeDomain.value === 'math') {
     captureSlotGeom(rootEl)
     canvas.value = { w: rootEl.offsetWidth, h: rootEl.offsetHeight }
-    measureLinks()
+    links.value = []
     return
   }
   const moved = layoutPolitical(rootEl)
@@ -497,13 +472,13 @@ watch(activeDomain, () => void nextTick(measure))
             <p class="epoch epoch-contemp">{{ t('epoch.contemporary') }}</p>
 
             <button
-              id="science-bar"
+              id="math-bar"
               type="button"
-              data-node="science-bar"
-              class="domain-bar science-bar"
-              @click="openDomain('science')"
+              data-node="math-bar"
+              class="domain-bar math-bar"
+              @click="openDomain('math')"
             >
-              <span class="domain-bar-label">{{ t('domain.science') }}</span>
+              <span class="domain-bar-label">{{ t('domain.math') }}</span>
             </button>
 
             <article id="presocratic" data-node="presocratic" class="node">
@@ -612,107 +587,7 @@ watch(activeDomain, () => void nextTick(measure))
         </template>
 
         <template v-else>
-          <div class="science-atlas">
-            <article id="astronomy" data-node="astronomy" class="node">
-              <SchoolBlock school-id="astronomy" />
-            </article>
-            <article
-              id="classicalMechanics"
-              data-node="classicalMechanics"
-              class="node"
-            >
-              <SchoolBlock school-id="classicalMechanics" />
-            </article>
-            <article
-              id="electrodynamics"
-              data-node="electrodynamics"
-              class="node"
-            >
-              <SchoolBlock school-id="electrodynamics" />
-            </article>
-            <article
-              id="thermodynamics"
-              data-node="thermodynamics"
-              class="node"
-            >
-              <SchoolBlock school-id="thermodynamics" />
-            </article>
-            <article
-              id="statisticalPhysics"
-              data-node="statisticalPhysics"
-              class="node"
-            >
-              <SchoolBlock school-id="statisticalPhysics" />
-            </article>
-            <article id="relativity" data-node="relativity" class="node">
-              <SchoolBlock school-id="relativity" />
-            </article>
-            <article
-              id="quantumMechanics"
-              data-node="quantumMechanics"
-              class="node"
-            >
-              <SchoolBlock school-id="quantumMechanics" />
-            </article>
-            <article
-              id="quantumFieldTheory"
-              data-node="quantumFieldTheory"
-              class="node"
-            >
-              <SchoolBlock school-id="quantumFieldTheory" />
-            </article>
-            <article
-              id="quantitativeChemistry"
-              data-node="quantitativeChemistry"
-              class="node"
-            >
-              <SchoolBlock school-id="quantitativeChemistry" />
-            </article>
-            <article
-              id="microscopicMatter"
-              data-node="microscopicMatter"
-              class="node"
-            >
-              <SchoolBlock school-id="microscopicMatter" />
-            </article>
-            <article
-              id="periodicTable"
-              data-node="periodicTable"
-              class="node"
-            >
-              <SchoolBlock school-id="periodicTable" />
-            </article>
-            <article
-              id="nuclearPhysics"
-              data-node="nuclearPhysics"
-              class="node"
-            >
-              <SchoolBlock school-id="nuclearPhysics" />
-            </article>
-            <article
-              id="quantumChemistry"
-              data-node="quantumChemistry"
-              class="node"
-            >
-              <SchoolBlock school-id="quantumChemistry" />
-            </article>
-            <article id="physiology" data-node="physiology" class="node">
-              <SchoolBlock school-id="physiology" />
-            </article>
-            <article id="microbiology" data-node="microbiology" class="node">
-              <SchoolBlock school-id="microbiology" />
-            </article>
-            <article id="evolution" data-node="evolution" class="node">
-              <SchoolBlock school-id="evolution" />
-            </article>
-            <article
-              id="molecularBiology"
-              data-node="molecularBiology"
-              class="node"
-            >
-              <SchoolBlock school-id="molecularBiology" />
-            </article>
-          </div>
+          <MathAtlas />
           <button
             id="philosophy-bar"
             type="button"
@@ -745,7 +620,7 @@ watch(activeDomain, () => void nextTick(measure))
   touch-action: pan-x pan-y;
 }
 
-.viewport-science {
+.viewport-math {
   overflow-x: auto;
   overflow-y: hidden;
 }
@@ -755,7 +630,7 @@ watch(activeDomain, () => void nextTick(measure))
   /* Per-domain max card width that still fits one viewport; shared size = min. */
   --card-w-cap: 56px;
   --card-w-floor: 32px;
-  --fit-science: clamp(
+  --fit-math: clamp(
     var(--card-w-floor),
     calc((100dvh - 12.5rem) / 16),
     var(--card-w-cap)
@@ -765,7 +640,7 @@ watch(activeDomain, () => void nextTick(measure))
     calc((100dvh - 11rem) / 14),
     var(--card-w-cap)
   );
-  --card-w: min(var(--fit-science), var(--fit-philosophy));
+  --card-w: min(var(--fit-math), var(--fit-philosophy));
   --info-h: 1.2rem;
   position: relative;
   display: flex;
@@ -826,7 +701,7 @@ watch(activeDomain, () => void nextTick(measure))
   grid-template-rows: auto auto minmax(0, 1fr) auto;
   grid-template-areas:
     'epochOnto epochOnto epochOnto epochOnto epochEpist epochEpist epochContemp epochContemp'
-    '. . . . science science science science'
+    '. . . . math math math math'
     'presocratic greece hellenistic scholasticism modern classical lifeCol existCol'
     '. . . . political political political political';
   gap: 8px var(--gutter-x);
@@ -844,147 +719,22 @@ watch(activeDomain, () => void nextTick(measure))
   box-sizing: border-box;
 }
 
-.science-slot {
-  margin-left: var(--science-left, 0px);
-  width: var(--science-width, max-content);
-  min-width: var(--science-width, 0px);
+.math-slot {
+  margin-left: var(--math-left, 0px);
+  width: var(--math-width, max-content);
+  min-width: var(--math-width, 0px);
   flex: 0 0 auto;
 }
 
-.graph.domain-science {
+.graph.domain-math {
   --gutter-x: 28px;
-  gap: 4px;
-  padding-top: 6px;
-  padding-bottom: max(8px, env(safe-area-inset-bottom));
+  gap: 10px;
+  padding-top: 8px;
+  padding-bottom: max(10px, env(safe-area-inset-bottom));
   justify-content: flex-start;
 }
 
-.science-atlas {
-  --gutter-x: 28px;
-  position: relative;
-  z-index: 3;
-  display: grid;
-  grid-template-columns: max-content max-content max-content max-content max-content max-content max-content;
-  grid-template-rows: auto auto auto auto auto;
-  grid-template-areas:
-    'astronomy classicalMechanics electrodynamics . . relativity .'
-    '. . thermodynamics statisticalPhysics . quantumMechanics quantumFieldTheory'
-    '. . quantitativeChemistry microscopicMatter periodicTable nuclearPhysics quantumChemistry'
-    '. . physiology microbiology . . .'
-    '. . evolution molecularBiology molecularBiology molecularBiology molecularBiology';
-  gap: 6px var(--gutter-x);
-  margin-left: var(--science-left, 0px);
-  width: max-content;
-  flex: 1 1 auto;
-  min-height: 0;
-  align-content: space-evenly;
-  align-items: start;
-  box-sizing: border-box;
-}
-
-.science-atlas #astronomy {
-  grid-area: astronomy;
-}
-
-.science-atlas #classicalMechanics {
-  grid-area: classicalMechanics;
-}
-
-.science-atlas #electrodynamics {
-  grid-area: electrodynamics;
-}
-
-.science-atlas #thermodynamics {
-  grid-area: thermodynamics;
-}
-
-.science-atlas #statisticalPhysics {
-  grid-area: statisticalPhysics;
-}
-
-.science-atlas #relativity {
-  grid-area: relativity;
-}
-
-.science-atlas #quantumMechanics {
-  grid-area: quantumMechanics;
-}
-
-.science-atlas #quantumFieldTheory {
-  grid-area: quantumFieldTheory;
-}
-
-.science-atlas #quantitativeChemistry {
-  grid-area: quantitativeChemistry;
-}
-
-.science-atlas #microscopicMatter {
-  grid-area: microscopicMatter;
-}
-
-.science-atlas #periodicTable {
-  grid-area: periodicTable;
-}
-
-.science-atlas #nuclearPhysics {
-  grid-area: nuclearPhysics;
-}
-
-.science-atlas #quantumChemistry {
-  grid-area: quantumChemistry;
-}
-
-.science-atlas #physiology {
-  grid-area: physiology;
-}
-
-.science-atlas #microbiology {
-  grid-area: microbiology;
-}
-
-.science-atlas #evolution {
-  grid-area: evolution;
-}
-
-.science-atlas #molecularBiology {
-  grid-area: molecularBiology;
-  display: grid;
-  grid-template-columns: subgrid;
-  align-items: start;
-}
-
-.science-atlas #molecularBiology :deep(.school) {
-  display: grid;
-  grid-template-columns: subgrid;
-  grid-column: 1 / -1;
-  width: auto;
-  min-width: 0;
-}
-
-.science-atlas #molecularBiology :deep(.head) {
-  grid-column: 1 / -1;
-}
-
-.science-atlas #molecularBiology :deep(.genetics-grid) {
-  display: grid;
-  grid-template-columns: subgrid;
-  grid-column: 1 / -1;
-  align-items: start;
-}
-
-.science-atlas #molecularBiology :deep(.slot-mendel) {
-  grid-column: 1;
-}
-
-.science-atlas #molecularBiology :deep(.slot-crick) {
-  grid-column: 3;
-}
-
-.science-atlas #molecularBiology :deep(.slot-watson) {
-  grid-column: 4;
-}
-
-.graph.domain-science .philosophy-bar {
+.graph.domain-math .philosophy-bar {
   margin-left: var(--philosophy-left, 0px);
   width: var(--philosophy-width, max-content);
   min-width: var(--philosophy-width, 0px);
@@ -1032,24 +782,19 @@ watch(activeDomain, () => void nextTick(measure))
   letter-spacing: 0.12em;
 }
 
-.science-bar {
-  grid-area: science;
+.math-bar {
+  grid-area: math;
   justify-self: stretch;
   align-self: center;
-  border: 1px solid rgba(74, 155, 184, 0.4);
-  background: rgba(74, 155, 184, 0.1);
-  color: #9ecfe0;
+  border: 1px solid rgba(142, 180, 196, 0.42);
+  background: rgba(142, 180, 196, 0.1);
+  color: #b7d4e0;
 }
 
 .philosophy-bar {
   border: 1px solid var(--line);
   background: rgba(212, 184, 122, 0.08);
   color: var(--gold-2);
-}
-
-.science-slot > .node {
-  width: max-content;
-  box-sizing: border-box;
 }
 
 .wires {
@@ -1140,10 +885,6 @@ watch(activeDomain, () => void nextTick(measure))
 
 #scholasticism {
   grid-area: scholasticism;
-  align-self: center;
-}
-
-#astronomy {
   align-self: center;
 }
 
@@ -1299,7 +1040,7 @@ watch(activeDomain, () => void nextTick(measure))
   .graph {
     --card-w-cap: 48px;
     --card-w-floor: 30px;
-    --fit-science: clamp(
+    --fit-math: clamp(
       var(--card-w-floor),
       calc((100dvh - 11rem) / 16),
       var(--card-w-cap)
@@ -1309,7 +1050,7 @@ watch(activeDomain, () => void nextTick(measure))
       calc((100dvh - 9.5rem) / 14),
       var(--card-w-cap)
     );
-    --card-w: min(var(--fit-science), var(--fit-philosophy));
+    --card-w: min(var(--fit-math), var(--fit-philosophy));
     --info-h: 1.1rem;
     padding: 10px 32px 12px;
     padding-bottom: max(12px, env(safe-area-inset-bottom));
@@ -1318,8 +1059,8 @@ watch(activeDomain, () => void nextTick(measure))
     gap: 8px;
   }
 
-  .graph.domain-science {
-    gap: 3px;
+  .graph.domain-math {
+    gap: 8px;
     padding-top: 4px;
     padding-bottom: max(6px, env(safe-area-inset-bottom));
   }
@@ -1338,7 +1079,7 @@ watch(activeDomain, () => void nextTick(measure))
     --gutter-x: 22px;
     --card-w-cap: 46px;
     --card-w-floor: 30px;
-    --fit-science: clamp(
+    --fit-math: clamp(
       var(--card-w-floor),
       calc((100dvh - 11rem) / 16),
       var(--card-w-cap)
@@ -1348,7 +1089,7 @@ watch(activeDomain, () => void nextTick(measure))
       calc((100dvh - 9.5rem) / 14),
       var(--card-w-cap)
     );
-    --card-w: min(var(--fit-science), var(--fit-philosophy));
+    --card-w: min(var(--fit-math), var(--fit-philosophy));
     --info-h: 1.15rem;
     height: auto;
     min-height: 100%;
@@ -1360,15 +1101,15 @@ watch(activeDomain, () => void nextTick(measure))
     align-items: flex-start;
   }
 
-  .graph.domain-science {
+  .graph.domain-math {
     height: 100%;
     min-height: 0;
-    gap: 4px;
+    gap: 8px;
     padding-top: 4px;
     padding-bottom: max(6px, env(safe-area-inset-bottom));
   }
 
-  .viewport-science {
+  .viewport-math {
     overflow-x: auto;
     overflow-y: hidden;
   }
@@ -1383,12 +1124,6 @@ watch(activeDomain, () => void nextTick(measure))
     height: auto;
     gap: 10px var(--gutter-x);
     align-items: start;
-  }
-
-  .science-atlas {
-    --gutter-x: 22px;
-    gap: 12px var(--gutter-x);
-    align-content: start;
   }
 
   .epoch {
@@ -1426,7 +1161,7 @@ watch(activeDomain, () => void nextTick(measure))
   .graph {
     --gutter-x: 16px;
     --card-w-cap: 42px;
-    --card-w: min(var(--fit-science), var(--fit-philosophy));
+    --card-w: min(var(--fit-math), var(--fit-philosophy));
     --info-h: 1.1rem;
     gap: 10px;
   }

@@ -1,10 +1,10 @@
 const ja = {
   site: {
     title: 'ここに至るまで',
-    chapter: '哲学と科学',
+    chapter: '哲学と数学',
     kicker: '歩いて読める簡史',
     subtitle:
-      '中世ののち、科学は哲学から分かれ出る。自然科学はまず天文学として自立する',
+      '哲学は枝分かれし、数学は四本の数軸として、人物が左から右へ各分野を進める',
   },
   nav: {
     greece: 'ギリシア',
@@ -14,7 +14,7 @@ const ja = {
     classical: '古典',
     split: '分裂',
     political: '政治',
-    astronomy: '天文学',
+    math: '数学',
   },
   lang: {
     zh: '中文',
@@ -92,6 +92,23 @@ const ja = {
   domain: {
     philosophy: '哲学',
     science: '自然科学',
+    math: '数学',
+  },
+  mathDomain: {
+    algebra: '代数学',
+    analysis: '解析学',
+    geometry: '幾何と位相',
+    numberTheory: '数論',
+  },
+  mathEra: {
+    ancient: '古典',
+    earlyModern: '近世初期',
+    foundations: '基礎固め',
+    modern: '現代',
+  },
+  math: {
+    hint: '軸上の点はその人物が進めた分野を示す',
+    timeAxis: '時間',
   },
   branch: {
     trunk: '本流',
@@ -106,6 +123,7 @@ const ja = {
     split: '分裂',
     afterHegel: 'ヘーゲルのあと、思想史はいくつかの大河に裂ける',
     scienceBranch: '中世哲学から分岐 · 自然科学の最初の独立した支流',
+    mathParallel: '哲学と並行 · 四本の分野数軸',
   },
   epoch: {
     ontology: '存在論',
@@ -197,6 +215,27 @@ const ja = {
     pasteur: 'ルイ・パスツール',
     crick: 'フランシス・クリック',
     watson: 'ジェームズ・ワトソン',
+    euclid: 'ユークリッド',
+    archimedes: 'アルキメデス',
+    fermat: 'ピエール・ド・フェルマー',
+    euler: 'レオンハルト・オイラー',
+    lagrange: 'ジョゼフ＝ルイ・ラグランジュ',
+    laplace: 'ピエール＝シモン・ラプラス',
+    fourier: 'ジョゼフ・フーリエ',
+    gauss: 'カール・フリードリヒ・ガウス',
+    cauchy: 'オーギュスタン＝ルイ・コーシー',
+    abel: 'ニールス・アーベル',
+    galois: 'エヴァリスト・ガロア',
+    weierstrass: 'カール・ワイエルシュトラス',
+    riemann: 'ベルンハルト・リーマン',
+    cantor: 'ゲオルク・カントール',
+    poincare: 'アンリ・ポアンカレ',
+    hilbert: 'ダフィット・ヒルベルト',
+    noether: 'エミー・ネーター',
+    kolmogorov: 'アンドレイ・コルモゴロフ',
+    vonNeumann: 'ジョン・フォン・ノイマン',
+    godel: 'クルト・ゲーデル',
+    grothendieck: 'アレクサンドル・グロタンディーク',
   },
   // person と同じキーを使用。未記載の哲学者には、まだ名言を表示しない。
   quote: {

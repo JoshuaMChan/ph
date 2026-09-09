@@ -1,9 +1,9 @@
 const zh = {
   site: {
     title: '涉历至此',
-    chapter: '哲学与科学',
+    chapter: '哲学与数学',
     kicker: '一部可漫游的简史',
-    subtitle: '中世纪之后，科学从哲学中分出；自然科学先以天文学独立',
+    subtitle: '哲学开枝散叶；数学自为四条数轴，人物按时间从左到右推进各领域',
   },
   nav: {
     greece: '希腊',
@@ -13,7 +13,7 @@ const zh = {
     classical: '古典',
     split: '分裂',
     political: '政治',
-    astronomy: '天文学',
+    math: '数学',
   },
   lang: {
     zh: '中文',
@@ -91,6 +91,23 @@ const zh = {
   domain: {
     philosophy: '哲学',
     science: '自然科学',
+    math: '数学',
+  },
+  mathDomain: {
+    algebra: '代数学',
+    analysis: '分析学',
+    geometry: '几何与拓扑学',
+    numberTheory: '数论',
+  },
+  mathEra: {
+    ancient: '古典',
+    earlyModern: '近代早期',
+    foundations: '奠基期',
+    modern: '现代',
+  },
+  math: {
+    hint: '四点落在哪条轴上，便推进了哪个领域',
+    timeAxis: '时间',
   },
   branch: {
     trunk: '主干',
@@ -105,6 +122,7 @@ const zh = {
     split: '分裂',
     afterHegel: '黑格尔之后，思想史裂为几条大河',
     scienceBranch: '自中世纪哲学分出 · 自然科学的第一条独立支线',
+    mathParallel: '与哲学并行 · 四条领域数轴',
   },
   epoch: {
     ontology: '本体论',
@@ -196,6 +214,27 @@ const zh = {
     pasteur: '路易·巴斯德',
     crick: '弗朗西斯·克里克',
     watson: '詹姆斯·沃森',
+    euclid: '欧几里得',
+    archimedes: '阿基米德',
+    fermat: '皮埃尔·德·费马',
+    euler: '莱昂哈德·欧拉',
+    lagrange: '约瑟夫·拉格朗日',
+    laplace: '皮埃尔-西蒙·拉普拉斯',
+    fourier: '约瑟夫·傅里叶',
+    gauss: '卡尔·弗里德里希·高斯',
+    cauchy: '奥古斯丁-路易·柯西',
+    abel: '尼尔斯·阿贝尔',
+    galois: '埃瓦里斯特·伽罗瓦',
+    weierstrass: '卡尔·魏尔施特拉斯',
+    riemann: '伯恩哈德·黎曼',
+    cantor: '格奥尔格·康托尔',
+    poincare: '亨利·庞加莱',
+    hilbert: '大卫·希尔伯特',
+    noether: '埃米·诺特',
+    kolmogorov: '安德雷·柯尔莫哥洛夫',
+    vonNeumann: '约翰·冯·诺依曼',
+    godel: '库尔特·哥德尔',
+    grothendieck: '亚历山大·格罗滕迪克',
   },
   // 与 person 使用相同的键；未列出的哲学家暂不显示名言。
   quote: {

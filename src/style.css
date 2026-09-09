@@ -40,6 +40,11 @@
   --c-microbiology: #5a9e8a;
   --c-evolution: #7a9e6a;
   --c-mol-bio: #5a8e9e;
+  --c-algebra: #d4a35c;
+  --c-analysis: #5a9ec9;
+  --c-geometry: #5eb89a;
+  --c-number-theory: #c97b9b;
+  --c-math: #8eb4c4;
   --serif: 'Cormorant Garamond', 'Songti SC', 'STSong', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
   --sans: 'Source Sans 3', 'PingFang SC', 'Hiragino Sans', 'Yu Gothic UI', sans-serif;
 }
