@@ -75,6 +75,10 @@ const pauli = computed(() => people.value.find((item) => item.id === 'pauli'))
 const fermi = computed(() => people.value.find((item) => item.id === 'fermi'))
 const heisenberg = computed(() => people.value.find((item) => item.id === 'heisenberg'))
 const dirac = computed(() => people.value.find((item) => item.id === 'dirac'))
+
+const mendel = computed(() => people.value.find((item) => item.id === 'mendel'))
+const crick = computed(() => people.value.find((item) => item.id === 'crick'))
+const watson = computed(() => people.value.find((item) => item.id === 'watson'))
 </script>
 
 <template>
@@ -122,6 +126,11 @@ const dirac = computed(() => people.value.find((item) => item.id === 'dirac'))
       <PhilosopherCard v-if="fermi" class="slot-fermi" :person="fermi" />
       <PhilosopherCard v-if="heisenberg" class="slot-heisenberg" :person="heisenberg" />
       <PhilosopherCard v-if="dirac" class="slot-dirac" :person="dirac" />
+    </div>
+    <div v-else-if="schoolId === 'molecularBiology'" class="people genetics-grid">
+      <PhilosopherCard v-if="mendel" class="slot-mendel" :person="mendel" />
+      <PhilosopherCard v-if="crick" class="slot-crick" :person="crick" />
+      <PhilosopherCard v-if="watson" class="slot-watson" :person="watson" />
     </div>
     <div
       v-else
@@ -354,6 +363,16 @@ h2 {
 
 .slot-dirac {
   grid-area: dirac;
+}
+
+.genetics-grid {
+  gap: 4px 10px;
+}
+
+.slot-mendel,
+.slot-crick,
+.slot-watson {
+  min-width: 0;
 }
 
 .nested {

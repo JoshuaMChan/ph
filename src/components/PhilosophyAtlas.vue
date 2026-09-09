@@ -871,7 +871,7 @@ watch(activeDomain, () => void nextTick(measure))
     '. . thermodynamics statisticalPhysics . quantumMechanics quantumFieldTheory'
     '. . quantitativeChemistry microscopicMatter periodicTable nuclearPhysics quantumChemistry'
     '. . physiology microbiology . . .'
-    '. . evolution molecularBiology . . .';
+    '. . evolution molecularBiology molecularBiology molecularBiology molecularBiology';
   gap: 6px var(--gutter-x);
   margin-left: var(--science-left, 0px);
   width: max-content;
@@ -948,6 +948,40 @@ watch(activeDomain, () => void nextTick(measure))
 
 .science-atlas #molecularBiology {
   grid-area: molecularBiology;
+  display: grid;
+  grid-template-columns: subgrid;
+  align-items: start;
+}
+
+.science-atlas #molecularBiology :deep(.school) {
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-column: 1 / -1;
+  width: auto;
+  min-width: 0;
+}
+
+.science-atlas #molecularBiology :deep(.head) {
+  grid-column: 1 / -1;
+}
+
+.science-atlas #molecularBiology :deep(.genetics-grid) {
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-column: 1 / -1;
+  align-items: start;
+}
+
+.science-atlas #molecularBiology :deep(.slot-mendel) {
+  grid-column: 1;
+}
+
+.science-atlas #molecularBiology :deep(.slot-crick) {
+  grid-column: 3;
+}
+
+.science-atlas #molecularBiology :deep(.slot-watson) {
+  grid-column: 4;
 }
 
 .graph.domain-science .philosophy-bar {
