@@ -328,13 +328,25 @@ function curve(
 
   // Approach the political box from the left
   if (fromSide === 'bottom' && toSide === 'left') {
-    // Same-row rightward (e.g. Galileo → Newton): drop below, then across into left
     if (x2 > x1) {
-      const down = Math.max(y1, y2) + 28
-      return `M ${x1} ${y1} C ${x1} ${down}, ${x2} ${down}, ${x2} ${y2}`
+      // Tip faces right at (x2, y2): when coming from above, never sag below y2
+      // (same floor rule as philosophy → science). Same-row: arc above, not under.
+      if (Math.abs(dy) < 40) {
+        const up = Math.min(y1, y2) - 28
+        return `M ${x1} ${y1} C ${x1} ${up}, ${x2} ${up}, ${x2} ${y2}`
+      }
+      if (y1 <= y2) {
+        const midY = y1 + (y2 - y1) * 0.55
+        const run = Math.max(28, dx * 0.4)
+        return `M ${x1} ${y1} C ${x1} ${midY}, ${x2 - run} ${y2}, ${x2} ${y2}`
+      }
+      const run = Math.max(28, dx * 0.4)
+      return `M ${x1} ${y1} C ${x1} ${y2}, ${x2 - run} ${y2}, ${x2} ${y2}`
     }
     const midY = y1 + (y2 - y1) * 0.65
-    return `M ${x1} ${y1} C ${x1} ${midY}, ${x1} ${y2}, ${x2} ${y2}`
+    // Clamp so a descending stroke still ends on the tip line, not under it.
+    const c1y = y1 <= y2 ? Math.min(midY, y2) : midY
+    return `M ${x1} ${y1} C ${x1} ${c1y}, ${x1} ${y2}, ${x2} ${y2}`
   }
 
   // Branch upward into science from below

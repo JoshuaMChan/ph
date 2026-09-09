@@ -314,6 +314,21 @@ function onLeave() {
   grid-template-rows: repeat(4, 1fr);
   pointer-events: none;
   z-index: 0;
+  /* Soft left lead-in so the four rails don't start as a hard cut. */
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    rgba(0, 0, 0, 0.35) 28px,
+    #000 64px,
+    #000 100%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    rgba(0, 0, 0, 0.35) 28px,
+    #000 64px,
+    #000 100%
+  );
 }
 
 .rail {
@@ -327,7 +342,12 @@ function onLeave() {
   right: 0;
   top: 50%;
   height: 1px;
-  background: color-mix(in srgb, var(--lane) 28%, transparent);
+  background: linear-gradient(
+    90deg,
+    transparent 0,
+    color-mix(in srgb, var(--lane) 28%, transparent) 64px,
+    color-mix(in srgb, var(--lane) 28%, transparent)
+  );
   transition:
     height 0.18s ease,
     background 0.18s ease,
@@ -336,7 +356,12 @@ function onLeave() {
 
 .rail.is-focus::before {
   height: 2px;
-  background: color-mix(in srgb, var(--lane) 78%, transparent);
+  background: linear-gradient(
+    90deg,
+    transparent 0,
+    color-mix(in srgb, var(--lane) 78%, transparent) 64px,
+    color-mix(in srgb, var(--lane) 78%, transparent)
+  );
   box-shadow: 0 0 16px color-mix(in srgb, var(--lane) 40%, transparent);
 }
 
