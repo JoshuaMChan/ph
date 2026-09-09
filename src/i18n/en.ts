@@ -100,12 +100,6 @@ const en = {
     geometry: 'Geometry & Topology',
     numberTheory: 'Number Theory',
   },
-  mathEra: {
-    ancient: 'Classical',
-    earlyModern: 'Early modern',
-    foundations: 'Foundations',
-    modern: 'Modern',
-  },
   math: {
     hint: 'A lit point on an axis means that person advanced that field',
     timeAxis: 'Time',

@@ -100,12 +100,6 @@ const ja = {
     geometry: '幾何と位相',
     numberTheory: '数論',
   },
-  mathEra: {
-    ancient: '古典',
-    earlyModern: '近世初期',
-    foundations: '基礎固め',
-    modern: '現代',
-  },
   math: {
     hint: '軸上の点はその人物が進めた分野を示す',
     timeAxis: '時間',

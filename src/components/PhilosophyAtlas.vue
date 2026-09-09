@@ -194,7 +194,7 @@ function captureSlotGeom(rootEl: HTMLElement) {
     return
   }
 
-  // Math domain: keep the philosophy band; only grow if content needs more room.
+  // Math domain: keep the philosophy band; science bar starts at Newton.
   const atlas = rootEl.querySelector('.math-atlas') as HTMLElement | null
   if (!atlas) return
 
@@ -219,11 +219,30 @@ function captureSlotGeom(rootEl: HTMLElement) {
     atlasRight - philosophyLeft,
   )
 
+  // Align collapsed natural-science bar with Newton's column.
+  const newtonNode = rootEl.querySelector(
+    '.math-atlas [data-node="newton"]',
+  ) as HTMLElement | null
+  const newtonCol =
+    (newtonNode?.closest('.math-col') as HTMLElement | null) ?? newtonNode
+  const scienceLeft = newtonCol
+    ? Math.max(0, Math.round(relLeft(newtonCol)))
+    : slotGeom.value.scienceLeft
+  const sciBar = rootEl.querySelector('[data-node="science-bar"]')
+  const sciBarW = sciBar
+    ? Math.round((sciBar as HTMLElement).offsetWidth)
+    : 0
+  const scienceWidth = Math.max(
+    sciBarW,
+    atlasRight - scienceLeft,
+    philosophyLeft + philosophyWidth - scienceLeft,
+  )
+
   setSlotGeom({
     mathLeft,
     mathWidth,
-    scienceLeft: slotGeom.value.scienceLeft,
-    scienceWidth: slotGeom.value.scienceWidth,
+    scienceLeft,
+    scienceWidth,
     philosophyLeft,
     philosophyWidth,
   })
@@ -302,18 +321,16 @@ function curve(
       const up = Math.min(y1, y2) - 28
       return `M ${x1} ${y1} C ${x1} ${up}, ${x2} ${up}, ${x2} ${y2}`
     }
-    // From below into a box's left edge (scholasticism → science-bar, etc.):
-    // soft quarter-turn instead of a sharp elbow.
+    // From below into a box's left edge (scholasticism / philosophy-bar → science-bar):
+    // one continuous cubic — rise then settle horizontally into the target.
     if (y2 < y1) {
-      const r = Math.min(56, Math.abs(dx) * 0.5, Math.abs(dy) * 0.45)
-      const cornerY = y2 + r
-      const cornerX = x1 + Math.min(r, Math.max(0, dx))
-      // Prefer rising near the start, then sweeping right into the target.
+      const rise = Math.max(36, Math.abs(dy) * 0.62)
+      const run = Math.max(28, Math.abs(dx) * 0.42)
       if (x2 >= x1) {
-        return `M ${x1} ${y1} L ${x1} ${cornerY} C ${x1} ${y2}, ${x1} ${y2}, ${cornerX} ${y2} L ${x2} ${y2}`
+        return `M ${x1} ${y1} C ${x1} ${y1 - rise}, ${x2 - run} ${y2}, ${x2} ${y2}`
       }
-      const elbowX = x2 - 28
-      return `M ${x1} ${y1} C ${x1} ${y1 + dy * 0.45}, ${elbowX} ${y2 + r}, ${elbowX} ${y2} L ${x2} ${y2}`
+      const elbowX = x2 - Math.min(36, Math.abs(dx) * 0.35)
+      return `M ${x1} ${y1} C ${x1} ${y1 - rise * 0.55}, ${elbowX} ${y2 + Math.min(40, Math.abs(dy) * 0.35)}, ${elbowX} ${y2} L ${x2} ${y2}`
     }
     const midY = y1 + (y2 - y1) * 0.55
     return `M ${x1} ${y1} C ${x1} ${midY}, ${x1} ${y2}, ${x2} ${y2}`
@@ -528,14 +545,14 @@ watch(activeDomain, () => void nextTick(measure))
             <marker
               id="arrow"
               viewBox="0 0 10 10"
-              refX="9"
+              refX="8.6"
               refY="5"
-              markerWidth="10"
-              markerHeight="10"
+              markerWidth="9"
+              markerHeight="9"
               markerUnits="userSpaceOnUse"
               orient="auto"
             >
-              <path d="M 1 1.2 L 9 5 L 1 8.8 z" fill="context-stroke" />
+              <path d="M 1.6 2 L 8.4 5 L 1.6 8 Z" fill="context-stroke" />
             </marker>
           </defs>
           <path

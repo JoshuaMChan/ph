@@ -100,12 +100,6 @@ const zh = {
     geometry: '几何与拓扑学',
     numberTheory: '数论',
   },
-  mathEra: {
-    ancient: '古典',
-    earlyModern: '近代早期',
-    foundations: '奠基期',
-    modern: '现代',
-  },
   math: {
     hint: '四点落在哪条轴上，便推进了哪个领域',
     timeAxis: '时间',
