@@ -289,16 +289,15 @@ function curve(
       const up = Math.min(y1, y2) - 28
       return `M ${x1} ${y1} C ${x1} ${up}, ${x2} ${up}, ${x2} ${y2}`
     }
-    // From below into a box's left edge (scholasticism / philosophy-bar → science-bar):
-    // rise toward the target, then enter horizontally from the left (tip faces right).
+    // Birth point → left end of the rightward arrowhead: rise, then horizontal in.
     if (y2 < y1) {
-      const run = Math.max(28, Math.abs(dx) * 0.7)
+      const run = Math.max(20, Math.abs(dx) * 0.55)
       if (x2 >= x1) {
         const midY = y1 + (y2 - y1) * 0.55
         return `M ${x1} ${y1} C ${x1} ${midY}, ${x2 - run} ${y2}, ${x2} ${y2}`
       }
       const elbowX = x2 - Math.min(36, Math.max(16, Math.abs(dx) * 0.35))
-      return `M ${x1} ${y1} C ${x1} ${y1 + dy * 0.45}, ${elbowX} ${y2}, ${elbowX} ${y2} L ${x2} ${y2}`
+      return `M ${x1} ${y1} C ${x1} ${y1 + dy * 0.45}, ${elbowX} ${y2}, ${x2} ${y2}`
     }
     const midY = y1 + (y2 - y1) * 0.55
     return `M ${x1} ${y1} C ${x1} ${midY}, ${x1} ${y2}, ${x2} ${y2}`
@@ -420,6 +419,9 @@ function measureLinks() {
   const root = rootEl.getBoundingClientRect()
   canvas.value = { w: rootEl.offsetWidth, h: rootEl.offsetHeight }
 
+  // Marker tip sits to the right of the path end (refX = arrow base / left end).
+  const arrowTip = 7
+
   links.value = graphEdges.flatMap((edge) => {
     const a = rootEl.querySelector(`[data-node="${edge.from}"]`)
     const b = rootEl.querySelector(`[data-node="${edge.to}"]`)
@@ -435,7 +437,7 @@ function measureLinks() {
       start[0] = end[0] - forkNudge
     }
     if (edge.from === 'philosophy-bar' && edge.to === 'science-bar') {
-      // Leave philosophy a bit left of the science bar so the cubic has room to bend.
+      // Birth under the science bar, left enough for a soft rise into the arrow.
       start[0] = end[0] - 52
     }
     if (
@@ -458,6 +460,10 @@ function measureLinks() {
     if (edge.viaCluster) {
       const cluster = rootEl.querySelector(`[data-node="${edge.viaCluster}"]`)
       if (cluster) start[0] = box(cluster, root).right
+    }
+    // Curve ends at the left end of the rightward arrow; tip reaches the target.
+    if (toSide === 'left') {
+      end[0] -= arrowTip
     }
     return [
       {
@@ -547,7 +553,7 @@ watch(activeDomain, () => void nextTick(measure))
             <marker
               id="arrow"
               viewBox="0 0 10 10"
-              refX="8.6"
+              refX="1.6"
               refY="5"
               markerWidth="9"
               markerHeight="9"

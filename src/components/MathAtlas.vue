@@ -413,15 +413,9 @@ function onLeave() {
   display: flex;
   justify-content: center;
   padding: 10px 0 4px;
-  border-top: 1px solid rgba(212, 184, 122, 0.12);
   min-height: var(--card-block-h);
   box-sizing: border-box;
   overflow: visible;
-  transition: border-top-color 0.16s ease;
-}
-
-.math-col.is-hovered .who {
-  border-top-color: rgba(212, 184, 122, 0.45);
 }
 
 @media (max-width: 720px) {
