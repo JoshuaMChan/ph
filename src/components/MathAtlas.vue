@@ -283,12 +283,7 @@ function onLeave() {
   white-space: nowrap;
   transition:
     color 0.18s ease,
-    filter 0.18s ease,
-    transform 0.18s ease;
-}
-
-.math-label.is-focus {
-  transform: translateX(2px);
+    filter 0.18s ease;
 }
 
 .math-label.is-focus .lane-name {
@@ -300,22 +295,25 @@ function onLeave() {
 
 .math-label.is-focus .lane-tick {
   opacity: 1;
-  width: 16px;
+  transform: scaleX(1);
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--lane) 35%, transparent),
     0 0 14px color-mix(in srgb, var(--lane) 60%, transparent);
 }
 
 .lane-tick {
-  width: 11px;
+  /* Fixed slot so focus never changes sticky column width (avoids layout jitter). */
+  width: 16px;
   height: 2px;
   border-radius: 999px;
   background: var(--lane);
   opacity: 0.9;
-  flex: 0 0 auto;
+  flex: 0 0 16px;
+  transform: scaleX(0.7);
+  transform-origin: left center;
   box-shadow: 0 0 10px color-mix(in srgb, var(--lane) 40%, transparent);
   transition:
-    width 0.18s ease,
+    transform 0.18s ease,
     opacity 0.18s ease,
     box-shadow 0.18s ease;
 }
