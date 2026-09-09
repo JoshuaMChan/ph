@@ -4,9 +4,14 @@ import { useI18n } from 'vue-i18n'
 import type { Philosopher } from '../types'
 import { formatLifespan } from '../utils/dates'
 
-const props = defineProps<{
-  person: Philosopher
-}>()
+const props = withDefaults(
+  defineProps<{
+    person: Philosopher
+    /** Show quote tooltip when available (off in math atlas). */
+    quotes?: boolean
+  }>(),
+  { quotes: true },
+)
 
 const { t, te, locale } = useI18n()
 
@@ -15,6 +20,7 @@ const portraitSrc = computed(
   () => import.meta.env.BASE_URL + props.person.portrait.replace(/^\/+/, ''),
 )
 const quote = computed(() => {
+  if (!props.quotes) return ''
   const key = 'quote.' + props.person.id
   return te(key, locale.value) ? t(key, locale.value) : ''
 })
