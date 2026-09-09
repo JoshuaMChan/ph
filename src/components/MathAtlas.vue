@@ -213,14 +213,17 @@ function onLeave() {
 .math-labels::before {
   content: '';
   position: absolute;
-  inset: 8% auto 18% 0;
+  top: 0;
+  left: 0;
+  height: var(--marks-h);
   width: 2px;
   border-radius: 2px;
   background: linear-gradient(
     180deg,
-    transparent,
-    rgba(212, 184, 122, 0.28),
-    transparent
+    transparent 0%,
+    rgba(212, 184, 122, 0.28) 14%,
+    rgba(212, 184, 122, 0.28) 86%,
+    transparent 100%
   );
   opacity: 0.9;
 }

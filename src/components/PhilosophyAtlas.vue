@@ -280,6 +280,30 @@ function curve(
 ) {
   const dx = x2 - x1
   const dy = y2 - y1
+
+  // Branch upward into the science lane first — even short gaps must curve
+  // (philosophy-bar → science-bar sits close; a straight slash looks stiff).
+  if (fromSide === 'top' && toSide === 'left') {
+    // Same-row rightward from a portrait top: rise above, then into left
+    if (x2 > x1 && y2 >= y1 - 40) {
+      const up = Math.min(y1, y2) - 28
+      return `M ${x1} ${y1} C ${x1} ${up}, ${x2} ${up}, ${x2} ${y2}`
+    }
+    // From below into a box's left edge (scholasticism / philosophy-bar → science-bar):
+    // leave vertically, settle horizontally — continuous cubic, no elbow.
+    if (y2 < y1) {
+      const rise = Math.max(28, Math.abs(dy) * 0.9)
+      const run = Math.max(24, Math.abs(dx) * 0.65)
+      if (x2 >= x1) {
+        return `M ${x1} ${y1} C ${x1} ${y1 - rise}, ${x2 - run} ${y2}, ${x2} ${y2}`
+      }
+      const elbowX = x2 - Math.min(36, Math.max(16, Math.abs(dx) * 0.35))
+      return `M ${x1} ${y1} C ${x1} ${y1 - rise * 0.55}, ${elbowX} ${y2 + Math.min(40, Math.abs(dy) * 0.35)}, ${elbowX} ${y2} L ${x2} ${y2}`
+    }
+    const midY = y1 + (y2 - y1) * 0.55
+    return `M ${x1} ${y1} C ${x1} ${midY}, ${x1} ${y2}, ${x2} ${y2}`
+  }
+
   if (Math.hypot(dx, dy) < 56) {
     return `M ${x1} ${y1} L ${x2} ${y2}`
   }
@@ -311,28 +335,6 @@ function curve(
       return `M ${x1} ${y1} C ${x1} ${down}, ${x2} ${down}, ${x2} ${y2}`
     }
     const midY = y1 + (y2 - y1) * 0.65
-    return `M ${x1} ${y1} C ${x1} ${midY}, ${x1} ${y2}, ${x2} ${y2}`
-  }
-
-  // Branch upward into the science lane: go up, then across into the left edge
-  if (fromSide === 'top' && toSide === 'left') {
-    // Same-row rightward from a portrait top: rise above, then into left
-    if (x2 > x1 && y2 >= y1 - 40) {
-      const up = Math.min(y1, y2) - 28
-      return `M ${x1} ${y1} C ${x1} ${up}, ${x2} ${up}, ${x2} ${y2}`
-    }
-    // From below into a box's left edge (scholasticism / philosophy-bar → science-bar):
-    // one continuous cubic — rise then settle horizontally into the target.
-    if (y2 < y1) {
-      const rise = Math.max(36, Math.abs(dy) * 0.62)
-      const run = Math.max(28, Math.abs(dx) * 0.42)
-      if (x2 >= x1) {
-        return `M ${x1} ${y1} C ${x1} ${y1 - rise}, ${x2 - run} ${y2}, ${x2} ${y2}`
-      }
-      const elbowX = x2 - Math.min(36, Math.abs(dx) * 0.35)
-      return `M ${x1} ${y1} C ${x1} ${y1 - rise * 0.55}, ${elbowX} ${y2 + Math.min(40, Math.abs(dy) * 0.35)}, ${elbowX} ${y2} L ${x2} ${y2}`
-    }
-    const midY = y1 + (y2 - y1) * 0.55
     return `M ${x1} ${y1} C ${x1} ${midY}, ${x1} ${y2}, ${x2} ${y2}`
   }
 
@@ -433,8 +435,8 @@ function measureLinks() {
       start[0] = end[0] - forkNudge
     }
     if (edge.from === 'philosophy-bar' && edge.to === 'science-bar') {
-      // Mid-way fork: leave philosophy bar under the science bar's left edge.
-      start[0] = end[0] - forkNudge
+      // Leave philosophy a bit left of the science bar so the cubic has room to bend.
+      start[0] = end[0] - 52
     }
     if (
       edge.from === 'philosophy-bar' &&
