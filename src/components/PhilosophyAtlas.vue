@@ -290,15 +290,15 @@ function curve(
       return `M ${x1} ${y1} C ${x1} ${up}, ${x2} ${up}, ${x2} ${y2}`
     }
     // From below into a box's left edge (scholasticism / philosophy-bar → science-bar):
-    // leave vertically, settle horizontally — continuous cubic, no elbow.
+    // rise toward the target, then enter horizontally from the left (tip faces right).
     if (y2 < y1) {
-      const rise = Math.max(28, Math.abs(dy) * 0.9)
-      const run = Math.max(24, Math.abs(dx) * 0.65)
+      const run = Math.max(28, Math.abs(dx) * 0.7)
       if (x2 >= x1) {
-        return `M ${x1} ${y1} C ${x1} ${y1 - rise}, ${x2 - run} ${y2}, ${x2} ${y2}`
+        const midY = y1 + (y2 - y1) * 0.55
+        return `M ${x1} ${y1} C ${x1} ${midY}, ${x2 - run} ${y2}, ${x2} ${y2}`
       }
       const elbowX = x2 - Math.min(36, Math.max(16, Math.abs(dx) * 0.35))
-      return `M ${x1} ${y1} C ${x1} ${y1 - rise * 0.55}, ${elbowX} ${y2 + Math.min(40, Math.abs(dy) * 0.35)}, ${elbowX} ${y2} L ${x2} ${y2}`
+      return `M ${x1} ${y1} C ${x1} ${y1 + dy * 0.45}, ${elbowX} ${y2}, ${elbowX} ${y2} L ${x2} ${y2}`
     }
     const midY = y1 + (y2 - y1) * 0.55
     return `M ${x1} ${y1} C ${x1} ${midY}, ${x1} ${y2}, ${x2} ${y2}`
@@ -552,7 +552,7 @@ watch(activeDomain, () => void nextTick(measure))
               markerWidth="9"
               markerHeight="9"
               markerUnits="userSpaceOnUse"
-              orient="auto"
+              orient="0"
             >
               <path d="M 1.6 2 L 8.4 5 L 1.6 8 Z" fill="context-stroke" />
             </marker>
