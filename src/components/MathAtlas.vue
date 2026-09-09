@@ -10,7 +10,6 @@ import {
   type Mathematician,
 } from '../data/mathematicians'
 import type { Philosopher } from '../types'
-import { formatYear } from '../utils/dates'
 import PhilosopherCard from './PhilosopherCard.vue'
 
 const { t } = useI18n()
@@ -85,19 +84,7 @@ function onLeave() {
 <template>
   <section class="math-atlas" data-node="math-atlas" aria-label="Mathematics">
     <header class="math-head">
-      <div class="math-title-row">
-        <h2>{{ t('domain.math') }}</h2>
-        <p class="math-hint">{{ t('math.hint') }}</p>
-      </div>
-      <ul class="math-legend" aria-hidden="true">
-        <li v-for="d in domains" :key="d" class="legend-item">
-          <span
-            class="legend-dot"
-            :style="{ background: mathDomainAccent[d] }"
-          />
-          <span>{{ t(`mathDomain.${d}`) }}</span>
-        </li>
-      </ul>
+      <h2>{{ t('domain.math') }}</h2>
     </header>
 
     <div class="math-board">
@@ -168,16 +155,6 @@ function onLeave() {
         </div>
       </div>
     </div>
-
-    <p class="math-axis-caption">
-      <span class="axis-arrow" aria-hidden="true">←</span>
-      {{ t('math.timeAxis') }}
-      <span class="axis-arrow" aria-hidden="true">→</span>
-      <span class="axis-range"
-        >{{ formatYear(people[0].birth.year) }} –
-        {{ formatYear(people[people.length - 1].birth.year) }}</span
-      >
-    </p>
   </section>
 </template>
 
@@ -200,20 +177,7 @@ function onLeave() {
 }
 
 .math-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 8px 24px;
   padding: 0 4px;
-  max-width: 100%;
-}
-
-.math-title-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 8px 16px;
 }
 
 .math-head h2 {
@@ -223,38 +187,6 @@ function onLeave() {
   font-weight: 600;
   letter-spacing: 0.18em;
   color: var(--cream);
-}
-
-.math-hint {
-  margin: 0;
-  font-size: 0.78rem;
-  letter-spacing: 0.06em;
-  color: var(--muted);
-}
-
-.math-legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 14px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.legend-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.72rem;
-  letter-spacing: 0.04em;
-  color: var(--muted);
-}
-
-.legend-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12);
 }
 
 .math-board {
@@ -475,29 +407,6 @@ function onLeave() {
 
 .math-col.is-hovered .who {
   border-top-color: rgba(212, 184, 122, 0.4);
-}
-
-.math-axis-caption {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 2px 0 0;
-  padding: 0 4px;
-  font-size: 0.7rem;
-  letter-spacing: 0.14em;
-  color: var(--muted);
-}
-
-.axis-arrow {
-  color: var(--gold);
-  opacity: 0.7;
-}
-
-.axis-range {
-  margin-left: 4px;
-  letter-spacing: 0.04em;
-  color: var(--gold-2);
-  opacity: 0.85;
 }
 
 @media (max-width: 720px) {

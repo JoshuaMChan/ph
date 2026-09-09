@@ -1,10 +1,10 @@
 const en = {
   site: {
     title: 'How We Get Here',
-    chapter: 'Philosophy & Mathematics',
+    chapter: 'Philosophy · Math · Science',
     kicker: 'A brief history you can walk',
     subtitle:
-      'Philosophy branches; mathematics runs four domain axes, people advancing left to right in time',
+      'Mathematics runs parallel to philosophy from the start; after the Middle Ages, natural science branches off, beginning with astronomy',
   },
   nav: {
     greece: 'Greece',
