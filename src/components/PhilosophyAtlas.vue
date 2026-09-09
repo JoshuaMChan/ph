@@ -193,7 +193,7 @@ function captureSlotGeom(rootEl: HTMLElement) {
     return
   }
 
-  // Math domain: keep left edges stable; stretch philosophy bar to atlas right.
+  // Math domain: keep the philosophy band; only grow if content needs more room.
   const atlas = rootEl.querySelector('.math-atlas') as HTMLElement | null
   if (!atlas) return
 
@@ -204,15 +204,19 @@ function captureSlotGeom(rootEl: HTMLElement) {
   const atlasRight = Math.round(relRight(atlas))
   const mathWidth = Math.max(
     slotGeom.value.mathWidth,
+    slotGeom.value.philosophyWidth,
     atlasRight - mathLeft,
-    Math.round(atlas.offsetWidth),
   )
 
   const philosophyLeft =
     slotGeom.value.philosophyLeft > 0
       ? slotGeom.value.philosophyLeft
       : mathLeft
-  const philosophyWidth = Math.max(0, atlasRight - philosophyLeft)
+  const philosophyWidth = Math.max(
+    slotGeom.value.philosophyWidth,
+    mathWidth,
+    atlasRight - philosophyLeft,
+  )
 
   setSlotGeom({
     mathLeft,
@@ -554,11 +558,12 @@ watch(activeDomain, () => void nextTick(measure))
               type="button"
               data-node="math-bar"
               class="domain-bar math-bar"
-              :title="t('ui.openDomain')"
+              :title="t('domain.math')"
+              :aria-label="t('domain.math')"
               @click="openDomain('math')"
             >
               <span class="domain-bar-label">{{ t('domain.math') }}</span>
-              <span class="domain-bar-hint">{{ t('ui.openDomain') }}</span>
+              <span class="domain-bar-hint" aria-hidden="true">↓</span>
             </button>
 
             <button
@@ -566,11 +571,12 @@ watch(activeDomain, () => void nextTick(measure))
               type="button"
               data-node="science-bar"
               class="domain-bar science-bar"
-              :title="t('ui.openDomain')"
+              :title="t('domain.science')"
+              :aria-label="t('domain.science')"
               @click="openDomain('science')"
             >
               <span class="domain-bar-label">{{ t('domain.science') }}</span>
-              <span class="domain-bar-hint">{{ t('ui.openDomain') }}</span>
+              <span class="domain-bar-hint" aria-hidden="true">↓</span>
             </button>
 
             <article id="presocratic" data-node="presocratic" class="node">
@@ -785,11 +791,12 @@ watch(activeDomain, () => void nextTick(measure))
             type="button"
             data-node="philosophy-bar"
             class="domain-bar philosophy-bar"
-            :title="t('ui.openDomain')"
+            :title="t('domain.philosophy')"
+            :aria-label="t('domain.philosophy')"
             @click="openDomain('philosophy')"
           >
             <span class="domain-bar-label">{{ t('domain.philosophy') }}</span>
-            <span class="domain-bar-hint">{{ t('ui.openDomain') }}</span>
+            <span class="domain-bar-hint" aria-hidden="true">↑</span>
           </button>
         </template>
 
@@ -800,11 +807,12 @@ watch(activeDomain, () => void nextTick(measure))
             type="button"
             data-node="philosophy-bar"
             class="domain-bar philosophy-bar"
-            :title="t('ui.openDomain')"
+            :title="t('domain.philosophy')"
+            :aria-label="t('domain.philosophy')"
             @click="openDomain('philosophy')"
           >
             <span class="domain-bar-label">{{ t('domain.philosophy') }}</span>
-            <span class="domain-bar-hint">{{ t('ui.openDomain') }}</span>
+            <span class="domain-bar-hint" aria-hidden="true">↑</span>
           </button>
         </template>
       </main>
@@ -1137,29 +1145,21 @@ watch(activeDomain, () => void nextTick(measure))
   font-size: 0.88rem;
   font-weight: 600;
   letter-spacing: 0.12em;
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.28em;
-  text-decoration-color: color-mix(in srgb, currentColor 55%, transparent);
-  transition: text-decoration-color 0.15s ease;
-}
-
-.domain-bar:hover .domain-bar-label {
-  text-decoration-color: currentColor;
 }
 
 .domain-bar-hint {
   position: sticky;
   left: calc(max(40px, env(safe-area-inset-left)) + 4.5em);
   z-index: 1;
-  font-size: 0.68rem;
-  letter-spacing: 0.08em;
-  opacity: 0.72;
+  font-size: 0.95rem;
+  line-height: 1;
+  letter-spacing: 0;
+  opacity: 0.75;
   white-space: nowrap;
 }
 
 .domain-bar:hover .domain-bar-hint {
-  opacity: 0.95;
+  opacity: 1;
 }
 
 .math-bar {

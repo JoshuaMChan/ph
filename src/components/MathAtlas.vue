@@ -181,13 +181,16 @@ function onLeave() {
   z-index: 3;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  justify-content: center;
+  gap: 14px;
   margin-left: var(--math-left, 0px);
-  width: max-content;
-  min-width: min(100%, var(--math-width, 0px));
+  /* At least as wide as the philosophy tree; grow if people need more room. */
+  width: max(var(--math-width, 0px), max-content);
+  min-width: var(--math-width, max-content);
+  max-width: none;
   flex: 1 1 auto;
   min-height: 0;
-  padding: 4px 0 0;
+  padding: 8px 0;
   box-sizing: border-box;
 }
 
@@ -206,11 +209,12 @@ function onLeave() {
 
 .math-board {
   display: grid;
-  grid-template-columns: max-content 1fr;
+  grid-template-columns: max-content minmax(0, 1fr);
   gap: 0 12px;
   align-items: stretch;
+  flex: 0 1 auto;
   min-height: 0;
-  flex: 1 1 auto;
+  width: 100%;
 }
 
 .math-labels {
@@ -277,6 +281,7 @@ function onLeave() {
 .math-scroll {
   position: relative;
   min-width: 0;
+  width: 100%;
   overflow: visible;
 }
 
@@ -321,9 +326,12 @@ function onLeave() {
   z-index: 1;
   display: flex;
   align-items: stretch;
-  gap: 10px;
-  width: max-content;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  min-width: max-content;
   min-height: 100%;
+  box-sizing: border-box;
 }
 
 .era-break {
