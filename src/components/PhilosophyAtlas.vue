@@ -1111,14 +1111,13 @@ watch(activeDomain, () => void nextTick(measure))
 
 .science-atlas #molecularBiology :deep(.slot-mendel) {
   grid-column: 1;
+  justify-self: start;
 }
 
-.science-atlas #molecularBiology :deep(.slot-crick) {
+/* Crick left-aligns with Curie (nuclearPhysics col); Watson sits tight beside him. */
+.science-atlas #molecularBiology :deep(.genetics-pair) {
   grid-column: 3;
-}
-
-.science-atlas #molecularBiology :deep(.slot-watson) {
-  grid-column: 4;
+  justify-self: start;
 }
 
 .graph.domain-science :deep(.math-bar) {

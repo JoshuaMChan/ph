@@ -129,8 +129,10 @@ const watson = computed(() => people.value.find((item) => item.id === 'watson'))
     </div>
     <div v-else-if="schoolId === 'molecularBiology'" class="people genetics-grid">
       <PhilosopherCard v-if="mendel" class="slot-mendel" :person="mendel" />
-      <PhilosopherCard v-if="crick" class="slot-crick" :person="crick" />
-      <PhilosopherCard v-if="watson" class="slot-watson" :person="watson" />
+      <div class="genetics-pair">
+        <PhilosopherCard v-if="crick" class="slot-crick" :person="crick" />
+        <PhilosopherCard v-if="watson" class="slot-watson" :person="watson" />
+      </div>
     </div>
     <div
       v-else
@@ -367,6 +369,14 @@ h2 {
 
 .genetics-grid {
   gap: 4px 10px;
+}
+
+.genetics-pair {
+  display: flex;
+  flex-direction: row;
+  align-items: start;
+  gap: 8px;
+  min-width: 0;
 }
 
 .slot-mendel,
