@@ -1,6 +1,6 @@
 <script setup lang="ts">
 defineProps<{
-  domain: 'philosophy' | 'science' | 'math'
+  domain: 'philosophy' | 'science' | 'math' | 'humanities'
   label: string
 }>()
 

@@ -55,6 +55,7 @@ const ja = {
     microbiology: '微生物学',
     evolution: '進化学',
     molecularBiology: '遺伝学',
+    economics: '経済学',
   },
   schoolTag: {
     greece: 'ギリシア',
