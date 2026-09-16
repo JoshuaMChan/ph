@@ -20,7 +20,7 @@ const politicalRegion = computed(() =>
   political.regionKeys.map((key) => t(`region.${key}`)).join(' · '),
 )
 
-type Domain = 'philosophy' | 'science' | 'math'
+type Domain = 'philosophy' | 'science' | 'math' | 'humanities'
 const activeDomain = ref<Domain>('philosophy')
 
 function openDomain(domain: Domain) {
@@ -80,6 +80,8 @@ const slotGeom = ref({
   mathWidth: 0,
   scienceLeft: 0,
   scienceWidth: 0,
+  humanitiesLeft: 0,
+  humanitiesWidth: 0,
   philosophyLeft: 0,
   philosophyWidth: 0,
 })
@@ -95,6 +97,11 @@ const slotVars = computed(() => ({
     slotGeom.value.scienceWidth > 0
       ? `${slotGeom.value.scienceWidth}px`
       : 'max-content',
+  '--humanities-left': `${slotGeom.value.humanitiesLeft}px`,
+  '--humanities-width':
+    slotGeom.value.humanitiesWidth > 0
+      ? `${slotGeom.value.humanitiesWidth}px`
+      : 'max-content',
   '--philosophy-left': `${slotGeom.value.philosophyLeft}px`,
   '--philosophy-width':
     slotGeom.value.philosophyWidth > 0
@@ -109,6 +116,8 @@ function setSlotGeom(next: typeof slotGeom.value) {
     Math.abs(prev.mathWidth - next.mathWidth) > 0.5 ||
     Math.abs(prev.scienceLeft - next.scienceLeft) > 0.5 ||
     Math.abs(prev.scienceWidth - next.scienceWidth) > 0.5 ||
+    Math.abs(prev.humanitiesLeft - next.humanitiesLeft) > 0.5 ||
+    Math.abs(prev.humanitiesWidth - next.humanitiesWidth) > 0.5 ||
     Math.abs(prev.philosophyLeft - next.philosophyLeft) > 0.5 ||
     Math.abs(prev.philosophyWidth - next.philosophyWidth) > 0.5
   ) {

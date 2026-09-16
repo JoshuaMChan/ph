@@ -114,4 +114,10 @@ defineEmits<{
   background: rgba(212, 184, 122, 0.08);
   color: var(--gold-2);
 }
+
+.humanities-bar {
+  border: 1px solid rgba(196, 160, 106, 0.42);
+  background: rgba(196, 160, 106, 0.1);
+  color: #e0c49a;
+}
 </style>
