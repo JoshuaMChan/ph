@@ -89,11 +89,13 @@ const en = {
     microbiology: 'Europe',
     evolution: 'Europe',
     molecularBiology: 'Europe · U.S.',
+    economics: 'Europe · U.S.',
   },
   domain: {
     philosophy: 'Philosophy',
     science: 'Natural Science',
     math: 'Mathematics',
+    humanities: 'Human Sciences',
   },
   mathDomain: {
     algebra: 'Algebra',
