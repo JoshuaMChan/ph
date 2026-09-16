@@ -120,7 +120,7 @@ const en = {
     split: 'The split',
     afterHegel: 'After Hegel, the story divides into great rivers',
     scienceBranch:
-      'Branches from medieval philosophy · the first independent line of natural science',
+      'Branches from the Greek three · the first independent line of natural science',
     mathParallel: 'Parallel to philosophy · four domain number lines',
   },
   epoch: {

@@ -119,7 +119,7 @@ const ja = {
     mergeAt: 'カントにおいて合流する',
     split: '分裂',
     afterHegel: 'ヘーゲルのあと、思想史はいくつかの大河に裂ける',
-    scienceBranch: '中世哲学から分岐 · 自然科学の最初の独立した支流',
+    scienceBranch: 'ギリシア三賢人から分岐 · 自然科学の最初の独立した支流',
     mathParallel: '哲学と並行 · 四本の分野数軸',
   },
   epoch: {

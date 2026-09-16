@@ -154,7 +154,8 @@ const watson = computed(() => people.value.find((item) => item.id === 'watson'))
             schoolId !== 'quantumChemistry' &&
             schoolId !== 'physiology' &&
             schoolId !== 'microbiology' &&
-            schoolId !== 'molecularBiology'),
+            schoolId !== 'molecularBiology' &&
+            schoolId !== 'economics'),
       }"
     >
       <PhilosopherCard v-for="item in people" :key="item.id" :person="item" />

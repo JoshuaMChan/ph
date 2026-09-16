@@ -135,9 +135,11 @@ function captureSlotGeom(rootEl: HTMLElement) {
 
   if (activeDomain.value === 'philosophy') {
     const modern = rootEl.querySelector('#modern')
+    const empiricism = rootEl.querySelector('#empiricism')
     const tree = rootEl.querySelector('.philosophy-atlas')
     const sciBar = rootEl.querySelector('[data-node="science-bar"]')
     const mathBar = rootEl.querySelector('[data-node="math-bar"]')
+    const humBar = rootEl.querySelector('[data-node="humanities-bar"]')
     if (!modern || !tree) return
 
     // Math co-originates with philosophy: bar starts at the tree's left edge.
@@ -150,18 +152,34 @@ function captureSlotGeom(rootEl: HTMLElement) {
     const mathLeft = philosophyLeft
     const mathWidth = Math.max(mathBarW, philosophyWidth, treeRight - mathLeft)
 
-    // Science still branches later (from modern / medieval band).
-    const scienceLeft = Math.max(0, Math.round(relLeft(modern)))
+    // Science left-aligns with rationalism; wire comes from greece (above).
+    const rationalism = rootEl.querySelector('#rationalism')
+    const scienceLeft = Math.max(
+      0,
+      Math.round(relLeft(rationalism ?? modern)),
+    )
     const sciBarW = sciBar
       ? Math.round((sciBar as HTMLElement).offsetWidth)
       : 0
     const scienceWidth = Math.max(sciBarW, treeRight - scienceLeft)
+
+    // Humanities forks from empiricism (same modern column, bar under the school row).
+    const humanitiesLeft = Math.max(
+      0,
+      Math.round(relLeft(empiricism ?? modern)),
+    )
+    const humBarW = humBar
+      ? Math.round((humBar as HTMLElement).offsetWidth)
+      : 0
+    const humanitiesWidth = Math.max(humBarW, treeRight - humanitiesLeft)
 
     setSlotGeom({
       mathLeft,
       mathWidth,
       scienceLeft,
       scienceWidth,
+      humanitiesLeft,
+      humanitiesWidth,
       philosophyLeft,
       philosophyWidth,
     })
@@ -197,6 +215,51 @@ function captureSlotGeom(rootEl: HTMLElement) {
       mathWidth: Math.max(slotGeom.value.mathWidth, philosophyWidth),
       scienceLeft,
       scienceWidth,
+      humanitiesLeft: slotGeom.value.humanitiesLeft,
+      humanitiesWidth: Math.max(
+        slotGeom.value.humanitiesWidth,
+        qftRight - (slotGeom.value.humanitiesLeft || scienceLeft),
+      ),
+      philosophyLeft,
+      philosophyWidth,
+    })
+    return
+  }
+
+  if (activeDomain.value === 'humanities') {
+    const atlas = rootEl.querySelector('.humanities-atlas') as HTMLElement | null
+    const economics = rootEl.querySelector('#economics') as HTMLElement | null
+    if (!atlas) return
+
+    const humanitiesLeft =
+      slotGeom.value.humanitiesLeft > 0
+        ? slotGeom.value.humanitiesLeft
+        : Math.max(0, Math.round(relLeft(economics ?? atlas)))
+    const atlasRight = Math.round(relRight(atlas))
+    const humanitiesWidth = Math.max(
+      slotGeom.value.humanitiesWidth,
+      atlasRight - humanitiesLeft,
+    )
+
+    const philosophyLeft =
+      slotGeom.value.philosophyLeft > 0
+        ? slotGeom.value.philosophyLeft
+        : 0
+    const philosophyWidth = Math.max(
+      slotGeom.value.philosophyWidth,
+      atlasRight - philosophyLeft,
+    )
+
+    setSlotGeom({
+      mathLeft: slotGeom.value.mathLeft,
+      mathWidth: Math.max(slotGeom.value.mathWidth, philosophyWidth),
+      scienceLeft: slotGeom.value.scienceLeft,
+      scienceWidth: Math.max(
+        slotGeom.value.scienceWidth,
+        atlasRight - (slotGeom.value.scienceLeft || humanitiesLeft),
+      ),
+      humanitiesLeft,
+      humanitiesWidth,
       philosophyLeft,
       philosophyWidth,
     })
@@ -252,6 +315,11 @@ function captureSlotGeom(rootEl: HTMLElement) {
     mathWidth,
     scienceLeft,
     scienceWidth,
+    humanitiesLeft: slotGeom.value.humanitiesLeft,
+    humanitiesWidth: Math.max(
+      slotGeom.value.humanitiesWidth,
+      atlasRight - (slotGeom.value.humanitiesLeft || scienceLeft),
+    ),
     philosophyLeft,
     philosophyWidth,
   })
@@ -462,6 +530,12 @@ function measureLinks() {
       start[0] = end[0] - 52
     }
     if (
+      (edge.from === 'empiricism' || edge.from === 'philosophy-bar') &&
+      edge.to === 'humanities-bar'
+    ) {
+      start[0] = end[0] - 52
+    }
+    if (
       edge.from === 'philosophy-bar' &&
       (edge.to === 'quantitativeChemistry' || edge.to === 'physiology')
     ) {
@@ -500,13 +574,11 @@ function measureLinks() {
 function measure() {
   const rootEl = graph.value
   if (!rootEl) return
-  if (activeDomain.value === 'math') {
-    captureSlotGeom(rootEl)
-    canvas.value = { w: rootEl.offsetWidth, h: rootEl.offsetHeight }
-    measureLinks()
-    return
-  }
-  if (activeDomain.value === 'science') {
+  if (
+    activeDomain.value === 'math' ||
+    activeDomain.value === 'science' ||
+    activeDomain.value === 'humanities'
+  ) {
     captureSlotGeom(rootEl)
     canvas.value = { w: rootEl.offsetWidth, h: rootEl.offsetHeight }
     measureLinks()
@@ -614,6 +686,12 @@ watch(activeDomain, () => void nextTick(measure))
               domain="science"
               :label="t('domain.science')"
               @open="openDomain('science')"
+            />
+
+            <DomainBar
+              domain="humanities"
+              :label="t('domain.humanities')"
+              @open="openDomain('humanities')"
             />
 
             <article id="presocratic" data-node="presocratic" class="node">
@@ -833,14 +911,47 @@ watch(activeDomain, () => void nextTick(measure))
             :label="t('domain.philosophy')"
             @open="openDomain('philosophy')"
           />
+          <DomainBar
+            domain="humanities"
+            :label="t('domain.humanities')"
+            @open="openDomain('humanities')"
+          />
         </template>
 
-        <template v-else>
+        <template v-else-if="activeDomain === 'humanities'">
+          <DomainBar
+            domain="math"
+            :label="t('domain.math')"
+            @open="openDomain('math')"
+          />
+          <DomainBar
+            domain="science"
+            :label="t('domain.science')"
+            @open="openDomain('science')"
+          />
+          <div class="humanities-atlas">
+            <article id="economics" data-node="economics" class="node">
+              <SchoolBlock school-id="economics" />
+            </article>
+          </div>
+          <DomainBar
+            domain="philosophy"
+            :label="t('domain.philosophy')"
+            @open="openDomain('philosophy')"
+          />
+        </template>
+
+        <template v-else-if="activeDomain === 'math'">
           <MathAtlas />
           <DomainBar
             domain="science"
             :label="t('domain.science')"
             @open="openDomain('science')"
+          />
+          <DomainBar
+            domain="humanities"
+            :label="t('domain.humanities')"
+            @open="openDomain('humanities')"
           />
           <DomainBar
             domain="philosophy"
@@ -871,7 +982,8 @@ watch(activeDomain, () => void nextTick(measure))
 }
 
 .viewport-math,
-.viewport-science {
+.viewport-science,
+.viewport-humanities {
   overflow-x: auto;
   overflow-y: hidden;
 }
@@ -891,12 +1003,22 @@ watch(activeDomain, () => void nextTick(measure))
     calc((100dvh - 12.5rem) / 16),
     var(--card-w-cap)
   );
+  --fit-humanities: clamp(
+    var(--card-w-floor),
+    calc((100dvh - 12.5rem) / 16),
+    var(--card-w-cap)
+  );
   --fit-philosophy: clamp(
     var(--card-w-floor),
     calc((100dvh - 11rem) / 14),
     var(--card-w-cap)
   );
-  --card-w: min(var(--fit-math), var(--fit-science), var(--fit-philosophy));
+  --card-w: min(
+    var(--fit-math),
+    var(--fit-science),
+    var(--fit-humanities),
+    var(--fit-philosophy)
+  );
   --info-h: 1.2rem;
   position: relative;
   display: flex;
@@ -954,12 +1076,13 @@ watch(activeDomain, () => void nextTick(measure))
   position: relative;
   display: grid;
   grid-template-columns: max-content max-content max-content max-content max-content max-content max-content max-content;
-  grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+  grid-template-rows: auto auto auto minmax(0, 1fr) auto auto;
   grid-template-areas:
     'epochOnto epochOnto epochOnto epochOnto epochEpist epochEpist epochContemp epochContemp'
     'math math math math math math math math'
     '. . . . science science science science'
     'presocratic greece hellenistic scholasticism modern classical lifeCol existCol'
+    '. . . . humanities humanities humanities humanities'
     '. . . . political political political political';
   gap: 8px var(--gutter-x);
   flex: 1 1 auto;
@@ -991,7 +1114,8 @@ watch(activeDomain, () => void nextTick(measure))
 }
 
 .graph.domain-science,
-.graph.domain-math {
+.graph.domain-math,
+.graph.domain-humanities {
   --gutter-x: 28px;
   gap: 4px;
   padding-top: 6px;
@@ -1129,7 +1253,8 @@ watch(activeDomain, () => void nextTick(measure))
   justify-self: start;
 }
 
-.graph.domain-science :deep(.math-bar) {
+.graph.domain-science :deep(.math-bar),
+.graph.domain-humanities :deep(.math-bar) {
   margin-left: var(--math-left, 0px);
   width: var(--math-width, max-content);
   min-width: var(--math-width, 0px);
@@ -1137,7 +1262,8 @@ watch(activeDomain, () => void nextTick(measure))
   box-sizing: border-box;
 }
 
-.graph.domain-math :deep(.science-bar) {
+.graph.domain-math :deep(.science-bar),
+.graph.domain-humanities :deep(.science-bar) {
   margin-left: var(--science-left, 0px);
   width: var(--science-width, max-content);
   min-width: var(--science-width, 0px);
@@ -1145,8 +1271,18 @@ watch(activeDomain, () => void nextTick(measure))
   box-sizing: border-box;
 }
 
+.graph.domain-science :deep(.humanities-bar),
+.graph.domain-math :deep(.humanities-bar) {
+  margin-left: var(--humanities-left, 0px);
+  width: var(--humanities-width, max-content);
+  min-width: var(--humanities-width, 0px);
+  flex: 0 0 auto;
+  box-sizing: border-box;
+}
+
 .graph.domain-science :deep(.philosophy-bar),
-.graph.domain-math :deep(.philosophy-bar) {
+.graph.domain-math :deep(.philosophy-bar),
+.graph.domain-humanities :deep(.philosophy-bar) {
   margin-left: var(--philosophy-left, 0px);
   width: var(--philosophy-width, max-content);
   min-width: var(--philosophy-width, 0px);
@@ -1164,6 +1300,30 @@ watch(activeDomain, () => void nextTick(measure))
   grid-area: science;
   justify-self: stretch;
   align-self: center;
+}
+
+.philosophy-atlas :deep(.humanities-bar) {
+  grid-area: humanities;
+  justify-self: stretch;
+  align-self: center;
+}
+
+.humanities-atlas {
+  --gutter-x: 28px;
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  margin-left: var(--humanities-left, 0px);
+  width: max(var(--humanities-width, 0px), max-content);
+  min-width: var(--humanities-width, max-content);
+  flex: 1 1 auto;
+  min-height: 0;
+  box-sizing: border-box;
+}
+
+.humanities-atlas #economics {
+  width: max-content;
 }
 
 .wires {
@@ -1419,12 +1579,22 @@ watch(activeDomain, () => void nextTick(measure))
       calc((100dvh - 11rem) / 16),
       var(--card-w-cap)
     );
+    --fit-humanities: clamp(
+      var(--card-w-floor),
+      calc((100dvh - 11rem) / 16),
+      var(--card-w-cap)
+    );
     --fit-philosophy: clamp(
       var(--card-w-floor),
       calc((100dvh - 9.5rem) / 14),
       var(--card-w-cap)
     );
-    --card-w: min(var(--fit-math), var(--fit-science), var(--fit-philosophy));
+    --card-w: min(
+      var(--fit-math),
+      var(--fit-science),
+      var(--fit-humanities),
+      var(--fit-philosophy)
+    );
     --info-h: 1.1rem;
     padding: 10px 32px 12px;
     padding-bottom: max(12px, env(safe-area-inset-bottom));
@@ -1434,7 +1604,8 @@ watch(activeDomain, () => void nextTick(measure))
   }
 
   .graph.domain-math,
-  .graph.domain-science {
+  .graph.domain-science,
+  .graph.domain-humanities {
     gap: 8px;
     padding-top: 4px;
     padding-bottom: max(6px, env(safe-area-inset-bottom));
@@ -1464,12 +1635,22 @@ watch(activeDomain, () => void nextTick(measure))
       calc((100dvh - 11rem) / 16),
       var(--card-w-cap)
     );
+    --fit-humanities: clamp(
+      var(--card-w-floor),
+      calc((100dvh - 11rem) / 16),
+      var(--card-w-cap)
+    );
     --fit-philosophy: clamp(
       var(--card-w-floor),
       calc((100dvh - 9.5rem) / 14),
       var(--card-w-cap)
     );
-    --card-w: min(var(--fit-math), var(--fit-science), var(--fit-philosophy));
+    --card-w: min(
+      var(--fit-math),
+      var(--fit-science),
+      var(--fit-humanities),
+      var(--fit-philosophy)
+    );
     --info-h: 1.15rem;
     height: auto;
     min-height: 100%;
@@ -1482,7 +1663,8 @@ watch(activeDomain, () => void nextTick(measure))
   }
 
   .graph.domain-math,
-  .graph.domain-science {
+  .graph.domain-science,
+  .graph.domain-humanities {
     height: 100%;
     min-height: 0;
     gap: 8px;
@@ -1491,7 +1673,8 @@ watch(activeDomain, () => void nextTick(measure))
   }
 
   .viewport-math,
-  .viewport-science {
+  .viewport-science,
+  .viewport-humanities {
     overflow-x: auto;
     overflow-y: hidden;
   }
@@ -1549,7 +1732,12 @@ watch(activeDomain, () => void nextTick(measure))
   .graph {
     --gutter-x: 16px;
     --card-w-cap: 42px;
-    --card-w: min(var(--fit-math), var(--fit-science), var(--fit-philosophy));
+    --card-w: min(
+      var(--fit-math),
+      var(--fit-science),
+      var(--fit-humanities),
+      var(--fit-philosophy)
+    );
     --info-h: 1.1rem;
     gap: 10px;
   }

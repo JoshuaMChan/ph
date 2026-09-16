@@ -33,9 +33,10 @@ export const graphEdges: GraphEdge[] = [
     fromSide: 'bottom',
     toSide: 'left',
   },
-  // Philosophy expanded: fork from medieval philosophy up into the science summary bar
+  // Philosophy expanded: fork from Greek three sages up into the science bar
+  // (bar still left-aligns with rationalism / modern column).
   {
-    from: 'scholasticism',
+    from: 'greece',
     to: 'science-bar',
     color: 'var(--c-astronomy)',
     fromSide: 'top',

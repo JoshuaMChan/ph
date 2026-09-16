@@ -119,7 +119,7 @@ const zh = {
     mergeAt: '合流于康德',
     split: '分裂',
     afterHegel: '黑格尔之后，思想史裂为几条大河',
-    scienceBranch: '自中世纪哲学分出 · 自然科学的第一条独立支线',
+    scienceBranch: '自希腊三贤分出 · 自然科学的第一条独立支线',
     mathParallel: '与哲学并行 · 四条领域数轴',
   },
   epoch: {
