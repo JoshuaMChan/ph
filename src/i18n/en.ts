@@ -55,6 +55,7 @@ const en = {
     microbiology: 'Microbiology',
     evolution: 'Evolution',
     molecularBiology: 'Genetics',
+    economics: 'Economics',
   },
   schoolTag: {
     greece: 'Greece',

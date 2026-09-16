@@ -55,6 +55,7 @@ const zh = {
     microbiology: '微生物学',
     evolution: '演化学',
     molecularBiology: '遗传学',
+    economics: '经济学',
   },
   schoolTag: {
     greece: '希腊',
@@ -88,11 +89,13 @@ const zh = {
     microbiology: '欧',
     evolution: '欧',
     molecularBiology: '欧 · 美',
+    economics: '欧 · 美',
   },
   domain: {
     philosophy: '哲学',
     science: '自然科学',
     math: '数学',
+    humanities: '人文科学',
   },
   mathDomain: {
     algebra: '代数学',
