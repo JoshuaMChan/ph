@@ -95,7 +95,7 @@ const en = {
     philosophy: 'Philosophy',
     science: 'Natural Science',
     math: 'Mathematics',
-    humanities: 'Human Sciences',
+    humanities: 'Social Sciences',
   },
   mathDomain: {
     algebra: 'Algebra',

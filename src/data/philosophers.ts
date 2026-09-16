@@ -2124,7 +2124,7 @@ export const schools: Record<string, School> = {
     countryIds: ['203', '826', '840'],
     accent: 'var(--c-mol-bio)',
   },
-  // Empiricism → humanities: economics first
+  // Empiricism → social sciences: economics first
   economics: {
     id: 'economics',
     people: ['smith', 'marx', 'marshall', 'keynes', 'hayek', 'friedman'],

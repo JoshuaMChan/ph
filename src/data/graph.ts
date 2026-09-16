@@ -42,7 +42,7 @@ export const graphEdges: GraphEdge[] = [
     fromSide: 'top',
     toSide: 'left',
   },
-  // Empiricism → humanities: leave from the right side of empiricism
+  // Empiricism → social sciences: leave from the right side of empiricism
   {
     from: 'empiricism',
     to: 'humanities-bar',
@@ -50,12 +50,20 @@ export const graphEdges: GraphEdge[] = [
     fromSide: 'right',
     toSide: 'left',
   },
-  // Collapsed philosophy forks down into humanities (bar sits under philosophy)
+  // Collapsed philosophy forks down into social sciences (bar sits under philosophy)
   {
     from: 'philosophy-bar',
     to: 'humanities-bar',
     color: 'var(--c-economics)',
     fromSide: 'bottom',
+    toSide: 'left',
+  },
+  // Social sciences expanded: fork up from philosophy (behind) into economics
+  {
+    from: 'philosophy-bar',
+    to: 'economics',
+    color: 'var(--c-economics)',
+    fromSide: 'top',
     toSide: 'left',
   },
   // Math expanded: collapsed philosophy still forks mid-way into the science bar

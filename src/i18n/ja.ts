@@ -95,7 +95,7 @@ const ja = {
     philosophy: '哲学',
     science: '自然科学',
     math: '数学',
-    humanities: '人文科学',
+    humanities: '社会科学',
   },
   mathDomain: {
     algebra: '代数学',

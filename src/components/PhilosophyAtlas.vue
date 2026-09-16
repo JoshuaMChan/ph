@@ -250,14 +250,21 @@ function captureSlotGeom(rootEl: HTMLElement) {
       atlasRight - philosophyLeft,
     )
 
+    // Natural science sits further left than social sciences when social is open.
+    const scienceLeft =
+      philosophyLeft > 0
+        ? philosophyLeft
+        : Math.max(0, humanitiesLeft - 120)
+    const scienceWidth = Math.max(
+      slotGeom.value.scienceWidth,
+      atlasRight - scienceLeft,
+    )
+
     setSlotGeom({
       mathLeft: slotGeom.value.mathLeft,
       mathWidth: Math.max(slotGeom.value.mathWidth, philosophyWidth),
-      scienceLeft: slotGeom.value.scienceLeft,
-      scienceWidth: Math.max(
-        slotGeom.value.scienceWidth,
-        atlasRight - (slotGeom.value.scienceLeft || humanitiesLeft),
-      ),
+      scienceLeft,
+      scienceWidth,
       humanitiesLeft,
       humanitiesWidth,
       philosophyLeft,
@@ -530,6 +537,10 @@ function measureLinks() {
       start[0] = end[0] - 52
     }
     if (edge.from === 'philosophy-bar' && edge.to === 'humanities-bar') {
+      start[0] = end[0] - 52
+    }
+    if (edge.from === 'philosophy-bar' && edge.to === 'economics') {
+      // Rise from behind/below social sciences into the economics left edge.
       start[0] = end[0] - 52
     }
     if (
