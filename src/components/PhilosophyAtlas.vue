@@ -2,8 +2,7 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { graphEdges } from '../data/graph'
-import { philosophers, schools } from '../data/philosophers'
-import { formatEraYears } from '../utils/dates'
+import { philosophers } from '../data/philosophers'
 import MathAtlas from './MathAtlas.vue'
 import DomainBar from './DomainBar.vue'
 import PhilosopherCard from './PhilosopherCard.vue'
@@ -11,14 +10,6 @@ import SchoolBlock from './SchoolBlock.vue'
 import SiteHeader from './SiteHeader.vue'
 
 const { t, locale } = useI18n()
-
-const political = schools.political
-const politicalYears = computed(() =>
-  formatEraYears(political.yearStart, political.yearEnd),
-)
-const politicalRegion = computed(() =>
-  political.regionKeys.map((key) => t(`region.${key}`)).join(' · '),
-)
 
 type Domain = 'philosophy' | 'science' | 'math' | 'humanities'
 const activeDomain = ref<Domain>('philosophy')
@@ -763,44 +754,64 @@ watch(activeDomain, () => void nextTick(measure))
             <section id="political" data-node="political" class="political">
               <header class="pol-head">
                 <h2>{{ t('school.political') }}</h2>
-                <p class="pol-meta">
-                  <span class="when">{{ politicalYears }}</span>
-                  <span class="where">{{ politicalRegion }}</span>
-                </p>
               </header>
               <div class="pol-track" :style="{ width: `${polLayout.trackW}px` }">
                 <div class="pol-slot pol-slot-machiavelli" style="left: 0">
-                  <PhilosopherCard :person="philosophers.machiavelli" />
+                  <PhilosopherCard
+                    :person="philosophers.machiavelli"
+                    :place="false"
+                    :dates="false"
+                  />
                 </div>
                 <div
                   class="pol-slot pol-slot-hobbes"
                   :style="{ left: `${polLayout.hobbes}px` }"
                 >
-                  <PhilosopherCard :person="philosophers.hobbes" />
+                  <PhilosopherCard
+                    :person="philosophers.hobbes"
+                    :place="false"
+                    :dates="false"
+                  />
                 </div>
                 <div
                   class="pol-slot pol-slot-rousseau"
                   :style="{ left: `${polLayout.rousseau}px` }"
                 >
-                  <PhilosopherCard :person="philosophers.rousseau" />
+                  <PhilosopherCard
+                    :person="philosophers.rousseau"
+                    :place="false"
+                    :dates="false"
+                  />
                 </div>
                 <div
                   class="pol-slot pol-slot-mill"
                   :style="{ left: `${polLayout.mill}px` }"
                 >
-                  <PhilosopherCard :person="philosophers.mill" />
+                  <PhilosopherCard
+                    :person="philosophers.mill"
+                    :place="false"
+                    :dates="false"
+                  />
                 </div>
                 <div
                   class="pol-slot pol-slot-marx"
                   :style="{ left: `${polLayout.marx}px` }"
                 >
-                  <PhilosopherCard :person="philosophers.marx" />
+                  <PhilosopherCard
+                    :person="philosophers.marx"
+                    :place="false"
+                    :dates="false"
+                  />
                 </div>
                 <div
                   class="pol-slot pol-slot-rawls"
                   :style="{ left: `${polLayout.rawls}px` }"
                 >
-                  <PhilosopherCard :person="philosophers.rawls" />
+                  <PhilosopherCard
+                    :person="philosophers.rawls"
+                    :place="false"
+                    :dates="false"
+                  />
                 </div>
               </div>
             </section>

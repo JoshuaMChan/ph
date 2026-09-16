@@ -39,13 +39,18 @@ const scienceSchoolIds = new Set([
 
 const years = computed(() => {
   if (scienceSchoolIds.has(props.schoolId)) return ''
+  if (props.schoolId === 'economics') return ''
   return formatEraYears(school.value.yearStart, school.value.yearEnd)
 })
 
 const countries = computed(() => {
   if (scienceSchoolIds.has(props.schoolId)) return ''
+  if (props.schoolId === 'economics') return ''
   return school.value.regionKeys.map((key) => t(`region.${key}`)).join(' · ')
 })
+
+const hidePlace = computed(() => props.schoolId === 'economics')
+const hideDates = computed(() => props.schoolId === 'economics')
 
 const showMeta = computed(() => Boolean(years.value || countries.value))
 
@@ -158,7 +163,13 @@ const watson = computed(() => people.value.find((item) => item.id === 'watson'))
             schoolId !== 'economics'),
       }"
     >
-      <PhilosopherCard v-for="item in people" :key="item.id" :person="item" />
+      <PhilosopherCard
+        v-for="item in people"
+        :key="item.id"
+        :person="item"
+        :place="!hidePlace"
+        :dates="!hideDates"
+      />
     </div>
   </section>
 </template>

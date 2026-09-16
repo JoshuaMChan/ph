@@ -11,8 +11,12 @@ const props = withDefaults(
     quotes?: boolean
     /** Stack name above dates/country and center under the portrait. */
     stacked?: boolean
+    /** Show country/place under the dates (off in political & social sciences). */
+    place?: boolean
+    /** Show lifespan dates (off in political & social sciences). */
+    dates?: boolean
   }>(),
-  { quotes: true, stacked: false },
+  { quotes: true, stacked: false, place: true, dates: true },
 )
 
 const { t, te, locale } = useI18n()
@@ -126,9 +130,9 @@ onBeforeUnmount(() => {
     </div>
     <div class="info">
       <h3>{{ t('person.' + person.id) }}</h3>
-      <p class="meta">
-        <span class="dates">{{ life }}</span>
-        <span class="country">{{ t('region.' + person.country) }}</span>
+      <p v-if="dates || place" class="meta">
+        <span v-if="dates" class="dates">{{ life }}</span>
+        <span v-if="place" class="country">{{ t('region.' + person.country) }}</span>
       </p>
     </div>
     <Teleport to="body">
