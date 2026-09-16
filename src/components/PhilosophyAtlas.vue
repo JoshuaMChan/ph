@@ -757,61 +757,37 @@ watch(activeDomain, () => void nextTick(measure))
               </header>
               <div class="pol-track" :style="{ width: `${polLayout.trackW}px` }">
                 <div class="pol-slot pol-slot-machiavelli" style="left: 0">
-                  <PhilosopherCard
-                    :person="philosophers.machiavelli"
-                    :place="false"
-                    :dates="false"
-                  />
+                  <PhilosopherCard :person="philosophers.machiavelli" />
                 </div>
                 <div
                   class="pol-slot pol-slot-hobbes"
                   :style="{ left: `${polLayout.hobbes}px` }"
                 >
-                  <PhilosopherCard
-                    :person="philosophers.hobbes"
-                    :place="false"
-                    :dates="false"
-                  />
+                  <PhilosopherCard :person="philosophers.hobbes" />
                 </div>
                 <div
                   class="pol-slot pol-slot-rousseau"
                   :style="{ left: `${polLayout.rousseau}px` }"
                 >
-                  <PhilosopherCard
-                    :person="philosophers.rousseau"
-                    :place="false"
-                    :dates="false"
-                  />
+                  <PhilosopherCard :person="philosophers.rousseau" />
                 </div>
                 <div
                   class="pol-slot pol-slot-mill"
                   :style="{ left: `${polLayout.mill}px` }"
                 >
-                  <PhilosopherCard
-                    :person="philosophers.mill"
-                    :place="false"
-                    :dates="false"
-                  />
+                  <PhilosopherCard :person="philosophers.mill" />
                 </div>
                 <div
                   class="pol-slot pol-slot-marx"
                   :style="{ left: `${polLayout.marx}px` }"
                 >
-                  <PhilosopherCard
-                    :person="philosophers.marx"
-                    :place="false"
-                    :dates="false"
-                  />
+                  <PhilosopherCard :person="philosophers.marx" />
                 </div>
                 <div
                   class="pol-slot pol-slot-rawls"
                   :style="{ left: `${polLayout.rawls}px` }"
                 >
-                  <PhilosopherCard
-                    :person="philosophers.rawls"
-                    :place="false"
-                    :dates="false"
-                  />
+                  <PhilosopherCard :person="philosophers.rawls" />
                 </div>
               </div>
             </section>

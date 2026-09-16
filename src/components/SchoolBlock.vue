@@ -49,9 +49,6 @@ const countries = computed(() => {
   return school.value.regionKeys.map((key) => t(`region.${key}`)).join(' · ')
 })
 
-const hidePlace = computed(() => props.schoolId === 'economics')
-const hideDates = computed(() => props.schoolId === 'economics')
-
 const showMeta = computed(() => Boolean(years.value || countries.value))
 
 const nietzsche = computed(() => people.value.find((item) => item.id === 'nietzsche'))
@@ -163,13 +160,7 @@ const watson = computed(() => people.value.find((item) => item.id === 'watson'))
             schoolId !== 'economics'),
       }"
     >
-      <PhilosopherCard
-        v-for="item in people"
-        :key="item.id"
-        :person="item"
-        :place="!hidePlace"
-        :dates="!hideDates"
-      />
+      <PhilosopherCard v-for="item in people" :key="item.id" :person="item" />
     </div>
   </section>
 </template>
