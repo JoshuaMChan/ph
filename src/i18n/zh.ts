@@ -1,6 +1,6 @@
 const zh = {
   site: {
-    title: '涉历至此',
+    title: '我们如何至此',
     chapter: '哲学 · 数学 · 科学',
     kicker: '一部可漫游的简史',
     subtitle:

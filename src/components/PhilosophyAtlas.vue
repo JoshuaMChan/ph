@@ -135,7 +135,6 @@ function captureSlotGeom(rootEl: HTMLElement) {
 
   if (activeDomain.value === 'philosophy') {
     const modern = rootEl.querySelector('#modern')
-    const empiricism = rootEl.querySelector('#empiricism')
     const tree = rootEl.querySelector('.philosophy-atlas')
     const sciBar = rootEl.querySelector('[data-node="science-bar"]')
     const mathBar = rootEl.querySelector('[data-node="math-bar"]')
@@ -163,10 +162,11 @@ function captureSlotGeom(rootEl: HTMLElement) {
       : 0
     const scienceWidth = Math.max(sciBarW, treeRight - scienceLeft)
 
-    // Humanities forks from empiricism (same modern column, bar under the school row).
+    // Humanities left-aligns with classical philosophy.
+    const classical = rootEl.querySelector('#classical')
     const humanitiesLeft = Math.max(
       0,
-      Math.round(relLeft(empiricism ?? modern)),
+      Math.round(relLeft(classical ?? modern)),
     )
     const humBarW = humBar
       ? Math.round((humBar as HTMLElement).offsetWidth)
@@ -529,10 +529,7 @@ function measureLinks() {
       // Birth under the science bar, left enough for a soft rise into the arrow.
       start[0] = end[0] - 52
     }
-    if (
-      (edge.from === 'empiricism' || edge.from === 'philosophy-bar') &&
-      edge.to === 'humanities-bar'
-    ) {
+    if (edge.from === 'philosophy-bar' && edge.to === 'humanities-bar') {
       start[0] = end[0] - 52
     }
     if (
@@ -949,14 +946,14 @@ watch(activeDomain, () => void nextTick(measure))
             @open="openDomain('science')"
           />
           <DomainBar
-            domain="humanities"
-            :label="t('domain.humanities')"
-            @open="openDomain('humanities')"
-          />
-          <DomainBar
             domain="philosophy"
             :label="t('domain.philosophy')"
             @open="openDomain('philosophy')"
+          />
+          <DomainBar
+            domain="humanities"
+            :label="t('domain.humanities')"
+            @open="openDomain('humanities')"
           />
         </template>
       </main>
@@ -1082,7 +1079,7 @@ watch(activeDomain, () => void nextTick(measure))
     'math math math math math math math math'
     '. . . . science science science science'
     'presocratic greece hellenistic scholasticism modern classical lifeCol existCol'
-    '. . . . humanities humanities humanities humanities'
+    '. . . . . humanities humanities humanities'
     '. . . . political political political political';
   gap: 8px var(--gutter-x);
   flex: 1 1 auto;
