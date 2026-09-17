@@ -102,6 +102,8 @@ const polLayout = ref({
 
 /** Shift whole sociology block so its left (and Marx) sits under economics Marx. */
 const sociologyIndent = ref(0)
+/** Stretch sociology to the same right edge as economics. */
+const sociologyWidth = ref(0)
 
 /** Stable domain-slot geometry so expand/collapse keeps the same left edge & width. */
 const slotGeom = ref({
@@ -541,23 +543,36 @@ function layoutPolitical(rootEl: HTMLElement) {
   return changed
 }
 
-/** Move sociology frame so Marx lines up under economics Marx (no inner blank). */
+/** Align sociology: Marx under economics Marx; right edge with economics. */
 function layoutSocialMarx(rootEl: HTMLElement) {
+  const economics = rootEl.querySelector('#economics') as HTMLElement | null
+  const sociology = rootEl.querySelector('#sociology') as HTMLElement | null
   const econMarx = rootEl.querySelector(
     '#economics [data-node="marx"]',
   ) as HTMLElement | null
   const socMarx = rootEl.querySelector(
     '#sociology [data-node="marx"]',
   ) as HTMLElement | null
-  if (!econMarx || !socMarx) return false
+  if (!economics || !sociology || !econMarx || !socMarx) return false
+
   const delta =
     econMarx.getBoundingClientRect().left - socMarx.getBoundingClientRect().left
-  const next = Math.max(0, Math.round(sociologyIndent.value + delta))
-  if (Math.abs(next - sociologyIndent.value) > 0.5) {
-    sociologyIndent.value = next
-    return true
+  const nextIndent = Math.max(0, Math.round(sociologyIndent.value + delta))
+
+  // After indent, sociology left ≈ current left + (nextIndent - sociologyIndent)
+  const socLeft =
+    sociology.getBoundingClientRect().left + (nextIndent - sociologyIndent.value)
+  const econRight = economics.getBoundingClientRect().right
+  const nextWidth = Math.max(0, Math.round(econRight - socLeft))
+
+  const changed =
+    Math.abs(nextIndent - sociologyIndent.value) > 0.5 ||
+    Math.abs(nextWidth - sociologyWidth.value) > 0.5
+  if (changed) {
+    sociologyIndent.value = nextIndent
+    sociologyWidth.value = nextWidth
   }
-  return false
+  return changed
 }
 
 function measureLinks() {
@@ -720,6 +735,7 @@ onBeforeUnmount(() => {
 watch(locale, () => void nextTick(measure))
 watch(activeDomain, () => {
   sociologyIndent.value = 0
+  sociologyWidth.value = 0
   saveDomain(activeDomain.value)
   void nextTick(measure)
 })
@@ -1032,7 +1048,11 @@ watch(activeDomain, () => {
           />
           <div
             class="humanities-atlas"
-            :style="{ '--sociology-indent': `${sociologyIndent}px` }"
+            :style="{
+              '--sociology-indent': `${sociologyIndent}px`,
+              '--sociology-width':
+                sociologyWidth > 0 ? `${sociologyWidth}px` : 'max-content',
+            }"
           >
             <article id="economics" data-node="economics" class="node">
               <SchoolBlock school-id="economics" />
@@ -1441,8 +1461,18 @@ watch(activeDomain, () => {
 }
 
 .humanities-atlas #sociology {
-  width: max-content;
+  width: var(--sociology-width, max-content);
   margin-left: var(--sociology-indent, 0px);
+  box-sizing: border-box;
+}
+
+.humanities-atlas #sociology :deep(.school) {
+  width: 100%;
+}
+
+.humanities-atlas #sociology :deep(.people) {
+  width: 100%;
+  justify-content: space-between;
 }
 
 .wires {
