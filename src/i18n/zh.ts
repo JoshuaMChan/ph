@@ -180,7 +180,7 @@ const zh = {
     simmel: '格奥尔格·齐美尔',
     durkheim: '埃米尔·涂尔干',
     weber: '马克斯·韦伯',
-    bourdieu: '皮埃尔·布尔迪厄',
+    bourdieu: '皮埃尔·布迪厄',
     rawls: '约翰·罗尔斯',
     machiavelli: '尼可罗·马基雅维利',
     hobbes: '托马斯·霍布斯',

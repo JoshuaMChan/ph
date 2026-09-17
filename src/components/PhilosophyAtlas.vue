@@ -3,6 +3,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { graphEdges } from '../data/graph'
 import { philosophers } from '../data/philosophers'
+import { readCookie, writeCookie } from '../utils/cookies'
 import MathAtlas from './MathAtlas.vue'
 import DomainBar from './DomainBar.vue'
 import PhilosopherCard from './PhilosopherCard.vue'
@@ -12,19 +13,53 @@ import SiteHeader from './SiteHeader.vue'
 const { t, locale } = useI18n()
 
 type Domain = 'philosophy' | 'science' | 'math' | 'humanities'
-const activeDomain = ref<Domain>('philosophy')
+
+const ATLAS_DOMAIN_KEY = 'atlas-domain'
+const ATLAS_SCROLL_X_KEY = 'atlas-scroll-x'
+
+function isDomain(value: string | null | undefined): value is Domain {
+  return (
+    value === 'philosophy' ||
+    value === 'science' ||
+    value === 'math' ||
+    value === 'humanities'
+  )
+}
+
+function loadDomain(): Domain {
+  const fromCookie = readCookie(ATLAS_DOMAIN_KEY)
+  return isDomain(fromCookie) ? fromCookie : 'philosophy'
+}
+
+function saveDomain(domain: Domain) {
+  writeCookie(ATLAS_DOMAIN_KEY, domain)
+}
+
+function saveScrollX(x: number) {
+  writeCookie(ATLAS_SCROLL_X_KEY, String(Math.max(0, Math.round(x))))
+}
+
+function loadScrollX(): number {
+  const raw = readCookie(ATLAS_SCROLL_X_KEY)
+  const n = raw == null ? 0 : Number(raw)
+  return Number.isFinite(n) && n > 0 ? n : 0
+}
+
+const activeDomain = ref<Domain>(loadDomain())
 
 function openDomain(domain: Domain) {
   if (activeDomain.value === domain) return
   const scrollLeft = viewport.value?.scrollLeft ?? 0
   const scrollTop = viewport.value?.scrollTop ?? 0
   activeDomain.value = domain
+  saveDomain(domain)
 
   const restoreScroll = () => {
     const el = viewport.value
     if (!el) return
     el.scrollLeft = scrollLeft
     el.scrollTop = scrollTop
+    saveScrollX(scrollLeft)
   }
 
   void nextTick(() => {
@@ -65,7 +100,7 @@ const polLayout = ref({
   trackW: 200,
 })
 
-/** Pad sociology so its Marx lines up under economics Marx. */
+/** Shift whole sociology block so its left (and Marx) sits under economics Marx. */
 const sociologyIndent = ref(0)
 
 /** Stable domain-slot geometry so expand/collapse keeps the same left edge & width. */
@@ -506,7 +541,7 @@ function layoutPolitical(rootEl: HTMLElement) {
   return changed
 }
 
-/** Line up sociology Marx under economics Marx when social sciences is open. */
+/** Move sociology frame so Marx lines up under economics Marx (no inner blank). */
 function layoutSocialMarx(rootEl: HTMLElement) {
   const econMarx = rootEl.querySelector(
     '#economics [data-node="marx"]',
@@ -515,7 +550,8 @@ function layoutSocialMarx(rootEl: HTMLElement) {
     '#sociology [data-node="marx"]',
   ) as HTMLElement | null
   if (!econMarx || !socMarx) return false
-  const delta = econMarx.getBoundingClientRect().left - socMarx.getBoundingClientRect().left
+  const delta =
+    econMarx.getBoundingClientRect().left - socMarx.getBoundingClientRect().left
   const next = Math.max(0, Math.round(sociologyIndent.value + delta))
   if (Math.abs(next - sociologyIndent.value) > 0.5) {
     sociologyIndent.value = next
@@ -559,6 +595,7 @@ function measureLinks() {
       start[0] = end[0] - 52
     }
     if (edge.from === 'philosophy-bar' && edge.to === 'sociology') {
+      // Sociology box starts under economics Marx — fork later than economics.
       start[0] = end[0] - 52
     }
     if (
@@ -601,7 +638,6 @@ function measure() {
   const rootEl = graph.value
   if (!rootEl) return
   if (activeDomain.value === 'humanities') {
-    // Align Marx first so sociology's right edge is final, then size bars to it.
     const moved = layoutSocialMarx(rootEl)
     captureSlotGeom(rootEl)
     canvas.value = { w: rootEl.offsetWidth, h: rootEl.offsetHeight }
@@ -636,6 +672,23 @@ function measure() {
 }
 
 let observer: ResizeObserver | null = null
+let scrollSaveTimer: ReturnType<typeof setTimeout> | null = null
+
+function onViewportScroll() {
+  const x = viewport.value?.scrollLeft ?? 0
+  if (scrollSaveTimer) clearTimeout(scrollSaveTimer)
+  scrollSaveTimer = setTimeout(() => {
+    saveScrollX(x)
+    scrollSaveTimer = null
+  }, 120)
+}
+
+function restoreSavedScroll() {
+  const el = viewport.value
+  if (!el) return
+  const x = loadScrollX()
+  if (x > 0) el.scrollLeft = x
+}
 
 onMounted(() => {
   observer = new ResizeObserver(() => measure())
@@ -645,19 +698,29 @@ onMounted(() => {
       if (!img.complete) img.addEventListener('load', measure, { once: true })
     })
   }
+  viewport.value?.addEventListener('scroll', onViewportScroll, { passive: true })
+  saveDomain(activeDomain.value)
   void nextTick(() => {
     measure()
-    requestAnimationFrame(measure)
+    requestAnimationFrame(() => {
+      measure()
+      restoreSavedScroll()
+      // Layout may still settle after images / sociology indent.
+      requestAnimationFrame(restoreSavedScroll)
+    })
   })
 })
 
 onBeforeUnmount(() => {
   observer?.disconnect()
+  viewport.value?.removeEventListener('scroll', onViewportScroll)
+  if (scrollSaveTimer) clearTimeout(scrollSaveTimer)
 })
 
 watch(locale, () => void nextTick(measure))
 watch(activeDomain, () => {
   sociologyIndent.value = 0
+  saveDomain(activeDomain.value)
   void nextTick(measure)
 })
 </script>
@@ -1373,12 +1436,12 @@ watch(activeDomain, () => {
   box-sizing: border-box;
 }
 
-.humanities-atlas #economics,
-.humanities-atlas #sociology {
+.humanities-atlas #economics {
   width: max-content;
 }
 
-.humanities-atlas #sociology :deep(.people) {
+.humanities-atlas #sociology {
+  width: max-content;
   margin-left: var(--sociology-indent, 0px);
 }
 
