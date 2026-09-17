@@ -241,15 +241,18 @@ function captureSlotGeom(rootEl: HTMLElement) {
       atlasRight - philosophyLeft,
     )
 
-    // Natural science sits further left than social sciences when social is open.
+    // Natural science sits with philosophy: same left & right (not stretched by
+    // a sticky prior scienceWidth after we move it further left).
     const scienceLeft =
       philosophyLeft > 0
         ? philosophyLeft
         : Math.max(0, humanitiesLeft - 120)
-    const scienceWidth = Math.max(
-      slotGeom.value.scienceWidth,
-      atlasRight - scienceLeft,
+    const bandRight = Math.max(
+      atlasRight,
+      humanitiesLeft + humanitiesWidth,
+      philosophyLeft + philosophyWidth,
     )
+    const scienceWidth = Math.max(0, bandRight - scienceLeft)
 
     setSlotGeom({
       mathLeft: slotGeom.value.mathLeft,
