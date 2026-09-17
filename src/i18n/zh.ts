@@ -56,6 +56,7 @@ const zh = {
     evolution: '演化学',
     molecularBiology: '遗传学',
     economics: '经济学',
+    sociology: '社会学',
   },
   schoolTag: {
     greece: '希腊',
@@ -90,6 +91,7 @@ const zh = {
     evolution: '欧',
     molecularBiology: '欧 · 美',
     economics: '欧 · 美',
+    sociology: '欧',
   },
   domain: {
     philosophy: '哲学',
@@ -175,6 +177,10 @@ const zh = {
     keynes: '约翰·梅纳德·凯恩斯',
     hayek: '弗里德里希·哈耶克',
     friedman: '米尔顿·弗里德曼',
+    simmel: '格奥尔格·齐美尔',
+    durkheim: '埃米尔·涂尔干',
+    weber: '马克斯·韦伯',
+    bourdieu: '皮埃尔·布尔迪厄',
     rawls: '约翰·罗尔斯',
     machiavelli: '尼可罗·马基雅维利',
     hobbes: '托马斯·霍布斯',

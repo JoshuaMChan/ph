@@ -65,6 +65,9 @@ const polLayout = ref({
   trackW: 200,
 })
 
+/** Pad sociology so its Marx lines up under economics Marx. */
+const sociologyIndent = ref(0)
+
 /** Stable domain-slot geometry so expand/collapse keeps the same left edge & width. */
 const slotGeom = ref({
   mathLeft: 0,
@@ -220,43 +223,43 @@ function captureSlotGeom(rootEl: HTMLElement) {
   if (activeDomain.value === 'humanities') {
     const atlas = rootEl.querySelector('.humanities-atlas') as HTMLElement | null
     const economics = rootEl.querySelector('#economics') as HTMLElement | null
+    const sociology = rootEl.querySelector('#sociology') as HTMLElement | null
     if (!atlas) return
 
     const humanitiesLeft =
       slotGeom.value.humanitiesLeft > 0
         ? slotGeom.value.humanitiesLeft
         : Math.max(0, Math.round(relLeft(economics ?? atlas)))
-    const atlasRight = Math.round(relRight(atlas))
-    const humanitiesWidth = Math.max(
-      slotGeom.value.humanitiesWidth,
-      atlasRight - humanitiesLeft,
+
+    // Right edge of social-sciences content (sociology is usually the farthest).
+    const bandRight = Math.max(
+      Math.round(relRight(atlas)),
+      economics ? Math.round(relRight(economics)) : 0,
+      sociology ? Math.round(relRight(sociology)) : 0,
     )
+
+    const humanitiesWidth = Math.max(0, bandRight - humanitiesLeft)
 
     const philosophyLeft =
       slotGeom.value.philosophyLeft > 0
         ? slotGeom.value.philosophyLeft
         : 0
-    const philosophyWidth = Math.max(
-      slotGeom.value.philosophyWidth,
-      atlasRight - philosophyLeft,
-    )
+    const philosophyWidth = Math.max(0, bandRight - philosophyLeft)
 
-    // Natural science sits with philosophy: same left & right (not stretched by
-    // a sticky prior scienceWidth after we move it further left).
+    // Natural science shares philosophy's left; all collapsed bars share bandRight.
     const scienceLeft =
       philosophyLeft > 0
         ? philosophyLeft
         : Math.max(0, humanitiesLeft - 120)
-    const bandRight = Math.max(
-      atlasRight,
-      humanitiesLeft + humanitiesWidth,
-      philosophyLeft + philosophyWidth,
-    )
     const scienceWidth = Math.max(0, bandRight - scienceLeft)
 
+    const mathLeft =
+      slotGeom.value.mathLeft > 0 ? slotGeom.value.mathLeft : philosophyLeft
+    const mathWidth = Math.max(0, bandRight - mathLeft)
+
     setSlotGeom({
-      mathLeft: slotGeom.value.mathLeft,
-      mathWidth: Math.max(slotGeom.value.mathWidth, philosophyWidth),
+      mathLeft,
+      mathWidth,
       scienceLeft,
       scienceWidth,
       humanitiesLeft,
@@ -503,6 +506,24 @@ function layoutPolitical(rootEl: HTMLElement) {
   return changed
 }
 
+/** Line up sociology Marx under economics Marx when social sciences is open. */
+function layoutSocialMarx(rootEl: HTMLElement) {
+  const econMarx = rootEl.querySelector(
+    '#economics [data-node="marx"]',
+  ) as HTMLElement | null
+  const socMarx = rootEl.querySelector(
+    '#sociology [data-node="marx"]',
+  ) as HTMLElement | null
+  if (!econMarx || !socMarx) return false
+  const delta = econMarx.getBoundingClientRect().left - socMarx.getBoundingClientRect().left
+  const next = Math.max(0, Math.round(sociologyIndent.value + delta))
+  if (Math.abs(next - sociologyIndent.value) > 0.5) {
+    sociologyIndent.value = next
+    return true
+  }
+  return false
+}
+
 function measureLinks() {
   const rootEl = graph.value
   if (!rootEl) return
@@ -536,6 +557,13 @@ function measureLinks() {
     if (edge.from === 'philosophy-bar' && edge.to === 'economics') {
       // Rise from behind/below social sciences into the economics left edge.
       start[0] = end[0] - 52
+    }
+    if (edge.from === 'philosophy-bar' && edge.to === 'sociology') {
+      start[0] = end[0] - 52
+    }
+    if (edge.from === 'classical' && edge.to === 'humanities-bar') {
+      // Leave classical on the right; bar sits under classical column.
+      start[0] = Math.min(start[0], end[0] - 36)
     }
     if (
       edge.from === 'philosophy-bar' &&
@@ -576,11 +604,24 @@ function measureLinks() {
 function measure() {
   const rootEl = graph.value
   if (!rootEl) return
-  if (
-    activeDomain.value === 'math' ||
-    activeDomain.value === 'science' ||
-    activeDomain.value === 'humanities'
-  ) {
+  if (activeDomain.value === 'humanities') {
+    // Align Marx first so sociology's right edge is final, then size bars to it.
+    const moved = layoutSocialMarx(rootEl)
+    captureSlotGeom(rootEl)
+    canvas.value = { w: rootEl.offsetWidth, h: rootEl.offsetHeight }
+    if (moved) {
+      void nextTick(() => {
+        layoutSocialMarx(rootEl)
+        captureSlotGeom(rootEl)
+        canvas.value = { w: rootEl.offsetWidth, h: rootEl.offsetHeight }
+        measureLinks()
+      })
+      return
+    }
+    measureLinks()
+    return
+  }
+  if (activeDomain.value === 'math' || activeDomain.value === 'science') {
     captureSlotGeom(rootEl)
     canvas.value = { w: rootEl.offsetWidth, h: rootEl.offsetHeight }
     measureLinks()
@@ -619,7 +660,10 @@ onBeforeUnmount(() => {
 })
 
 watch(locale, () => void nextTick(measure))
-watch(activeDomain, () => void nextTick(measure))
+watch(activeDomain, () => {
+  sociologyIndent.value = 0
+  void nextTick(measure)
+})
 </script>
 
 <template>
@@ -927,9 +971,15 @@ watch(activeDomain, () => void nextTick(measure))
             :label="t('domain.science')"
             @open="openDomain('science')"
           />
-          <div class="humanities-atlas">
+          <div
+            class="humanities-atlas"
+            :style="{ '--sociology-indent': `${sociologyIndent}px` }"
+          >
             <article id="economics" data-node="economics" class="node">
               <SchoolBlock school-id="economics" />
+            </article>
+            <article id="sociology" data-node="sociology" class="node">
+              <SchoolBlock school-id="sociology" />
             </article>
           </div>
           <DomainBar
@@ -1046,6 +1096,11 @@ watch(activeDomain, () => void nextTick(measure))
 
 .graph :deep(.people) {
   gap: 4px 10px;
+}
+
+.graph :deep(.school[data-school='economics'] .people),
+.graph :deep(.school[data-school='sociology'] .people) {
+  gap: 14px 48px;
 }
 
 .graph :deep(.quantum-grid) {
@@ -1311,7 +1366,9 @@ watch(activeDomain, () => void nextTick(measure))
   position: relative;
   z-index: 3;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  gap: 18px;
   margin-left: var(--humanities-left, 0px);
   width: max(var(--humanities-width, 0px), max-content);
   min-width: var(--humanities-width, max-content);
@@ -1320,8 +1377,13 @@ watch(activeDomain, () => void nextTick(measure))
   box-sizing: border-box;
 }
 
-.humanities-atlas #economics {
+.humanities-atlas #economics,
+.humanities-atlas #sociology {
   width: max-content;
+}
+
+.humanities-atlas #sociology :deep(.people) {
+  margin-left: var(--sociology-indent, 0px);
 }
 
 .wires {

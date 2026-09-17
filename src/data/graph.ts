@@ -42,11 +42,18 @@ export const graphEdges: GraphEdge[] = [
     fromSide: 'top',
     toSide: 'left',
   },
-  // Empiricism → social sciences: leave from the right side of empiricism
+  // Empiricism → social sciences (economics); classical → sociology
   {
     from: 'empiricism',
     to: 'humanities-bar',
     color: 'var(--c-economics)',
+    fromSide: 'right',
+    toSide: 'left',
+  },
+  {
+    from: 'classical',
+    to: 'humanities-bar',
+    color: 'var(--c-sociology)',
     fromSide: 'right',
     toSide: 'left',
   },
@@ -58,11 +65,18 @@ export const graphEdges: GraphEdge[] = [
     fromSide: 'bottom',
     toSide: 'left',
   },
-  // Social sciences expanded: fork up from philosophy (behind) into economics
+  // Social sciences expanded: fork up from philosophy into economics & sociology
   {
     from: 'philosophy-bar',
     to: 'economics',
     color: 'var(--c-economics)',
+    fromSide: 'top',
+    toSide: 'left',
+  },
+  {
+    from: 'philosophy-bar',
+    to: 'sociology',
+    color: 'var(--c-sociology)',
     fromSide: 'top',
     toSide: 'left',
   },

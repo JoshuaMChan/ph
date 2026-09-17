@@ -56,6 +56,7 @@ const en = {
     evolution: 'Evolution',
     molecularBiology: 'Genetics',
     economics: 'Economics',
+    sociology: 'Sociology',
   },
   schoolTag: {
     greece: 'Greece',
@@ -90,6 +91,7 @@ const en = {
     evolution: 'Europe',
     molecularBiology: 'Europe · U.S.',
     economics: 'Europe · U.S.',
+    sociology: 'Europe',
   },
   domain: {
     philosophy: 'Philosophy',
@@ -176,6 +178,10 @@ const en = {
     keynes: 'John Maynard Keynes',
     hayek: 'Friedrich Hayek',
     friedman: 'Milton Friedman',
+    simmel: 'Georg Simmel',
+    durkheim: 'Émile Durkheim',
+    weber: 'Max Weber',
+    bourdieu: 'Pierre Bourdieu',
     rawls: 'John Rawls',
     machiavelli: 'Niccolò Machiavelli',
     hobbes: 'Thomas Hobbes',

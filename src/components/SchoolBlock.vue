@@ -39,13 +39,13 @@ const scienceSchoolIds = new Set([
 
 const years = computed(() => {
   if (scienceSchoolIds.has(props.schoolId)) return ''
-  if (props.schoolId === 'economics') return ''
+  if (props.schoolId === 'economics' || props.schoolId === 'sociology') return ''
   return formatEraYears(school.value.yearStart, school.value.yearEnd)
 })
 
 const countries = computed(() => {
   if (scienceSchoolIds.has(props.schoolId)) return ''
-  if (props.schoolId === 'economics') return ''
+  if (props.schoolId === 'economics' || props.schoolId === 'sociology') return ''
   return school.value.regionKeys.map((key) => t(`region.${key}`)).join(' · ')
 })
 
@@ -157,10 +157,16 @@ const watson = computed(() => people.value.find((item) => item.id === 'watson'))
             schoolId !== 'physiology' &&
             schoolId !== 'microbiology' &&
             schoolId !== 'molecularBiology' &&
-            schoolId !== 'economics'),
+            schoolId !== 'economics' &&
+            schoolId !== 'sociology'),
       }"
     >
-      <PhilosopherCard v-for="item in people" :key="item.id" :person="item" />
+      <PhilosopherCard
+        v-for="item in people"
+        :key="item.id"
+        :person="item"
+        :stacked="schoolId === 'economics' || schoolId === 'sociology'"
+      />
     </div>
   </section>
 </template>
@@ -226,6 +232,21 @@ h2 {
   flex-direction: column;
   align-items: flex-start;
   gap: 8px;
+}
+
+/* Social sciences: stacked labels need room so names don't collide. */
+.school[data-school='economics'] .people,
+.school[data-school='sociology'] .people {
+  gap: 14px 48px;
+  align-items: flex-start;
+}
+
+.school[data-school='economics'] :deep(.card.stacked),
+.school[data-school='sociology'] :deep(.card.stacked) {
+  width: max-content;
+  min-width: var(--card-w, 70px);
+  padding-inline: 6px;
+  box-sizing: border-box;
 }
 
 .life-grid {

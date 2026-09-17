@@ -56,6 +56,7 @@ const ja = {
     evolution: '進化学',
     molecularBiology: '遺伝学',
     economics: '経済学',
+    sociology: '社会学',
   },
   schoolTag: {
     greece: 'ギリシア',
@@ -90,6 +91,7 @@ const ja = {
     evolution: '欧州',
     molecularBiology: '欧州 · 米',
     economics: '欧州 · 米',
+    sociology: '欧州',
   },
   domain: {
     philosophy: '哲学',
@@ -175,6 +177,10 @@ const ja = {
     keynes: 'ジョン・メイナード・ケインズ',
     hayek: 'フリードリヒ・ハイエク',
     friedman: 'ミルトン・フリードマン',
+    simmel: 'ゲオルク・ジンメル',
+    durkheim: 'エミール・デュルケーム',
+    weber: 'マックス・ヴェーバー',
+    bourdieu: 'ピエール・ブルデュー',
     rawls: 'ジョン・ロールズ',
     machiavelli: 'ニッコロ・マキャヴェッリ',
     hobbes: 'トマス・ホッブズ',
