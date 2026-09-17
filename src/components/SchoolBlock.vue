@@ -39,13 +39,23 @@ const scienceSchoolIds = new Set([
 
 const years = computed(() => {
   if (scienceSchoolIds.has(props.schoolId)) return ''
-  if (props.schoolId === 'economics' || props.schoolId === 'sociology') return ''
+  if (
+    props.schoolId === 'economics' ||
+    props.schoolId === 'sociology' ||
+    props.schoolId === 'politicalScience'
+  )
+    return ''
   return formatEraYears(school.value.yearStart, school.value.yearEnd)
 })
 
 const countries = computed(() => {
   if (scienceSchoolIds.has(props.schoolId)) return ''
-  if (props.schoolId === 'economics' || props.schoolId === 'sociology') return ''
+  if (
+    props.schoolId === 'economics' ||
+    props.schoolId === 'sociology' ||
+    props.schoolId === 'politicalScience'
+  )
+    return ''
   return school.value.regionKeys.map((key) => t(`region.${key}`)).join(' · ')
 })
 
@@ -158,14 +168,19 @@ const watson = computed(() => people.value.find((item) => item.id === 'watson'))
             schoolId !== 'microbiology' &&
             schoolId !== 'molecularBiology' &&
             schoolId !== 'economics' &&
-            schoolId !== 'sociology'),
+            schoolId !== 'sociology' &&
+            schoolId !== 'politicalScience'),
       }"
     >
       <PhilosopherCard
         v-for="item in people"
         :key="item.id"
         :person="item"
-        :stacked="schoolId === 'economics' || schoolId === 'sociology'"
+        :stacked="
+          schoolId === 'economics' ||
+          schoolId === 'sociology' ||
+          schoolId === 'politicalScience'
+        "
       />
     </div>
   </section>
@@ -245,8 +260,14 @@ h2 {
   align-items: flex-start;
 }
 
+.school[data-school='politicalScience'] .people {
+  gap: 14px 28px;
+  align-items: flex-start;
+}
+
 .school[data-school='economics'] :deep(.card.stacked),
-.school[data-school='sociology'] :deep(.card.stacked) {
+.school[data-school='sociology'] :deep(.card.stacked),
+.school[data-school='politicalScience'] :deep(.card.stacked) {
   width: max-content;
   min-width: var(--card-w, 70px);
   padding-inline: 6px;

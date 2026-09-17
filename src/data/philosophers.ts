@@ -727,6 +727,28 @@ export const philosophers: Record<string, Philosopher> = {
       countryId: '380',
     },
   },
+  montesquieu: {
+    id: 'montesquieu',
+    nativeName: 'Montesquieu',
+    country: 'france',
+    portrait: '/portraits/montesquieu.jpg',
+    birth: { year: 1689, month: 1, day: 18 },
+    death: { year: 1755, month: 2, day: 10 },
+    born: {
+      city: 'bordeaux',
+      region: 'france',
+      lat: 44.8378,
+      lng: -0.5792,
+      countryId: '250',
+    },
+    died: {
+      city: 'paris',
+      region: 'france',
+      lat: 48.8566,
+      lng: 2.3522,
+      countryId: '250',
+    },
+  },
   hobbes: {
     id: 'hobbes',
     nativeName: 'Thomas Hobbes',
@@ -2037,6 +2059,23 @@ export const schools: Record<string, School> = {
     yearEnd: 2002,
     regionKeys: ['europe'],
     countryIds: ['380', '826', '756', '276', '840'],
+    accent: 'var(--c-political)',
+  },
+  // Natural science domain: political science (Marx / Weber align with social sciences)
+  politicalScience: {
+    id: 'politicalScience',
+    people: [
+      'machiavelli',
+      'hobbes',
+      'locke',
+      'montesquieu',
+      'marx',
+      'weber',
+    ],
+    yearStart: 1469,
+    yearEnd: 1920,
+    regionKeys: ['europe'],
+    countryIds: ['380', '826', '250', '276'],
     accent: 'var(--c-political)',
   },
   // Fixed lineage order: Copernicus → Galileo → Kepler

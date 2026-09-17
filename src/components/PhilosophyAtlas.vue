@@ -2,11 +2,9 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { graphEdges } from '../data/graph'
-import { philosophers } from '../data/philosophers'
 import { readCookie, writeCookie } from '../utils/cookies'
 import MathAtlas from './MathAtlas.vue'
 import DomainBar from './DomainBar.vue'
-import PhilosopherCard from './PhilosopherCard.vue'
 import SchoolBlock from './SchoolBlock.vue'
 import SiteHeader from './SiteHeader.vue'
 
@@ -16,6 +14,35 @@ type Domain = 'philosophy' | 'science' | 'math' | 'humanities'
 
 const ATLAS_DOMAIN_KEY = 'atlas-domain'
 const ATLAS_SCROLL_X_KEY = 'atlas-scroll-x'
+const ATLAS_SLOT_GEOM_KEY = 'atlas-slot-geom'
+const ATLAS_SOCIOLOGY_KEY = 'atlas-sociology-layout'
+const ATLAS_PS_ALIGN_KEY = 'atlas-ps-align'
+
+type SlotGeom = {
+  mathLeft: number
+  mathWidth: number
+  scienceLeft: number
+  scienceWidth: number
+  humanitiesLeft: number
+  humanitiesWidth: number
+  philosophyLeft: number
+  philosophyWidth: number
+}
+
+type PsAlign = { marx: number; weber: number }
+
+function emptySlotGeom(): SlotGeom {
+  return {
+    mathLeft: 0,
+    mathWidth: 0,
+    scienceLeft: 0,
+    scienceWidth: 0,
+    humanitiesLeft: 0,
+    humanitiesWidth: 0,
+    philosophyLeft: 0,
+    philosophyWidth: 0,
+  }
+}
 
 function isDomain(value: string | null | undefined): value is Domain {
   return (
@@ -36,7 +63,8 @@ function saveDomain(domain: Domain) {
 }
 
 function saveScrollX(x: number) {
-  writeCookie(ATLAS_SCROLL_X_KEY, String(Math.max(0, Math.round(x))))
+  pendingScrollX = Math.max(0, Math.round(x))
+  writeCookie(ATLAS_SCROLL_X_KEY, String(pendingScrollX))
 }
 
 function loadScrollX(): number {
@@ -45,7 +73,83 @@ function loadScrollX(): number {
   return Number.isFinite(n) && n > 0 ? n : 0
 }
 
+let pendingScrollX = loadScrollX()
+
+function loadSlotGeom(): SlotGeom {
+  const raw = readCookie(ATLAS_SLOT_GEOM_KEY)
+  if (!raw) return emptySlotGeom()
+  try {
+    const parsed = JSON.parse(raw) as Partial<SlotGeom>
+    const next = emptySlotGeom()
+    for (const key of Object.keys(next) as (keyof SlotGeom)[]) {
+      const n = Number(parsed[key])
+      if (Number.isFinite(n) && n >= 0) next[key] = Math.round(n)
+    }
+    return next
+  } catch {
+    return emptySlotGeom()
+  }
+}
+
+function saveSlotGeom(geom: SlotGeom) {
+  writeCookie(ATLAS_SLOT_GEOM_KEY, JSON.stringify(geom))
+}
+
+function loadSociologyLayout(): { indent: number; minWidth: number } {
+  const raw = readCookie(ATLAS_SOCIOLOGY_KEY)
+  if (!raw) return { indent: 0, minWidth: 0 }
+  try {
+    const parsed = JSON.parse(raw) as { indent?: unknown; minWidth?: unknown }
+    const indent = Number(parsed.indent)
+    const minWidth = Number(parsed.minWidth)
+    return {
+      indent: Number.isFinite(indent) && indent > 0 ? Math.round(indent) : 0,
+      minWidth:
+        Number.isFinite(minWidth) && minWidth > 0 ? Math.round(minWidth) : 0,
+    }
+  } catch {
+    return { indent: 0, minWidth: 0 }
+  }
+}
+
+function saveSociologyLayout(indent: number, minWidth: number) {
+  writeCookie(
+    ATLAS_SOCIOLOGY_KEY,
+    JSON.stringify({
+      indent: Math.max(0, Math.round(indent)),
+      minWidth: Math.max(0, Math.round(minWidth)),
+    }),
+  )
+}
+
+function loadPsAlign(): PsAlign {
+  const raw = readCookie(ATLAS_PS_ALIGN_KEY)
+  if (!raw) return { marx: 0, weber: 0 }
+  try {
+    const parsed = JSON.parse(raw) as Partial<PsAlign>
+    const marx = Number(parsed.marx)
+    const weber = Number(parsed.weber)
+    return {
+      marx: Number.isFinite(marx) && marx > 0 ? Math.round(marx) : 0,
+      weber: Number.isFinite(weber) && weber > 0 ? Math.round(weber) : 0,
+    }
+  } catch {
+    return { marx: 0, weber: 0 }
+  }
+}
+
+function savePsAlign(align: PsAlign) {
+  writeCookie(
+    ATLAS_PS_ALIGN_KEY,
+    JSON.stringify({
+      marx: Math.max(0, Math.round(align.marx)),
+      weber: Math.max(0, Math.round(align.weber)),
+    }),
+  )
+}
+
 const activeDomain = ref<Domain>(loadDomain())
+const savedSociology = loadSociologyLayout()
 
 function openDomain(domain: Domain) {
   if (activeDomain.value === domain) return
@@ -53,6 +157,7 @@ function openDomain(domain: Domain) {
   const scrollTop = viewport.value?.scrollTop ?? 0
   activeDomain.value = domain
   saveDomain(domain)
+  pendingScrollX = Math.max(0, Math.round(scrollLeft))
 
   const restoreScroll = () => {
     const el = viewport.value
@@ -91,31 +196,19 @@ const graph = ref<HTMLElement | null>(null)
 const viewport = ref<HTMLElement | null>(null)
 const canvas = ref({ w: 0, h: 0 })
 const links = ref<Link[]>([])
-const polLayout = ref({
-  hobbes: 0,
-  rousseau: 0,
-  marx: 0,
-  mill: 0,
-  rawls: 0,
-  trackW: 200,
-})
+
+/** Margin shifts so political-science Marx/Weber match social-sciences targets. */
+const psGaps = ref({ marx: 0, weber: 0 })
+/** Target left edges (graph-relative, minus padLeft) captured from humanities. */
+const psAlign = ref<PsAlign>(loadPsAlign())
 
 /** Shift whole sociology block so its left (and Marx) sits under economics Marx. */
-const sociologyIndent = ref(0)
+const sociologyIndent = ref(savedSociology.indent)
 /** Stretch sociology box to at least economics' right edge (never shrink below content). */
-const sociologyMinWidth = ref(0)
+const sociologyMinWidth = ref(savedSociology.minWidth)
 
 /** Stable domain-slot geometry so expand/collapse keeps the same left edge & width. */
-const slotGeom = ref({
-  mathLeft: 0,
-  mathWidth: 0,
-  scienceLeft: 0,
-  scienceWidth: 0,
-  humanitiesLeft: 0,
-  humanitiesWidth: 0,
-  philosophyLeft: 0,
-  philosophyWidth: 0,
-})
+const slotGeom = ref<SlotGeom>(loadSlotGeom())
 
 const slotVars = computed(() => ({
   '--math-left': `${slotGeom.value.mathLeft}px`,
@@ -140,7 +233,7 @@ const slotVars = computed(() => ({
       : 'max-content',
 }))
 
-function setSlotGeom(next: typeof slotGeom.value) {
+function setSlotGeom(next: SlotGeom) {
   const prev = slotGeom.value
   if (
     Math.abs(prev.mathLeft - next.mathLeft) > 0.5 ||
@@ -153,6 +246,7 @@ function setSlotGeom(next: typeof slotGeom.value) {
     Math.abs(prev.philosophyWidth - next.philosophyWidth) > 0.5
   ) {
     slotGeom.value = next
+    saveSlotGeom(next)
   }
 }
 
@@ -193,12 +287,8 @@ function captureSlotGeom(rootEl: HTMLElement) {
       : 0
     const scienceWidth = Math.max(sciBarW, treeRight - scienceLeft)
 
-    // Humanities left-aligns with classical philosophy.
-    const classical = rootEl.querySelector('#classical')
-    const humanitiesLeft = Math.max(
-      0,
-      Math.round(relLeft(classical ?? modern)),
-    )
+    // Humanities left-aligns with modern (where political philosophy sat).
+    const humanitiesLeft = Math.max(0, Math.round(relLeft(modern)))
     const humBarW = humBar
       ? Math.round((humBar as HTMLElement).offsetWidth)
       : 0
@@ -221,6 +311,9 @@ function captureSlotGeom(rootEl: HTMLElement) {
     const atlas = rootEl.querySelector('.science-atlas') as HTMLElement | null
     const astronomy = rootEl.querySelector('#astronomy') as HTMLElement | null
     const qft = rootEl.querySelector('#quantumFieldTheory') as HTMLElement | null
+    const politicalScience = rootEl.querySelector(
+      '#politicalScience',
+    ) as HTMLElement | null
     if (!atlas || !astronomy) return
 
     const scienceLeft =
@@ -229,17 +322,20 @@ function captureSlotGeom(rootEl: HTMLElement) {
         : Math.max(0, Math.round(relLeft(astronomy)))
     const atlasRight = Math.round(relRight(atlas))
     const qftRight = qft ? Math.round(relRight(qft)) : atlasRight
+    const psRight = politicalScience
+      ? Math.round(relRight(politicalScience))
+      : 0
+    const bandRight = Math.max(atlasRight, qftRight, psRight)
     const scienceWidth = Math.max(
       slotGeom.value.scienceWidth,
-      atlasRight - scienceLeft,
-      qftRight - scienceLeft,
+      bandRight - scienceLeft,
     )
 
     const philosophyLeft =
       slotGeom.value.philosophyLeft > 0
         ? slotGeom.value.philosophyLeft
         : 0
-    const philosophyWidth = Math.max(0, qftRight - philosophyLeft)
+    const philosophyWidth = Math.max(0, bandRight - philosophyLeft)
 
     setSlotGeom({
       mathLeft: slotGeom.value.mathLeft,
@@ -249,7 +345,7 @@ function captureSlotGeom(rootEl: HTMLElement) {
       humanitiesLeft: slotGeom.value.humanitiesLeft,
       humanitiesWidth: Math.max(
         slotGeom.value.humanitiesWidth,
-        qftRight - (slotGeom.value.humanitiesLeft || scienceLeft),
+        bandRight - (slotGeom.value.humanitiesLeft || scienceLeft),
       ),
       philosophyLeft,
       philosophyWidth,
@@ -481,65 +577,81 @@ function curve(
   return `M ${x1} ${y1} C ${x1} ${midY}, ${midX} ${y2}, ${x2} ${y2}`
 }
 
-function layoutPolitical(rootEl: HTMLElement) {
-  const track = rootEl.querySelector('.pol-track') as HTMLElement | null
-  const kant = rootEl.querySelector('#classical [data-node="kant"]')
-  const frege = rootEl.querySelector('#analytic [data-node="frege"]')
-  const foucault = rootEl.querySelector('#deconstruction [data-node="foucault"]')
-  const machSlot = rootEl.querySelector('.pol-slot-machiavelli') as HTMLElement | null
-  const hobbesSlot = rootEl.querySelector('.pol-slot-hobbes') as HTMLElement | null
-  const marxSlot = rootEl.querySelector('.pol-slot-marx') as HTMLElement | null
-  const millSlot = rootEl.querySelector('.pol-slot-mill') as HTMLElement | null
-  const rawlsSlot = rootEl.querySelector('.pol-slot-rawls') as HTMLElement | null
+/** Capture Marx/Weber left targets from social sciences for political-science alignment. */
+function capturePsAlignFromSocial(rootEl: HTMLElement) {
+  const root = rootEl.getBoundingClientRect()
+  const padLeft = Number.parseFloat(getComputedStyle(rootEl).paddingLeft) || 0
+  const relLeft = (el: Element) =>
+    el.getBoundingClientRect().left - root.left - padLeft
+
+  const socMarx = rootEl.querySelector(
+    '#sociology [data-node="marx"]',
+  ) as HTMLElement | null
+  const econMarx = rootEl.querySelector(
+    '#economics [data-node="marx"]',
+  ) as HTMLElement | null
+  const socWeber = rootEl.querySelector(
+    '#sociology [data-node="weber"]',
+  ) as HTMLElement | null
+
+  const marxEl = socMarx ?? econMarx
+  if (!marxEl && !socWeber) return
+
+  const next: PsAlign = {
+    marx: marxEl ? Math.max(0, Math.round(relLeft(marxEl))) : psAlign.value.marx,
+    weber: socWeber
+      ? Math.max(0, Math.round(relLeft(socWeber)))
+      : psAlign.value.weber,
+  }
+  const prev = psAlign.value
   if (
-    !track ||
-    !kant ||
-    !frege ||
-    !foucault ||
-    !machSlot ||
-    !hobbesSlot ||
-    !marxSlot ||
-    !millSlot ||
-    !rawlsSlot
-  )
-    return false
-
-  const trackLeft = track.getBoundingClientRect().left
-  const gap = 28
-  const machW = machSlot.offsetWidth
-  const hobbesW = hobbesSlot.offsetWidth
-  const marxW = marxSlot.offsetWidth
-  const millW = millSlot.offsetWidth
-  const rawlsW = rawlsSlot.offsetWidth
-
-  let rousseau = Math.max(0, kant.getBoundingClientRect().left - trackLeft)
-  let mill = Math.max(0, frege.getBoundingClientRect().left - trackLeft)
-  let rawls = Math.max(0, foucault.getBoundingClientRect().left - trackLeft)
-  let hobbes = machW + gap
-
-  if (hobbes + hobbesW + gap > rousseau) {
-    hobbes = Math.max(machW + 16, rousseau - hobbesW - gap)
-  }
-  if (mill < rousseau + gap) {
-    mill = rousseau + gap
-  }
-
-  const marx = mill + millW + gap
-  if (rawls < marx + marxW + gap) {
-    rawls = marx + marxW + gap
-  }
-
-  const trackW = Math.ceil(rawls + rawlsW)
-  const next = { hobbes, rousseau, marx, mill, rawls, trackW }
-  const prev = polLayout.value
-  const changed =
-    Math.abs(prev.hobbes - next.hobbes) > 0.5 ||
-    Math.abs(prev.rousseau - next.rousseau) > 0.5 ||
     Math.abs(prev.marx - next.marx) > 0.5 ||
-    Math.abs(prev.mill - next.mill) > 0.5 ||
-    Math.abs(prev.rawls - next.rawls) > 0.5 ||
-    Math.abs(prev.trackW - next.trackW) > 0.5
-  if (changed) polLayout.value = next
+    Math.abs(prev.weber - next.weber) > 0.5
+  ) {
+    psAlign.value = next
+    savePsAlign(next)
+  }
+}
+
+/** Shift political-science Marx/Weber toward targets captured from humanities. */
+function layoutPoliticsScience(rootEl: HTMLElement) {
+  const targets = psAlign.value
+  if (targets.marx <= 0 && targets.weber <= 0) return false
+
+  const root = rootEl.getBoundingClientRect()
+  const padLeft = Number.parseFloat(getComputedStyle(rootEl).paddingLeft) || 0
+  const relLeft = (el: Element) =>
+    el.getBoundingClientRect().left - root.left - padLeft
+
+  const psMarx = rootEl.querySelector(
+    '#politicalScience [data-node="marx"]',
+  ) as HTMLElement | null
+  const psWeber = rootEl.querySelector(
+    '#politicalScience [data-node="weber"]',
+  ) as HTMLElement | null
+
+  let nextMarx = psGaps.value.marx
+  let nextWeber = psGaps.value.weber
+
+  if (psMarx && targets.marx > 0) {
+    const current = relLeft(psMarx)
+    nextMarx = Math.max(
+      0,
+      Math.round(psGaps.value.marx + (targets.marx - current)),
+    )
+  }
+  if (psWeber && targets.weber > 0) {
+    const current = relLeft(psWeber)
+    nextWeber = Math.max(
+      0,
+      Math.round(psGaps.value.weber + (targets.weber - current)),
+    )
+  }
+
+  const changed =
+    Math.abs(nextMarx - psGaps.value.marx) > 0.5 ||
+    Math.abs(nextWeber - psGaps.value.weber) > 0.5
+  if (changed) psGaps.value = { marx: nextMarx, weber: nextWeber }
   return changed
 }
 
@@ -572,6 +684,7 @@ function layoutSocialMarx(rootEl: HTMLElement) {
   if (changed) {
     sociologyIndent.value = nextIndent
     sociologyMinWidth.value = nextMin
+    saveSociologyLayout(nextIndent, nextMin)
   }
   return changed
 }
@@ -603,8 +716,14 @@ function measureLinks() {
       // Birth under the science bar, left enough for a soft rise into the arrow.
       start[0] = end[0] - 52
     }
+    if (edge.from === 'philosophy-bar' && edge.to === 'politicalScience') {
+      start[0] = end[0] - 52
+    }
     if (edge.from === 'philosophy-bar' && edge.to === 'humanities-bar') {
       start[0] = end[0] - 52
+    }
+    if (edge.from === 'greece' && edge.to === 'humanities-bar') {
+      start[0] = from.cx // middle of Greek triad
     }
     if (edge.from === 'philosophy-bar' && edge.to === 'economics') {
       // Rise from behind/below social sciences into the economics left edge.
@@ -656,45 +775,61 @@ function measure() {
   if (activeDomain.value === 'humanities') {
     const moved = layoutSocialMarx(rootEl)
     captureSlotGeom(rootEl)
+    capturePsAlignFromSocial(rootEl)
     canvas.value = { w: rootEl.offsetWidth, h: rootEl.offsetHeight }
     if (moved) {
       void nextTick(() => {
         layoutSocialMarx(rootEl)
         captureSlotGeom(rootEl)
+        capturePsAlignFromSocial(rootEl)
         canvas.value = { w: rootEl.offsetWidth, h: rootEl.offsetHeight }
         measureLinks()
+        if (scrollRestoreActive) scheduleScrollRestore()
       })
       return
     }
     measureLinks()
     return
   }
-  if (activeDomain.value === 'math' || activeDomain.value === 'science') {
+  if (activeDomain.value === 'science') {
+    const moved = layoutPoliticsScience(rootEl)
+    captureSlotGeom(rootEl)
+    canvas.value = { w: rootEl.offsetWidth, h: rootEl.offsetHeight }
+    if (moved) {
+      void nextTick(() => {
+        layoutPoliticsScience(rootEl)
+        captureSlotGeom(rootEl)
+        canvas.value = { w: rootEl.offsetWidth, h: rootEl.offsetHeight }
+        measureLinks()
+        if (scrollRestoreActive) scheduleScrollRestore()
+      })
+      return
+    }
+    measureLinks()
+    return
+  }
+  if (activeDomain.value === 'math') {
     captureSlotGeom(rootEl)
     canvas.value = { w: rootEl.offsetWidth, h: rootEl.offsetHeight }
     measureLinks()
     return
   }
-  const moved = layoutPolitical(rootEl)
   captureSlotGeom(rootEl)
-  if (moved) {
-    void nextTick(() => {
-      captureSlotGeom(rootEl)
-      measureLinks()
-    })
-    return
-  }
   measureLinks()
 }
 
 let observer: ResizeObserver | null = null
 let scrollSaveTimer: ReturnType<typeof setTimeout> | null = null
+/** Only pin scroll while the first paint is still settling. */
+let scrollRestoreActive = false
+let scrollRestoreTimer: ReturnType<typeof setTimeout> | null = null
 
 function onViewportScroll() {
   const x = viewport.value?.scrollLeft ?? 0
+  pendingScrollX = Math.max(0, Math.round(x))
   if (scrollSaveTimer) clearTimeout(scrollSaveTimer)
   scrollSaveTimer = setTimeout(() => {
-    saveScrollX(x)
+    saveScrollX(pendingScrollX)
     scrollSaveTimer = null
   }, 120)
 }
@@ -702,27 +837,61 @@ function onViewportScroll() {
 function restoreSavedScroll() {
   const el = viewport.value
   if (!el) return
-  const x = loadScrollX()
-  if (x > 0) el.scrollLeft = x
+  if (pendingScrollX > 0) el.scrollLeft = pendingScrollX
+}
+
+/** Re-apply scroll after layout width settles (fonts / images / indent). */
+function scheduleScrollRestore() {
+  restoreSavedScroll()
+  requestAnimationFrame(() => {
+    restoreSavedScroll()
+    requestAnimationFrame(restoreSavedScroll)
+  })
+}
+
+function measureAndRestoreScroll() {
+  measure()
+  scheduleScrollRestore()
+}
+
+function beginScrollRestoreWindow(ms = 1000) {
+  scrollRestoreActive = true
+  if (scrollRestoreTimer) clearTimeout(scrollRestoreTimer)
+  scrollRestoreTimer = setTimeout(() => {
+    scrollRestoreActive = false
+    scrollRestoreTimer = null
+    restoreSavedScroll()
+  }, ms)
 }
 
 onMounted(() => {
-  observer = new ResizeObserver(() => measure())
+  beginScrollRestoreWindow()
+  observer = new ResizeObserver(() => {
+    measure()
+    if (scrollRestoreActive) scheduleScrollRestore()
+  })
   if (graph.value) {
     observer.observe(graph.value)
     graph.value.querySelectorAll('img').forEach((img) => {
-      if (!img.complete) img.addEventListener('load', measure, { once: true })
+      if (!img.complete) {
+        img.addEventListener(
+          'load',
+          () => {
+            measure()
+            if (scrollRestoreActive) scheduleScrollRestore()
+          },
+          { once: true },
+        )
+      }
     })
   }
   viewport.value?.addEventListener('scroll', onViewportScroll, { passive: true })
   saveDomain(activeDomain.value)
   void nextTick(() => {
-    measure()
-    requestAnimationFrame(() => {
-      measure()
-      restoreSavedScroll()
-      // Layout may still settle after images / sociology indent.
-      requestAnimationFrame(restoreSavedScroll)
+    measureAndRestoreScroll()
+    void document.fonts?.ready.then(() => {
+      if (!scrollRestoreActive) return
+      measureAndRestoreScroll()
     })
   })
 })
@@ -731,13 +900,19 @@ onBeforeUnmount(() => {
   observer?.disconnect()
   viewport.value?.removeEventListener('scroll', onViewportScroll)
   if (scrollSaveTimer) clearTimeout(scrollSaveTimer)
+  if (scrollRestoreTimer) clearTimeout(scrollRestoreTimer)
 })
 
-watch(locale, () => void nextTick(measure))
-watch(activeDomain, () => {
+watch(locale, () => {
+  beginScrollRestoreWindow()
+  void nextTick(measureAndRestoreScroll)
+})
+watch(activeDomain, (domain) => {
   sociologyIndent.value = 0
   sociologyMinWidth.value = 0
-  saveDomain(activeDomain.value)
+  saveSociologyLayout(0, 0)
+  if (domain !== 'science') psGaps.value = { marx: 0, weber: 0 }
+  saveDomain(domain)
   void nextTick(measure)
 })
 </script>
@@ -873,47 +1048,6 @@ watch(activeDomain, () => {
                 <SchoolBlock school-id="deconstruction" />
               </article>
             </div>
-
-            <section id="political" data-node="political" class="political">
-              <header class="pol-head">
-                <h2>{{ t('school.political') }}</h2>
-              </header>
-              <div class="pol-track" :style="{ width: `${polLayout.trackW}px` }">
-                <div class="pol-slot pol-slot-machiavelli" style="left: 0">
-                  <PhilosopherCard :person="philosophers.machiavelli" />
-                </div>
-                <div
-                  class="pol-slot pol-slot-hobbes"
-                  :style="{ left: `${polLayout.hobbes}px` }"
-                >
-                  <PhilosopherCard :person="philosophers.hobbes" />
-                </div>
-                <div
-                  class="pol-slot pol-slot-rousseau"
-                  :style="{ left: `${polLayout.rousseau}px` }"
-                >
-                  <PhilosopherCard :person="philosophers.rousseau" />
-                </div>
-                <div
-                  class="pol-slot pol-slot-mill"
-                  :style="{ left: `${polLayout.mill}px` }"
-                >
-                  <PhilosopherCard :person="philosophers.mill" />
-                </div>
-                <div
-                  class="pol-slot pol-slot-marx"
-                  :style="{ left: `${polLayout.marx}px` }"
-                >
-                  <PhilosopherCard :person="philosophers.marx" />
-                </div>
-                <div
-                  class="pol-slot pol-slot-rawls"
-                  :style="{ left: `${polLayout.rawls}px` }"
-                >
-                  <PhilosopherCard :person="philosophers.rawls" />
-                </div>
-              </div>
-            </section>
           </div>
         </template>
 
@@ -1024,6 +1158,17 @@ watch(activeDomain, () => {
               <SchoolBlock school-id="molecularBiology" />
             </article>
           </div>
+          <article
+            id="politicalScience"
+            data-node="politicalScience"
+            class="node political-science"
+            :style="{
+              '--ps-marx-gap': `${psGaps.marx}px`,
+              '--ps-weber-gap': `${psGaps.weber}px`,
+            }"
+          >
+            <SchoolBlock school-id="politicalScience" />
+          </article>
           <DomainBar
             domain="philosophy"
             :label="t('domain.philosophy')"
@@ -1209,14 +1354,13 @@ watch(activeDomain, () => {
   position: relative;
   display: grid;
   grid-template-columns: max-content max-content max-content max-content max-content max-content max-content max-content;
-  grid-template-rows: auto auto auto minmax(0, 1fr) auto auto;
+  grid-template-rows: auto auto auto minmax(0, 1fr) auto;
   grid-template-areas:
     'epochOnto epochOnto epochOnto epochOnto epochEpist epochEpist epochContemp epochContemp'
     'math math math math math math math math'
     '. . . . science science science science'
     'presocratic greece hellenistic scholasticism modern classical lifeCol existCol'
-    '. . . . . humanities humanities humanities'
-    '. . . . political political political political';
+    '. . . . humanities humanities humanities humanities';
   gap: 8px var(--gutter-x);
   flex: 1 1 auto;
   min-height: 0;
@@ -1384,6 +1528,23 @@ watch(activeDomain, () => {
 .science-atlas #molecularBiology :deep(.genetics-pair) {
   grid-column: 3;
   justify-self: start;
+}
+
+.political-science {
+  position: relative;
+  z-index: 3;
+  margin-left: var(--science-left, 0px);
+  width: max-content;
+  flex: 0 0 auto;
+  box-sizing: border-box;
+}
+
+.political-science :deep(.card:has([data-node='marx'])) {
+  margin-left: var(--ps-marx-gap, 0px);
+}
+
+.political-science :deep(.card:has([data-node='weber'])) {
+  margin-left: var(--ps-weber-gap, 0px);
 }
 
 .graph.domain-science :deep(.math-bar),
@@ -1630,88 +1791,6 @@ watch(activeDomain, () => {
   grid-area: existCol;
 }
 
-.political {
-  grid-area: political;
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  align-self: start;
-  justify-self: start;
-  width: max-content;
-  max-width: 100%;
-  min-width: 0;
-  overflow: visible;
-  gap: 8px;
-  margin-top: -2px;
-  padding: 13px 10px 12px;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: rgba(20, 24, 33, 0.42);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
-}
-
-.political::before {
-  content: '';
-  position: absolute;
-  top: 8px;
-  right: 10px;
-  left: 10px;
-  height: 3px;
-  background: var(--c-political);
-}
-
-.pol-head {
-  position: relative;
-  z-index: 3;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  align-items: baseline;
-  gap: 8px 10px;
-  white-space: nowrap;
-}
-
-.pol-head h2 {
-  margin: 0;
-  font-family: var(--serif);
-  font-size: 1.12rem;
-  font-weight: 600;
-  color: var(--cream);
-  letter-spacing: 0.03em;
-  line-height: 1.15;
-}
-
-.pol-meta {
-  display: flex;
-  gap: 8px;
-  margin: 0;
-  white-space: nowrap;
-}
-
-.pol-meta .when {
-  color: var(--gold-2);
-  font-size: 0.78rem;
-}
-
-.pol-meta .where {
-  color: var(--muted);
-  font-size: 0.72rem;
-}
-
-.pol-track {
-  position: relative;
-  z-index: 3;
-  height: calc(var(--card-w, 56px) * 4 / 3 + var(--info-h, 1.55rem));
-  min-width: 0;
-}
-
-.pol-slot {
-  position: absolute;
-  top: 0;
-}
-
 @media (max-height: 760px) {
   .graph {
     --card-w-cap: 48px;
@@ -1863,15 +1942,6 @@ watch(activeDomain, () => {
   .life-col,
   .exist-col {
     gap: 10px;
-  }
-
-  .pol-head {
-    flex-wrap: wrap;
-    white-space: normal;
-  }
-
-  .pol-head h2 {
-    font-size: 1rem;
   }
 }
 

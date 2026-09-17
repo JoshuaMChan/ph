@@ -26,13 +26,6 @@ export const graphEdges: GraphEdge[] = [
   { from: 'life', to: 'existentialism', color: 'var(--c-life)' },
   { from: 'life', to: 'deconstruction', color: 'var(--c-life)' },
   { from: 'phenomenology', to: 'existentialism', color: 'var(--c-phenom)' },
-  {
-    from: 'greece',
-    to: 'political',
-    color: 'var(--c-political)',
-    fromSide: 'bottom',
-    toSide: 'left',
-  },
   // Philosophy expanded: fork from Greek three sages up into the science bar
   // (bar still left-aligns with rationalism / modern column).
   {
@@ -42,15 +35,15 @@ export const graphEdges: GraphEdge[] = [
     fromSide: 'top',
     toSide: 'left',
   },
-  // Empiricism → social sciences (economics)
+  // Greek triad → social sciences (bar sits parallel to where political philosophy was)
   {
-    from: 'empiricism',
+    from: 'greece',
     to: 'humanities-bar',
     color: 'var(--c-economics)',
-    fromSide: 'right',
+    fromSide: 'bottom',
     toSide: 'left',
   },
-  // Collapsed philosophy forks down into social sciences (bar sits under philosophy)
+  // Collapsed philosophy forks down into social sciences
   {
     from: 'philosophy-bar',
     to: 'humanities-bar',
@@ -86,6 +79,14 @@ export const graphEdges: GraphEdge[] = [
     from: 'philosophy-bar',
     to: 'astronomy',
     color: 'var(--c-astronomy)',
+    fromSide: 'top',
+    toSide: 'left',
+  },
+  // Natural science expanded: political science under the atlas
+  {
+    from: 'philosophy-bar',
+    to: 'politicalScience',
+    color: 'var(--c-political)',
     fromSide: 'top',
     toSide: 'left',
   },
