@@ -42,18 +42,11 @@ export const graphEdges: GraphEdge[] = [
     fromSide: 'top',
     toSide: 'left',
   },
-  // Empiricism → social sciences (economics); classical → sociology
+  // Empiricism → social sciences (economics)
   {
     from: 'empiricism',
     to: 'humanities-bar',
     color: 'var(--c-economics)',
-    fromSide: 'right',
-    toSide: 'left',
-  },
-  {
-    from: 'classical',
-    to: 'humanities-bar',
-    color: 'var(--c-sociology)',
     fromSide: 'right',
     toSide: 'left',
   },

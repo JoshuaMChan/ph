@@ -561,10 +561,6 @@ function measureLinks() {
     if (edge.from === 'philosophy-bar' && edge.to === 'sociology') {
       start[0] = end[0] - 52
     }
-    if (edge.from === 'classical' && edge.to === 'humanities-bar') {
-      // Leave classical on the right; bar sits under classical column.
-      start[0] = Math.min(start[0], end[0] - 36)
-    }
     if (
       edge.from === 'philosophy-bar' &&
       (edge.to === 'quantitativeChemistry' || edge.to === 'physiology')
