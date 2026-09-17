@@ -235,9 +235,13 @@ h2 {
 }
 
 /* Social sciences: stacked labels need room so names don't collide. */
-.school[data-school='economics'] .people,
-.school[data-school='sociology'] .people {
+.school[data-school='economics'] .people {
   gap: 14px 48px;
+  align-items: flex-start;
+}
+
+.school[data-school='sociology'] .people {
+  gap: 14px 16px;
   align-items: flex-start;
 }
 

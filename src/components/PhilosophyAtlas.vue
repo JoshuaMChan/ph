@@ -102,8 +102,8 @@ const polLayout = ref({
 
 /** Shift whole sociology block so its left (and Marx) sits under economics Marx. */
 const sociologyIndent = ref(0)
-/** Stretch sociology to the same right edge as economics. */
-const sociologyWidth = ref(0)
+/** Stretch sociology box to at least economics' right edge (never shrink below content). */
+const sociologyMinWidth = ref(0)
 
 /** Stable domain-slot geometry so expand/collapse keeps the same left edge & width. */
 const slotGeom = ref({
@@ -543,7 +543,7 @@ function layoutPolitical(rootEl: HTMLElement) {
   return changed
 }
 
-/** Align sociology: Marx under economics Marx; right edge with economics. */
+/** Align sociology: Marx under economics Marx; box at least as wide as economics to the right. */
 function layoutSocialMarx(rootEl: HTMLElement) {
   const economics = rootEl.querySelector('#economics') as HTMLElement | null
   const sociology = rootEl.querySelector('#sociology') as HTMLElement | null
@@ -563,14 +563,15 @@ function layoutSocialMarx(rootEl: HTMLElement) {
   const socLeft =
     sociology.getBoundingClientRect().left + (nextIndent - sociologyIndent.value)
   const econRight = economics.getBoundingClientRect().right
-  const nextWidth = Math.max(0, Math.round(econRight - socLeft))
+  // min-width only: content can still grow past economics so portraits stay inside.
+  const nextMin = Math.max(0, Math.round(econRight - socLeft))
 
   const changed =
     Math.abs(nextIndent - sociologyIndent.value) > 0.5 ||
-    Math.abs(nextWidth - sociologyWidth.value) > 0.5
+    Math.abs(nextMin - sociologyMinWidth.value) > 0.5
   if (changed) {
     sociologyIndent.value = nextIndent
-    sociologyWidth.value = nextWidth
+    sociologyMinWidth.value = nextMin
   }
   return changed
 }
@@ -735,7 +736,7 @@ onBeforeUnmount(() => {
 watch(locale, () => void nextTick(measure))
 watch(activeDomain, () => {
   sociologyIndent.value = 0
-  sociologyWidth.value = 0
+  sociologyMinWidth.value = 0
   saveDomain(activeDomain.value)
   void nextTick(measure)
 })
@@ -1050,8 +1051,8 @@ watch(activeDomain, () => {
             class="humanities-atlas"
             :style="{
               '--sociology-indent': `${sociologyIndent}px`,
-              '--sociology-width':
-                sociologyWidth > 0 ? `${sociologyWidth}px` : 'max-content',
+              '--sociology-min-width':
+                sociologyMinWidth > 0 ? `${sociologyMinWidth}px` : '0px',
             }"
           >
             <article id="economics" data-node="economics" class="node">
@@ -1461,18 +1462,15 @@ watch(activeDomain, () => {
 }
 
 .humanities-atlas #sociology {
-  width: var(--sociology-width, max-content);
+  width: max-content;
+  min-width: var(--sociology-min-width, 0px);
   margin-left: var(--sociology-indent, 0px);
   box-sizing: border-box;
 }
 
 .humanities-atlas #sociology :deep(.school) {
-  width: 100%;
-}
-
-.humanities-atlas #sociology :deep(.people) {
-  width: 100%;
-  justify-content: space-between;
+  width: max-content;
+  min-width: 100%;
 }
 
 .wires {
