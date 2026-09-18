@@ -638,20 +638,33 @@ function measureLinks() {
         : slotGeom.value.humanitiesLeft
     const padLeft =
       Number.parseFloat(getComputedStyle(rootEl).paddingLeft) || 0
+    // Political-science left: natural science forks at the same period when both show.
+    const psNode = rootEl.querySelector('#politicalScience')
+    const psForkX = psNode
+      ? box(psNode, root).left - forkNudge
+      : null
     if (edge.from === 'philosophy-bar' && edge.to === 'astronomy') {
       start[0] = end[0] - forkNudge
     }
-    if (
-      edge.from === 'philosophy-bar' &&
-      (edge.to === 'science-bar' || edge.to === 'humanities-bar')
-    ) {
+    if (edge.from === 'philosophy-bar' && edge.to === 'science-bar') {
+      if (psForkX != null) {
+        // Same period as political-science arrow when social sciences is open.
+        start[0] = psForkX
+      } else if (sharedDomainLeft > 0) {
+        end[0] = sharedDomainLeft + padLeft
+        start[0] = end[0] - 52
+      } else {
+        start[0] = end[0] - 52
+      }
+    }
+    if (edge.from === 'philosophy-bar' && edge.to === 'humanities-bar') {
       if (sharedDomainLeft > 0) {
         end[0] = sharedDomainLeft + padLeft
       }
       start[0] = end[0] - 52
     }
     if (edge.from === 'philosophy-bar' && edge.to === 'politicalScience') {
-      // Same early fork as natural science / astronomy.
+      // Early fork — same period as natural-science bar when both are visible.
       start[0] = end[0] - forkNudge
     }
     if (
@@ -664,7 +677,6 @@ function measureLinks() {
       }
     }
     if (edge.from === 'philosophy-bar' && edge.to === 'economics') {
-      // Rise from behind/below social sciences into the economics left edge.
       start[0] = end[0] - 52
     }
     if (edge.from === 'philosophy-bar' && edge.to === 'sociology') {
@@ -1102,6 +1114,11 @@ watch(activeDomain, (domain) => {
             :label="t('domain.science')"
             @open="openDomain('science')"
           />
+          <DomainBar
+            domain="philosophy"
+            :label="t('domain.philosophy')"
+            @open="openDomain('philosophy')"
+          />
           <div
             class="humanities-atlas"
             :style="{
@@ -1125,11 +1142,6 @@ watch(activeDomain, (domain) => {
               <SchoolBlock school-id="sociology" />
             </article>
           </div>
-          <DomainBar
-            domain="philosophy"
-            :label="t('domain.philosophy')"
-            @open="openDomain('philosophy')"
-          />
         </template>
 
         <template v-else-if="activeDomain === 'math'">

@@ -51,19 +51,19 @@ export const graphEdges: GraphEdge[] = [
     fromSide: 'bottom',
     toSide: 'left',
   },
-  // Social sciences expanded: fork up from philosophy into economics & sociology
+  // Social sciences expanded: philosophy sits above the schools, forks down
   {
     from: 'philosophy-bar',
     to: 'economics',
     color: 'var(--c-economics)',
-    fromSide: 'top',
+    fromSide: 'bottom',
     toSide: 'left',
   },
   {
     from: 'philosophy-bar',
     to: 'sociology',
     color: 'var(--c-sociology)',
-    fromSide: 'top',
+    fromSide: 'bottom',
     toSide: 'left',
   },
   // Math expanded: collapsed philosophy still forks mid-way into the science bar
@@ -82,12 +82,12 @@ export const graphEdges: GraphEdge[] = [
     fromSide: 'top',
     toSide: 'left',
   },
-  // Social sciences expanded: political science co-forks early with natural science
+  // Social sciences: political science co-forks early with natural science (same period)
   {
     from: 'philosophy-bar',
     to: 'politicalScience',
     color: 'var(--c-political)',
-    fromSide: 'top',
+    fromSide: 'bottom',
     toSide: 'left',
   },
   // Natural science lineage
