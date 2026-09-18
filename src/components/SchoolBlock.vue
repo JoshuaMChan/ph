@@ -249,19 +249,11 @@ h2 {
   gap: 8px;
 }
 
-/* Social sciences: stacked labels need room so names don't collide. */
-.school[data-school='economics'] .people {
-  gap: 14px 48px;
-  align-items: flex-start;
-}
-
-.school[data-school='sociology'] .people {
-  gap: 14px 16px;
-  align-items: flex-start;
-}
-
+/* Social sciences: same person spacing (each school has six). */
+.school[data-school='economics'] .people,
+.school[data-school='sociology'] .people,
 .school[data-school='politicalScience'] .people {
-  gap: 14px 28px;
+  gap: 14px 36px;
   align-items: flex-start;
 }
 
