@@ -170,6 +170,8 @@ const links = ref<Link[]>([])
 
 /** Shift whole political-science block so its Marx sits under economics Marx. */
 const psIndent = ref(0)
+/** On social-sciences view: natural-science bar left-aligns with political science. */
+const scienceBarLeft = ref(0)
 
 /** Shift whole sociology block so its left (and Marx) sits under economics Marx. */
 const sociologyIndent = ref(savedSociology.indent)
@@ -200,6 +202,10 @@ const slotVars = computed(() => ({
     slotGeom.value.philosophyWidth > 0
       ? `${slotGeom.value.philosophyWidth}px`
       : 'max-content',
+  '--science-bar-left':
+    scienceBarLeft.value > 0
+      ? `${scienceBarLeft.value}px`
+      : `${slotGeom.value.scienceLeft}px`,
 }))
 
 function setSlotGeom(next: SlotGeom) {
@@ -556,6 +562,23 @@ function curve(
   return `M ${x1} ${y1} C ${x1} ${midY}, ${midX} ${y2}, ${x2} ${y2}`
 }
 
+/** Mirrored short arcs: philosophy-bar ↔ science / social-sciences domain bars only. */
+function domainTwinCurve(
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  fromSide: Side,
+) {
+  const dy = y2 - y1
+  if (fromSide === 'top') {
+    const bulge = Math.min(y1, y2) - Math.max(22, Math.abs(dy) * 0.35 + 12)
+    return `M ${x1} ${y1} C ${x1} ${bulge}, ${x2} ${bulge}, ${x2} ${y2}`
+  }
+  const bulge = Math.max(y1, y2) + Math.max(22, Math.abs(dy) * 0.35 + 12)
+  return `M ${x1} ${y1} C ${x1} ${bulge}, ${x2} ${bulge}, ${x2} ${y2}`
+}
+
 /** Align political-science Marx under economics Marx by shifting the whole row. */
 function layoutPoliticalScience(rootEl: HTMLElement) {
   const politics = rootEl.querySelector(
@@ -574,6 +597,23 @@ function layoutPoliticalScience(rootEl: HTMLElement) {
   const nextIndent = Math.round(psIndent.value + delta)
   const changed = Math.abs(nextIndent - psIndent.value) > 0.5
   if (changed) psIndent.value = nextIndent
+  return changed
+}
+
+/** Pin natural-science DomainBar left edge to political science. */
+function alignScienceBarToPolitics(rootEl: HTMLElement) {
+  const politics = rootEl.querySelector(
+    '#politicalScience',
+  ) as HTMLElement | null
+  if (!politics) return false
+  const root = rootEl.getBoundingClientRect()
+  const padLeft = Number.parseFloat(getComputedStyle(rootEl).paddingLeft) || 0
+  const left = Math.max(
+    0,
+    Math.round(politics.getBoundingClientRect().left - root.left - padLeft),
+  )
+  const changed = Math.abs(left - scienceBarLeft.value) > 0.5
+  if (changed) scienceBarLeft.value = left
   return changed
 }
 
@@ -638,18 +678,34 @@ function measureLinks() {
         : slotGeom.value.humanitiesLeft
     const padLeft =
       Number.parseFloat(getComputedStyle(rootEl).paddingLeft) || 0
-    // Political-science left: natural science forks at the same period when both show.
+    // Political science node — natural science bar/fork aligns to it when present.
     const psNode = rootEl.querySelector('#politicalScience')
-    const psForkX = psNode
-      ? box(psNode, root).left - forkNudge
-      : null
+    // Twin domain bars: leave philosophy at one x (up = science, down = social sciences).
+    const sciBarEl = rootEl.querySelector('[data-node="science-bar"]')
+    const humBarEl = rootEl.querySelector('[data-node="humanities-bar"]')
+    const astronomyEl = rootEl.querySelector('#astronomy')
+    const twinDomainLeft =
+      sharedDomainLeft > 0
+        ? sharedDomainLeft + padLeft
+        : sciBarEl && humBarEl
+          ? Math.min(box(sciBarEl, root).left, box(humBarEl, root).left)
+          : 0
+    const twinForkX =
+      sciBarEl && humBarEl && twinDomainLeft > 0
+        ? twinDomainLeft - 52
+        : astronomyEl && humBarEl
+          ? box(astronomyEl, root).left - forkNudge
+          : null
     if (edge.from === 'philosophy-bar' && edge.to === 'astronomy') {
-      start[0] = end[0] - forkNudge
+      start[0] = twinForkX ?? end[0] - forkNudge
     }
     if (edge.from === 'philosophy-bar' && edge.to === 'science-bar') {
-      if (psForkX != null) {
-        // Same period as political-science arrow when social sciences is open.
-        start[0] = psForkX
+      if (psNode) {
+        end[0] = box(psNode, root).left
+        start[0] = end[0] - forkNudge
+      } else if (twinForkX != null) {
+        if (twinDomainLeft > 0) end[0] = twinDomainLeft
+        start[0] = twinForkX
       } else if (sharedDomainLeft > 0) {
         end[0] = sharedDomainLeft + padLeft
         start[0] = end[0] - 52
@@ -658,10 +714,15 @@ function measureLinks() {
       }
     }
     if (edge.from === 'philosophy-bar' && edge.to === 'humanities-bar') {
-      if (sharedDomainLeft > 0) {
+      if (twinForkX != null) {
+        if (twinDomainLeft > 0) end[0] = twinDomainLeft
+        start[0] = twinForkX
+      } else if (sharedDomainLeft > 0) {
         end[0] = sharedDomainLeft + padLeft
+        start[0] = end[0] - 52
+      } else {
+        start[0] = end[0] - 52
       }
-      start[0] = end[0] - 52
     }
     if (edge.from === 'philosophy-bar' && edge.to === 'politicalScience') {
       // Early fork — same period as natural-science bar when both are visible.
@@ -708,10 +769,15 @@ function measureLinks() {
     if (toSide === 'left') {
       end[0] -= arrowTip
     }
+    const isDomainTwin =
+      edge.from === 'philosophy-bar' &&
+      (edge.to === 'science-bar' || edge.to === 'humanities-bar')
     return [
       {
         id: `${edge.from}-${edge.to}`,
-        d: curve(start[0], start[1], end[0], end[1], fromSide, toSide),
+        d: isDomainTwin
+          ? domainTwinCurve(start[0], start[1], end[0], end[1], fromSide)
+          : curve(start[0], start[1], end[0], end[1], fromSide, toSide),
         color: edge.color,
         dashed: Boolean(edge.dashed),
       },
@@ -725,12 +791,14 @@ function measure() {
   if (activeDomain.value === 'humanities') {
     const movedSocial = layoutSocialMarx(rootEl)
     const movedPs = layoutPoliticalScience(rootEl)
+    const movedSci = alignScienceBarToPolitics(rootEl)
     captureSlotGeom(rootEl)
     canvas.value = { w: rootEl.offsetWidth, h: rootEl.offsetHeight }
-    if (movedSocial || movedPs) {
+    if (movedSocial || movedPs || movedSci) {
       void nextTick(() => {
         layoutSocialMarx(rootEl)
         layoutPoliticalScience(rootEl)
+        alignScienceBarToPolitics(rootEl)
         captureSlotGeom(rootEl)
         canvas.value = { w: rootEl.offsetWidth, h: rootEl.offsetHeight }
         measureLinks()
@@ -844,7 +912,10 @@ watch(activeDomain, (domain) => {
   sociologyIndent.value = 0
   sociologyMinWidth.value = 0
   saveSociologyLayout(0, 0)
-  if (domain !== 'humanities') psIndent.value = 0
+  if (domain !== 'humanities') {
+    psIndent.value = 0
+    scienceBarLeft.value = 0
+  }
   saveDomain(domain)
   void nextTick(measure)
 })
@@ -1128,18 +1199,18 @@ watch(activeDomain, (domain) => {
               '--ps-indent': `${psIndent}px`,
             }"
           >
+            <article id="sociology" data-node="sociology" class="node">
+              <SchoolBlock school-id="sociology" />
+            </article>
+            <article id="economics" data-node="economics" class="node">
+              <SchoolBlock school-id="economics" />
+            </article>
             <article
               id="politicalScience"
               data-node="politicalScience"
               class="node political-science"
             >
               <SchoolBlock school-id="politicalScience" />
-            </article>
-            <article id="economics" data-node="economics" class="node">
-              <SchoolBlock school-id="economics" />
-            </article>
-            <article id="sociology" data-node="sociology" class="node">
-              <SchoolBlock school-id="sociology" />
             </article>
           </div>
         </template>
@@ -1484,9 +1555,16 @@ watch(activeDomain, (domain) => {
   box-sizing: border-box;
 }
 
-.graph.domain-math :deep(.science-bar),
-.graph.domain-humanities :deep(.science-bar) {
+.graph.domain-math :deep(.science-bar) {
   margin-left: var(--science-left, 0px);
+  width: var(--science-width, max-content);
+  min-width: var(--science-width, 0px);
+  flex: 0 0 auto;
+  box-sizing: border-box;
+}
+
+.graph.domain-humanities :deep(.science-bar) {
+  margin-left: var(--science-bar-left, var(--science-left, 0px));
   width: var(--science-width, max-content);
   min-width: var(--science-width, 0px);
   flex: 0 0 auto;
