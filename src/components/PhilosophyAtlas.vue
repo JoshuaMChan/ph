@@ -1546,7 +1546,9 @@ watch(activeDomain, (domain) => {
 
 .humanities-atlas :deep(.head) {
   grid-row: 1;
-  width: max-content;
+  justify-self: stretch;
+  width: auto;
+  min-width: 0;
   margin: 0;
   padding: 2px 2px 0;
   border-top: 2px solid var(--accent);

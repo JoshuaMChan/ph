@@ -127,11 +127,10 @@ const isSocialSchool = computed(
     props.schoolId === 'politicalScience',
 )
 
-const socialHeadColumn = computed(() => {
-  const cols = socialColumns[props.schoolId]
-  if (!cols) return 1
-  return Math.min(...Object.values(cols))
-})
+/** Full-width title rule — same frame for every social-science school. */
+const socialHeadStyle = computed(() =>
+  isSocialSchool.value ? { gridColumn: '1 / -1' } : undefined,
+)
 
 function socialColumn(personId: string) {
   return socialColumns[props.schoolId]?.[personId] ?? 1
@@ -145,10 +144,7 @@ function socialColumn(personId: string) {
     :data-school="schoolId"
     :style="{ '--accent': school.accent }"
   >
-    <header
-      class="head"
-      :style="isSocialSchool ? { gridColumn: String(socialHeadColumn) } : undefined"
-    >
+    <header class="head" :style="socialHeadStyle">
       <h2>{{ t(`school.${schoolId}`) }}</h2>
       <p v-if="showMeta" class="meta">
         <span v-if="years" class="when">{{ years }}</span>
