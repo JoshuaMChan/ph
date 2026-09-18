@@ -91,51 +91,6 @@ const dirac = computed(() => people.value.find((item) => item.id === 'dirac'))
 const mendel = computed(() => people.value.find((item) => item.id === 'mendel'))
 const crick = computed(() => people.value.find((item) => item.id === 'crick'))
 const watson = computed(() => people.value.find((item) => item.id === 'watson'))
-
-/** Shared columns so Marx lines up across sociology / economics / political science. */
-const socialColumns: Record<string, Record<string, number>> = {
-  politicalScience: {
-    machiavelli: 1,
-    hobbes: 2,
-    locke: 3,
-    montesquieu: 4,
-    marx: 5,
-    weber: 6,
-  },
-  economics: {
-    smith: 4,
-    marx: 5,
-    marshall: 6,
-    keynes: 7,
-    hayek: 8,
-    friedman: 9,
-  },
-  sociology: {
-    marx: 5,
-    simmel: 6,
-    durkheim: 7,
-    weber: 8,
-    foucault: 9,
-    bourdieu: 10,
-  },
-}
-
-const isSocialSchool = computed(
-  () =>
-    props.schoolId === 'economics' ||
-    props.schoolId === 'sociology' ||
-    props.schoolId === 'politicalScience',
-)
-
-const socialHeadColumn = computed(() => {
-  const cols = socialColumns[props.schoolId]
-  if (!cols) return 1
-  return Math.min(...Object.values(cols))
-})
-
-function socialColumn(personId: string) {
-  return socialColumns[props.schoolId]?.[personId] ?? 1
-}
 </script>
 
 <template>
@@ -145,10 +100,7 @@ function socialColumn(personId: string) {
     :data-school="schoolId"
     :style="{ '--accent': school.accent }"
   >
-    <header
-      class="head"
-      :style="isSocialSchool ? { gridColumn: String(socialHeadColumn) } : undefined"
-    >
+    <header class="head">
       <h2>{{ t(`school.${schoolId}`) }}</h2>
       <p v-if="showMeta" class="meta">
         <span v-if="years" class="when">{{ years }}</span>
@@ -194,15 +146,6 @@ function socialColumn(personId: string) {
         <PhilosopherCard v-if="watson" class="slot-watson" :person="watson" />
       </div>
     </div>
-    <div v-else-if="isSocialSchool" class="people social-grid">
-      <PhilosopherCard
-        v-for="item in people"
-        :key="item.id"
-        :person="item"
-        stacked
-        :style="{ gridColumn: socialColumn(item.id) }"
-      />
-    </div>
     <div
       v-else
       class="people"
@@ -223,13 +166,21 @@ function socialColumn(personId: string) {
             schoolId !== 'quantumChemistry' &&
             schoolId !== 'physiology' &&
             schoolId !== 'microbiology' &&
-            schoolId !== 'molecularBiology'),
+            schoolId !== 'molecularBiology' &&
+            schoolId !== 'economics' &&
+            schoolId !== 'sociology' &&
+            schoolId !== 'politicalScience'),
       }"
     >
       <PhilosopherCard
         v-for="item in people"
         :key="item.id"
         :person="item"
+        :stacked="
+          schoolId === 'economics' ||
+          schoolId === 'sociology' ||
+          schoolId === 'politicalScience'
+        "
       />
     </div>
   </section>
@@ -298,11 +249,11 @@ h2 {
   gap: 8px;
 }
 
-/* Social sciences: person columns come from humanities-atlas subgrid. */
+/* Social sciences: same person spacing (each school has six). */
 .school[data-school='economics'] .people,
 .school[data-school='sociology'] .people,
 .school[data-school='politicalScience'] .people {
-  gap: 0;
+  gap: 14px 36px;
   align-items: flex-start;
 }
 
@@ -313,11 +264,6 @@ h2 {
   min-width: var(--card-w, 70px);
   padding-inline: 6px;
   box-sizing: border-box;
-  justify-self: start;
-}
-
-.social-grid {
-  display: contents;
 }
 
 .life-grid {
