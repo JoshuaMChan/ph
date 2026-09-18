@@ -327,33 +327,36 @@ function captureSlotGeom(rootEl: HTMLElement) {
       politicalScience ? Math.round(relRight(politicalScience)) : 0,
     )
 
-    // Collapsed domain bars share sociology's right edge.
-    const barRight = sociologyRight > 0 ? sociologyRight : bandRight
-
+    // Keep collapsed math / philosophy / science bar lengths from other pages.
     const philosophyLeft =
       slotGeom.value.philosophyLeft > 0
         ? slotGeom.value.philosophyLeft
         : 0
     const mathLeft =
       slotGeom.value.mathLeft > 0 ? slotGeom.value.mathLeft : philosophyLeft
-    // Science thumbnail follows political-science left when measured.
     const sciBarLeft =
       scienceBarLeft.value > 0 ? scienceBarLeft.value : scienceLeft
-
-    const philosophyWidth = Math.max(0, barRight - philosophyLeft)
-    const mathWidth = Math.max(0, barRight - mathLeft)
-    const scienceWidth = Math.max(0, barRight - sciBarLeft)
+    const fallbackRight = sociologyRight > 0 ? sociologyRight : bandRight
     const humanitiesWidth = Math.max(0, bandRight - humanitiesLeft)
 
     setSlotGeom({
       mathLeft,
-      mathWidth,
+      mathWidth:
+        slotGeom.value.mathWidth > 0
+          ? slotGeom.value.mathWidth
+          : Math.max(0, fallbackRight - mathLeft),
       scienceLeft,
-      scienceWidth,
+      scienceWidth:
+        slotGeom.value.scienceWidth > 0
+          ? slotGeom.value.scienceWidth
+          : Math.max(0, fallbackRight - sciBarLeft),
       humanitiesLeft,
       humanitiesWidth,
       philosophyLeft,
-      philosophyWidth,
+      philosophyWidth:
+        slotGeom.value.philosophyWidth > 0
+          ? slotGeom.value.philosophyWidth
+          : Math.max(0, fallbackRight - philosophyLeft),
     })
     return
   }
@@ -645,9 +648,23 @@ function measureLinks() {
         start[0] = end[0] - 52
       }
     }
-    if (edge.from === 'philosophy-bar' && edge.to === 'politicalScience') {
-      // Early fork — same period as natural-science bar when both are visible.
-      start[0] = end[0] - forkNudge
+    if (
+      edge.from === 'philosophy-bar' &&
+      (edge.to === 'politicalScience' ||
+        edge.to === 'economics' ||
+        edge.to === 'sociology')
+    ) {
+      // Land on each school's content-fitted frame (not a full-row ghost box).
+      const node = rootEl.querySelector(`#${edge.to}`)
+      if (node) {
+        const frame = box(node, root)
+        const head = node.querySelector('.head')
+        end[0] = frame.left
+        end[1] = head ? box(head, root).cy : frame.cy
+        // Political science co-forks early with natural science; the others sit later.
+        start[0] =
+          end[0] - (edge.to === 'politicalScience' ? forkNudge : 52)
+      }
     }
     if (
       edge.from === 'greece' &&
@@ -657,13 +674,6 @@ function measureLinks() {
       if (sharedDomainLeft > 0) {
         end[0] = sharedDomainLeft + padLeft
       }
-    }
-    if (edge.from === 'philosophy-bar' && edge.to === 'economics') {
-      start[0] = end[0] - 52
-    }
-    if (edge.from === 'philosophy-bar' && edge.to === 'sociology') {
-      // Sociology box starts under economics Marx — fork later than economics.
-      start[0] = end[0] - 52
     }
     if (
       edge.from === 'philosophy-bar' &&
@@ -1522,7 +1532,6 @@ watch(activeDomain, (domain) => {
 }
 
 .humanities-atlas > .node {
-  grid-column: 1 / -1;
   display: grid;
   grid-template-columns: subgrid;
   width: auto;
@@ -1530,6 +1539,19 @@ watch(activeDomain, (domain) => {
   margin-left: 0;
   padding: 4px 0 2px;
   box-sizing: border-box;
+}
+
+/* Each school box only spans its own person columns. */
+.humanities-atlas #politicalScience {
+  grid-column: 1 / 7;
+}
+
+.humanities-atlas #economics {
+  grid-column: 4 / 10;
+}
+
+.humanities-atlas #sociology {
+  grid-column: 5 / 11;
 }
 
 .humanities-atlas :deep(.school) {
@@ -1546,6 +1568,7 @@ watch(activeDomain, (domain) => {
 
 .humanities-atlas :deep(.head) {
   grid-row: 1;
+  grid-column: 1 / -1;
   justify-self: stretch;
   width: auto;
   min-width: 0;
@@ -1562,20 +1585,6 @@ watch(activeDomain, (domain) => {
 .humanities-atlas :deep(.card.stacked) {
   grid-row: 2;
   justify-self: start;
-}
-
-.humanities-atlas #economics {
-  width: auto;
-}
-
-.humanities-atlas #sociology {
-  width: auto;
-  min-width: 0;
-}
-
-.humanities-atlas #politicalScience {
-  width: auto;
-  margin-left: 0;
 }
 
 .wires {

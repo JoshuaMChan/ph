@@ -92,7 +92,10 @@ const mendel = computed(() => people.value.find((item) => item.id === 'mendel'))
 const crick = computed(() => people.value.find((item) => item.id === 'crick'))
 const watson = computed(() => people.value.find((item) => item.id === 'watson'))
 
-/** Shared columns so Marx lines up across sociology / economics / political science. */
+/**
+ * Columns relative to each school's own subgrid span in humanities-atlas.
+ * Parent tracks still align Marx (politics 5 ≡ economics 2 ≡ sociology 1).
+ */
 const socialColumns: Record<string, Record<string, number>> = {
   politicalScience: {
     machiavelli: 1,
@@ -103,20 +106,20 @@ const socialColumns: Record<string, Record<string, number>> = {
     weber: 6,
   },
   economics: {
-    smith: 4,
-    marx: 5,
-    marshall: 6,
-    keynes: 7,
-    hayek: 8,
-    friedman: 9,
+    smith: 1,
+    marx: 2,
+    marshall: 3,
+    keynes: 4,
+    hayek: 5,
+    friedman: 6,
   },
   sociology: {
-    marx: 5,
-    simmel: 6,
-    durkheim: 7,
-    weber: 8,
-    foucault: 9,
-    bourdieu: 10,
+    marx: 1,
+    simmel: 2,
+    durkheim: 3,
+    weber: 4,
+    foucault: 5,
+    bourdieu: 6,
   },
 }
 
@@ -125,11 +128,6 @@ const isSocialSchool = computed(
     props.schoolId === 'economics' ||
     props.schoolId === 'sociology' ||
     props.schoolId === 'politicalScience',
-)
-
-/** Full-width title rule — same frame for every social-science school. */
-const socialHeadStyle = computed(() =>
-  isSocialSchool.value ? { gridColumn: '1 / -1' } : undefined,
 )
 
 function socialColumn(personId: string) {
@@ -144,7 +142,7 @@ function socialColumn(personId: string) {
     :data-school="schoolId"
     :style="{ '--accent': school.accent }"
   >
-    <header class="head" :style="socialHeadStyle">
+    <header class="head">
       <h2>{{ t(`school.${schoolId}`) }}</h2>
       <p v-if="showMeta" class="meta">
         <span v-if="years" class="when">{{ years }}</span>
