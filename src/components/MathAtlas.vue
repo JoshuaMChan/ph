@@ -370,9 +370,9 @@ function onLeave() {
   z-index: 1;
   display: flex;
   align-items: stretch;
-  justify-content: space-between;
-  gap: var(--gutter-x, 28px);
-  width: 100%;
+  justify-content: flex-start;
+  gap: 10px;
+  width: max-content;
   min-width: max-content;
   box-sizing: border-box;
 }

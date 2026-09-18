@@ -66,7 +66,7 @@ defineEmits<{
 
 .domain-bar-lead {
   position: sticky;
-  left: max(40px, env(safe-area-inset-left));
+  left: var(--domain-sticky-left, max(40px, env(safe-area-inset-left)));
   z-index: 1;
   display: inline-flex;
   align-items: center;
