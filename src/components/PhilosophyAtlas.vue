@@ -15,17 +15,29 @@ type Domain = 'philosophy' | 'science' | 'math' | 'humanities'
 const ATLAS_DOMAIN_KEY = 'atlas-domain'
 const ATLAS_SCROLL_X_KEY = 'atlas-scroll-x'
 const ATLAS_SLOT_GEOM_KEY = 'atlas-slot-geom'
-const ATLAS_SOCIOLOGY_KEY = 'atlas-sociology-layout'
 
 type SlotGeom = {
-  /** Shared abscissa for all four domain expansions (cookie). */
-  left: number
-  /** Shared band width for all four domain expansions (cookie). */
-  width: number
+  mathLeft: number
+  mathWidth: number
+  scienceLeft: number
+  scienceWidth: number
+  humanitiesLeft: number
+  humanitiesWidth: number
+  philosophyLeft: number
+  philosophyWidth: number
 }
 
 function emptySlotGeom(): SlotGeom {
-  return { left: 0, width: 0 }
+  return {
+    mathLeft: 0,
+    mathWidth: 0,
+    scienceLeft: 0,
+    scienceWidth: 0,
+    humanitiesLeft: 0,
+    humanitiesWidth: 0,
+    philosophyLeft: 0,
+    philosophyWidth: 0,
+  }
 }
 
 function isDomain(value: string | null | undefined): value is Domain {
@@ -63,32 +75,13 @@ function loadSlotGeom(): SlotGeom {
   const raw = readCookie(ATLAS_SLOT_GEOM_KEY)
   if (!raw) return emptySlotGeom()
   try {
-    const parsed = JSON.parse(raw) as Record<string, unknown>
-    if ('left' in parsed || 'width' in parsed) {
-      const left = Number(parsed.left)
-      const width = Number(parsed.width)
-      return {
-        left: Number.isFinite(left) && left >= 0 ? Math.round(left) : 0,
-        width: Number.isFinite(width) && width >= 0 ? Math.round(width) : 0,
-      }
+    const parsed = JSON.parse(raw) as Partial<SlotGeom>
+    const next = emptySlotGeom()
+    for (const key of Object.keys(next) as (keyof SlotGeom)[]) {
+      const n = Number(parsed[key])
+      if (Number.isFinite(n) && n >= 0) next[key] = Math.round(n)
     }
-    // Migrate older per-domain slots → one shared abscissa.
-    const lefts = [
-      Number(parsed.philosophyLeft),
-      Number(parsed.mathLeft),
-      Number(parsed.scienceLeft),
-      Number(parsed.humanitiesLeft),
-    ].filter((n) => Number.isFinite(n) && n >= 0)
-    const widths = [
-      Number(parsed.philosophyWidth),
-      Number(parsed.mathWidth),
-      Number(parsed.scienceWidth),
-      Number(parsed.humanitiesWidth),
-    ].filter((n) => Number.isFinite(n) && n > 0)
-    return {
-      left: lefts.length ? Math.round(Math.min(...lefts)) : 0,
-      width: widths.length ? Math.round(Math.max(...widths)) : 0,
-    }
+    return next
   } catch {
     return emptySlotGeom()
   }
@@ -98,35 +91,7 @@ function saveSlotGeom(geom: SlotGeom) {
   writeCookie(ATLAS_SLOT_GEOM_KEY, JSON.stringify(geom))
 }
 
-function loadSociologyLayout(): { indent: number; minWidth: number } {
-  const raw = readCookie(ATLAS_SOCIOLOGY_KEY)
-  if (!raw) return { indent: 0, minWidth: 0 }
-  try {
-    const parsed = JSON.parse(raw) as { indent?: unknown; minWidth?: unknown }
-    const indent = Number(parsed.indent)
-    const minWidth = Number(parsed.minWidth)
-    return {
-      indent: Number.isFinite(indent) && indent > 0 ? Math.round(indent) : 0,
-      minWidth:
-        Number.isFinite(minWidth) && minWidth > 0 ? Math.round(minWidth) : 0,
-    }
-  } catch {
-    return { indent: 0, minWidth: 0 }
-  }
-}
-
-function saveSociologyLayout(indent: number, minWidth: number) {
-  writeCookie(
-    ATLAS_SOCIOLOGY_KEY,
-    JSON.stringify({
-      indent: Math.max(0, Math.round(indent)),
-      minWidth: Math.max(0, Math.round(minWidth)),
-    }),
-  )
-}
-
 const activeDomain = ref<Domain>(loadDomain())
-const savedSociology = loadSociologyLayout()
 
 function openDomain(domain: Domain) {
   if (activeDomain.value === domain) return
@@ -174,43 +139,50 @@ const viewport = ref<HTMLElement | null>(null)
 const canvas = ref({ w: 0, h: 0 })
 const links = ref<Link[]>([])
 
-/** Shift whole political-science block so its Marx sits under economics Marx. */
-const psIndent = ref(0)
+/** On social-sciences view: natural-science bar left-aligns with political science. */
+const scienceBarLeft = ref(0)
 
-/** Shift whole sociology block so its left (and Marx) sits under economics Marx. */
-const sociologyIndent = ref(savedSociology.indent)
-/** Stretch sociology box to at least economics' right edge (never shrink below content). */
-const sociologyMinWidth = ref(savedSociology.minWidth)
-
-/** Shared abscissa + band width for all four domain expansions (cookie). */
+/** Stable domain-slot geometry so expand/collapse keeps the same left edge & width. */
 const slotGeom = ref<SlotGeom>(loadSlotGeom())
 
-const slotVars = computed(() => {
-  const left = `${slotGeom.value.left}px`
-  const width =
-    slotGeom.value.width > 0 ? `${slotGeom.value.width}px` : 'max-content'
-  return {
-    '--math-left': left,
-    '--math-width': width,
-    '--science-left': left,
-    '--science-width': width,
-    '--humanities-left': left,
-    '--humanities-width': width,
-    '--philosophy-left': left,
-    '--philosophy-width': width,
-    '--science-bar-left': left,
-    '--sociology-indent': `${sociologyIndent.value}px`,
-    '--sociology-min-width':
-      sociologyMinWidth.value > 0 ? `${sociologyMinWidth.value}px` : '0px',
-    '--ps-indent': `${psIndent.value}px`,
-  }
-})
+const slotVars = computed(() => ({
+  '--math-left': `${slotGeom.value.mathLeft}px`,
+  '--math-width':
+    slotGeom.value.mathWidth > 0
+      ? `${slotGeom.value.mathWidth}px`
+      : 'max-content',
+  '--science-left': `${slotGeom.value.scienceLeft}px`,
+  '--science-width':
+    slotGeom.value.scienceWidth > 0
+      ? `${slotGeom.value.scienceWidth}px`
+      : 'max-content',
+  '--humanities-left': `${slotGeom.value.humanitiesLeft}px`,
+  '--humanities-width':
+    slotGeom.value.humanitiesWidth > 0
+      ? `${slotGeom.value.humanitiesWidth}px`
+      : 'max-content',
+  '--philosophy-left': `${slotGeom.value.philosophyLeft}px`,
+  '--philosophy-width':
+    slotGeom.value.philosophyWidth > 0
+      ? `${slotGeom.value.philosophyWidth}px`
+      : 'max-content',
+  '--science-bar-left':
+    scienceBarLeft.value > 0
+      ? `${scienceBarLeft.value}px`
+      : `${slotGeom.value.scienceLeft}px`,
+}))
 
 function setSlotGeom(next: SlotGeom) {
   const prev = slotGeom.value
   if (
-    Math.abs(prev.left - next.left) > 0.5 ||
-    Math.abs(prev.width - next.width) > 0.5
+    Math.abs(prev.mathLeft - next.mathLeft) > 0.5 ||
+    Math.abs(prev.mathWidth - next.mathWidth) > 0.5 ||
+    Math.abs(prev.scienceLeft - next.scienceLeft) > 0.5 ||
+    Math.abs(prev.scienceWidth - next.scienceWidth) > 0.5 ||
+    Math.abs(prev.humanitiesLeft - next.humanitiesLeft) > 0.5 ||
+    Math.abs(prev.humanitiesWidth - next.humanitiesWidth) > 0.5 ||
+    Math.abs(prev.philosophyLeft - next.philosophyLeft) > 0.5 ||
+    Math.abs(prev.philosophyWidth - next.philosophyWidth) > 0.5
   ) {
     slotGeom.value = next
     saveSlotGeom(next)
@@ -225,27 +197,102 @@ function captureSlotGeom(rootEl: HTMLElement) {
   const relRight = (el: Element) =>
     el.getBoundingClientRect().right - root.left - padLeft
 
-  let measuredLeft = 0
-  let measuredRight = 0
+  /** Natural science & social science always share one fork / bar left edge. */
+  const lockSciHum = (left: number) => {
+    const x = Math.max(0, Math.round(left))
+    return { scienceLeft: x, humanitiesLeft: x }
+  }
 
   if (activeDomain.value === 'philosophy') {
+    const modern = rootEl.querySelector('#modern')
     const tree = rootEl.querySelector('.philosophy-atlas')
-    if (!tree) return
-    measuredLeft = Math.max(0, Math.round(relLeft(tree)))
-    measuredRight = Math.round(relRight(tree))
-  } else if (activeDomain.value === 'science') {
+    const sciBar = rootEl.querySelector('[data-node="science-bar"]')
+    const mathBar = rootEl.querySelector('[data-node="math-bar"]')
+    const humBar = rootEl.querySelector('[data-node="humanities-bar"]')
+    if (!modern || !tree) return
+
+    // Math co-originates with philosophy: bar starts at the tree's left edge.
+    const philosophyLeft = Math.max(0, Math.round(relLeft(tree)))
+    const philosophyWidth = Math.round((tree as HTMLElement).offsetWidth)
+    const treeRight = Math.round(relRight(tree))
+    const mathBarW = mathBar
+      ? Math.round((mathBar as HTMLElement).offsetWidth)
+      : 0
+    const mathLeft = philosophyLeft
+    const mathWidth = Math.max(mathBarW, philosophyWidth, treeRight - mathLeft)
+
+    // Same x for natural science & social science (rationalism / modern column).
+    const rationalism = rootEl.querySelector('#rationalism')
+    const { scienceLeft, humanitiesLeft } = lockSciHum(
+      relLeft(rationalism ?? modern),
+    )
+    const sciBarW = sciBar
+      ? Math.round((sciBar as HTMLElement).offsetWidth)
+      : 0
+    const humBarW = humBar
+      ? Math.round((humBar as HTMLElement).offsetWidth)
+      : 0
+    const scienceWidth = Math.max(sciBarW, treeRight - scienceLeft)
+    const humanitiesWidth = Math.max(humBarW, treeRight - humanitiesLeft)
+
+    setSlotGeom({
+      mathLeft,
+      mathWidth,
+      scienceLeft,
+      scienceWidth,
+      humanitiesLeft,
+      humanitiesWidth,
+      philosophyLeft,
+      philosophyWidth,
+    })
+    return
+  }
+
+  if (activeDomain.value === 'science') {
     const atlas = rootEl.querySelector('.science-atlas') as HTMLElement | null
     const astronomy = rootEl.querySelector('#astronomy') as HTMLElement | null
-    const qft = rootEl.querySelector(
-      '#quantumFieldTheory',
-    ) as HTMLElement | null
+    const qft = rootEl.querySelector('#quantumFieldTheory') as HTMLElement | null
     if (!atlas || !astronomy) return
-    measuredLeft = Math.max(0, Math.round(relLeft(astronomy)))
-    measuredRight = Math.max(
-      Math.round(relRight(atlas)),
-      qft ? Math.round(relRight(qft)) : 0,
+
+    const rawLeft =
+      slotGeom.value.scienceLeft > 0
+        ? slotGeom.value.scienceLeft
+        : slotGeom.value.humanitiesLeft > 0
+          ? slotGeom.value.humanitiesLeft
+          : Math.max(0, Math.round(relLeft(astronomy)))
+    const { scienceLeft, humanitiesLeft } = lockSciHum(rawLeft)
+    const atlasRight = Math.round(relRight(atlas))
+    const qftRight = qft ? Math.round(relRight(qft)) : atlasRight
+    const bandRight = Math.max(atlasRight, qftRight)
+    const scienceWidth = Math.max(
+      slotGeom.value.scienceWidth,
+      bandRight - scienceLeft,
     )
-  } else if (activeDomain.value === 'humanities') {
+    const humanitiesWidth = Math.max(
+      slotGeom.value.humanitiesWidth,
+      bandRight - humanitiesLeft,
+    )
+
+    const philosophyLeft =
+      slotGeom.value.philosophyLeft > 0
+        ? slotGeom.value.philosophyLeft
+        : 0
+    const philosophyWidth = Math.max(0, bandRight - philosophyLeft)
+
+    setSlotGeom({
+      mathLeft: slotGeom.value.mathLeft,
+      mathWidth: Math.max(slotGeom.value.mathWidth, philosophyWidth),
+      scienceLeft,
+      scienceWidth,
+      humanitiesLeft,
+      humanitiesWidth,
+      philosophyLeft,
+      philosophyWidth,
+    })
+    return
+  }
+
+  if (activeDomain.value === 'humanities') {
     const atlas = rootEl.querySelector('.humanities-atlas') as HTMLElement | null
     const economics = rootEl.querySelector('#economics') as HTMLElement | null
     const sociology = rootEl.querySelector('#sociology') as HTMLElement | null
@@ -253,36 +300,127 @@ function captureSlotGeom(rootEl: HTMLElement) {
       '#politicalScience',
     ) as HTMLElement | null
     if (!atlas) return
-    measuredLeft = Math.max(0, Math.round(relLeft(economics ?? atlas)))
-    measuredRight = Math.max(
+
+    const rawLeft =
+      slotGeom.value.scienceLeft > 0
+        ? slotGeom.value.scienceLeft
+        : slotGeom.value.humanitiesLeft > 0
+          ? slotGeom.value.humanitiesLeft
+          : Math.max(0, Math.round(relLeft(economics ?? atlas)))
+    const { scienceLeft, humanitiesLeft } = lockSciHum(rawLeft)
+
+    // Sociology content right edge (portraits / title), not the full subgrid track.
+    let sociologyRight = 0
+    if (sociology) {
+      sociology
+        .querySelectorAll('[data-node], .head')
+        .forEach((el) => {
+          sociologyRight = Math.max(sociologyRight, Math.round(relRight(el)))
+        })
+      if (sociologyRight <= 0) sociologyRight = Math.round(relRight(sociology))
+    }
+
+    const bandRight = Math.max(
+      sociologyRight,
       Math.round(relRight(atlas)),
       economics ? Math.round(relRight(economics)) : 0,
-      sociology ? Math.round(relRight(sociology)) : 0,
       politicalScience ? Math.round(relRight(politicalScience)) : 0,
     )
-  } else {
-    const atlas = rootEl.querySelector('.math-atlas') as HTMLElement | null
-    if (!atlas) return
-    measuredLeft = Math.max(0, Math.round(relLeft(atlas)))
-    measuredRight = Math.round(relRight(atlas))
+
+    // Collapsed domain bars share sociology's right edge.
+    const barRight = sociologyRight > 0 ? sociologyRight : bandRight
+
+    const philosophyLeft =
+      slotGeom.value.philosophyLeft > 0
+        ? slotGeom.value.philosophyLeft
+        : 0
+    const mathLeft =
+      slotGeom.value.mathLeft > 0 ? slotGeom.value.mathLeft : philosophyLeft
+    // Science thumbnail follows political-science left when measured.
+    const sciBarLeft =
+      scienceBarLeft.value > 0 ? scienceBarLeft.value : scienceLeft
+
+    const philosophyWidth = Math.max(0, barRight - philosophyLeft)
+    const mathWidth = Math.max(0, barRight - mathLeft)
+    const scienceWidth = Math.max(0, barRight - sciBarLeft)
+    const humanitiesWidth = Math.max(0, bandRight - humanitiesLeft)
+
+    setSlotGeom({
+      mathLeft,
+      mathWidth,
+      scienceLeft,
+      scienceWidth,
+      humanitiesLeft,
+      humanitiesWidth,
+      philosophyLeft,
+      philosophyWidth,
+    })
+    return
   }
 
-  // Include every visible band piece so expanded + collapsed share one right edge.
-  rootEl
-    .querySelectorAll(
-      '.philosophy-atlas, .science-atlas, .math-atlas, .humanities-atlas, [data-node$="-bar"]',
-    )
-    .forEach((el) => {
-      measuredRight = Math.max(measuredRight, Math.round(relRight(el)))
-    })
+  // Math domain: keep the philosophy band; lock sci/hum to the same left.
+  const atlas = rootEl.querySelector('.math-atlas') as HTMLElement | null
+  if (!atlas) return
 
-  // Cookie abscissa wins once set; width only grows so all rights stay aligned.
-  const left = slotGeom.value.left > 0 ? slotGeom.value.left : measuredLeft
-  const width = Math.max(
-    slotGeom.value.width,
-    Math.max(0, measuredRight - left),
+  const mathLeft =
+    slotGeom.value.mathLeft > 0
+      ? slotGeom.value.mathLeft
+      : Math.max(0, Math.round(relLeft(atlas)))
+  const atlasRight = Math.round(relRight(atlas))
+  const mathWidth = Math.max(
+    slotGeom.value.mathWidth,
+    slotGeom.value.philosophyWidth,
+    atlasRight - mathLeft,
   )
-  setSlotGeom({ left, width })
+
+  const philosophyLeft =
+    slotGeom.value.philosophyLeft > 0
+      ? slotGeom.value.philosophyLeft
+      : mathLeft
+  const philosophyWidth = Math.max(
+    slotGeom.value.philosophyWidth,
+    mathWidth,
+    atlasRight - philosophyLeft,
+  )
+
+  const newtonNode = rootEl.querySelector(
+    '.math-atlas [data-node="newton"]',
+  ) as HTMLElement | null
+  const newtonCol =
+    (newtonNode?.closest('.math-col') as HTMLElement | null) ?? newtonNode
+  const rawLeft =
+    slotGeom.value.scienceLeft > 0
+      ? slotGeom.value.scienceLeft
+      : slotGeom.value.humanitiesLeft > 0
+        ? slotGeom.value.humanitiesLeft
+        : newtonCol
+          ? Math.max(0, Math.round(relLeft(newtonCol)))
+          : 0
+  const { scienceLeft, humanitiesLeft } = lockSciHum(rawLeft)
+  const sciBar = rootEl.querySelector('[data-node="science-bar"]')
+  const sciBarW = sciBar
+    ? Math.round((sciBar as HTMLElement).offsetWidth)
+    : 0
+  const scienceWidth = Math.max(
+    sciBarW,
+    atlasRight - scienceLeft,
+    philosophyLeft + philosophyWidth - scienceLeft,
+  )
+  const humanitiesWidth = Math.max(
+    slotGeom.value.humanitiesWidth,
+    atlasRight - humanitiesLeft,
+  )
+
+  setSlotGeom({
+    mathLeft,
+    mathWidth,
+    scienceLeft,
+    scienceWidth,
+    humanitiesLeft,
+    humanitiesWidth,
+    philosophyLeft,
+    philosophyWidth,
+  })
 }
 
 function box(el: Element, root: DOMRect) {
@@ -417,59 +555,20 @@ function domainTwinCurve(
   return `M ${x1} ${y1} C ${x1} ${bulge}, ${x2} ${bulge}, ${x2} ${y2}`
 }
 
-/** Align political-science Marx under economics Marx by shifting the whole row. */
-function layoutPoliticalScience(rootEl: HTMLElement) {
+/** Pin natural-science DomainBar left edge to political science. */
+function alignScienceBarToPolitics(rootEl: HTMLElement) {
   const politics = rootEl.querySelector(
     '#politicalScience',
   ) as HTMLElement | null
-  const econMarx = rootEl.querySelector(
-    '#economics [data-node="marx"]',
-  ) as HTMLElement | null
-  const psMarx = rootEl.querySelector(
-    '#politicalScience [data-node="marx"]',
-  ) as HTMLElement | null
-  if (!politics || !econMarx || !psMarx) return false
-
-  const delta =
-    econMarx.getBoundingClientRect().left - psMarx.getBoundingClientRect().left
-  const nextIndent = Math.round(psIndent.value + delta)
-  const changed = Math.abs(nextIndent - psIndent.value) > 0.5
-  if (changed) psIndent.value = nextIndent
-  return changed
-}
-
-/** Align sociology: Marx under economics Marx; box at least as wide as economics to the right. */
-function layoutSocialMarx(rootEl: HTMLElement) {
-  const economics = rootEl.querySelector('#economics') as HTMLElement | null
-  const sociology = rootEl.querySelector('#sociology') as HTMLElement | null
-  const econMarx = rootEl.querySelector(
-    '#economics [data-node="marx"]',
-  ) as HTMLElement | null
-  const socMarx = rootEl.querySelector(
-    '#sociology [data-node="marx"]',
-  ) as HTMLElement | null
-  if (!economics || !sociology || !econMarx || !socMarx) return false
-
-  const delta =
-    econMarx.getBoundingClientRect().left - socMarx.getBoundingClientRect().left
-  const nextIndent = Math.max(0, Math.round(sociologyIndent.value + delta))
-
-  // After indent, sociology left ≈ current left + (nextIndent - sociologyIndent)
-  const socLeft =
-    sociology.getBoundingClientRect().left +
-    (nextIndent - sociologyIndent.value)
-  const econRight = economics.getBoundingClientRect().right
-  // min-width only: content can still grow past economics so portraits stay inside.
-  const nextMin = Math.max(0, Math.round(econRight - socLeft))
-
-  const changed =
-    Math.abs(nextIndent - sociologyIndent.value) > 0.5 ||
-    Math.abs(nextMin - sociologyMinWidth.value) > 0.5
-  if (changed) {
-    sociologyIndent.value = nextIndent
-    sociologyMinWidth.value = nextMin
-    saveSociologyLayout(nextIndent, nextMin)
-  }
+  if (!politics) return false
+  const root = rootEl.getBoundingClientRect()
+  const padLeft = Number.parseFloat(getComputedStyle(rootEl).paddingLeft) || 0
+  const left = Math.max(
+    0,
+    Math.round(politics.getBoundingClientRect().left - root.left - padLeft),
+  )
+  const changed = Math.abs(left - scienceBarLeft.value) > 0.5
+  if (changed) scienceBarLeft.value = left
   return changed
 }
 
@@ -493,10 +592,15 @@ function measureLinks() {
     const start = point(from, fromSide)
     const end = point(to, toSide)
     const forkNudge = 28
-    // Shared abscissa for all domain bars (cookie).
-    const sharedDomainLeft = slotGeom.value.left
+    // Shared abscissa for natural-science & social-science domain bars.
+    const sharedDomainLeft =
+      slotGeom.value.scienceLeft > 0
+        ? slotGeom.value.scienceLeft
+        : slotGeom.value.humanitiesLeft
     const padLeft =
       Number.parseFloat(getComputedStyle(rootEl).paddingLeft) || 0
+    // Political science node — natural science bar/fork aligns to it when present.
+    const psNode = rootEl.querySelector('#politicalScience')
     // Twin domain bars: leave philosophy at one x (up = science, down = social sciences).
     const sciBarEl = rootEl.querySelector('[data-node="science-bar"]')
     const humBarEl = rootEl.querySelector('[data-node="humanities-bar"]')
@@ -517,7 +621,10 @@ function measureLinks() {
       start[0] = twinForkX ?? end[0] - forkNudge
     }
     if (edge.from === 'philosophy-bar' && edge.to === 'science-bar') {
-      if (twinForkX != null) {
+      if (psNode) {
+        end[0] = box(psNode, root).left
+        start[0] = end[0] - forkNudge
+      } else if (twinForkX != null) {
         if (twinDomainLeft > 0) end[0] = twinDomainLeft
         start[0] = twinForkX
       } else if (sharedDomainLeft > 0) {
@@ -603,14 +710,12 @@ function measure() {
   const rootEl = graph.value
   if (!rootEl) return
   if (activeDomain.value === 'humanities') {
-    const movedSocial = layoutSocialMarx(rootEl)
-    const movedPs = layoutPoliticalScience(rootEl)
+    const movedSci = alignScienceBarToPolitics(rootEl)
     captureSlotGeom(rootEl)
     canvas.value = { w: rootEl.offsetWidth, h: rootEl.offsetHeight }
-    if (movedSocial || movedPs) {
+    if (movedSci) {
       void nextTick(() => {
-        layoutSocialMarx(rootEl)
-        layoutPoliticalScience(rootEl)
+        alignScienceBarToPolitics(rootEl)
         captureSlotGeom(rootEl)
         canvas.value = { w: rootEl.offsetWidth, h: rootEl.offsetHeight }
         measureLinks()
@@ -721,11 +826,8 @@ watch(locale, () => {
   void nextTick(measureAndRestoreScroll)
 })
 watch(activeDomain, (domain) => {
-  sociologyIndent.value = 0
-  sociologyMinWidth.value = 0
-  saveSociologyLayout(0, 0)
   if (domain !== 'humanities') {
-    psIndent.value = 0
+    scienceBarLeft.value = 0
   }
   saveDomain(domain)
   void nextTick(measure)
@@ -1164,8 +1266,7 @@ watch(activeDomain, (domain) => {
   gap: 8px var(--gutter-x);
   flex: 1 1 auto;
   min-height: 0;
-  width: max(var(--philosophy-width, 0px), max-content);
-  min-width: var(--philosophy-width, max-content);
+  width: max-content;
   margin-left: var(--philosophy-left, 0px);
   align-items: center;
   box-sizing: border-box;
@@ -1222,8 +1323,7 @@ watch(activeDomain, (domain) => {
     '. . evolution molecularBiology molecularBiology molecularBiology molecularBiology';
   gap: 6px var(--gutter-x);
   margin-left: var(--science-left, 0px);
-  width: max(var(--science-width, 0px), max-content);
-  min-width: var(--science-width, max-content);
+  width: max-content;
   flex: 1 1 auto;
   min-height: 0;
   align-content: space-evenly;
@@ -1335,25 +1435,52 @@ watch(activeDomain, (domain) => {
 .political-science {
   position: relative;
   z-index: 3;
-  width: max-content;
+  width: auto;
   flex: 0 0 auto;
   box-sizing: border-box;
 }
 
 .graph.domain-science :deep(.math-bar),
-.graph.domain-humanities :deep(.math-bar),
-.graph.domain-math :deep(.science-bar),
-.graph.domain-humanities :deep(.science-bar),
-.graph.domain-science :deep(.humanities-bar),
-.graph.domain-math :deep(.humanities-bar),
-.graph.domain-science :deep(.philosophy-bar),
-.graph.domain-math :deep(.philosophy-bar),
-.graph.domain-humanities :deep(.philosophy-bar) {
+.graph.domain-humanities :deep(.math-bar) {
   margin-left: var(--math-left, 0px);
   width: var(--math-width, max-content);
   min-width: var(--math-width, 0px);
   flex: 0 0 auto;
-  align-self: stretch;
+  box-sizing: border-box;
+}
+
+.graph.domain-math :deep(.science-bar) {
+  margin-left: var(--science-left, 0px);
+  width: var(--science-width, max-content);
+  min-width: var(--science-width, 0px);
+  flex: 0 0 auto;
+  box-sizing: border-box;
+}
+
+.graph.domain-humanities :deep(.science-bar) {
+  margin-left: var(--science-bar-left, var(--science-left, 0px));
+  width: var(--science-width, max-content);
+  min-width: var(--science-width, 0px);
+  flex: 0 0 auto;
+  box-sizing: border-box;
+}
+
+.graph.domain-science :deep(.humanities-bar),
+.graph.domain-math :deep(.humanities-bar) {
+  margin-left: var(--humanities-left, 0px);
+  width: var(--humanities-width, max-content);
+  min-width: var(--humanities-width, 0px);
+  flex: 0 0 auto;
+  box-sizing: border-box;
+}
+
+.graph.domain-science :deep(.philosophy-bar),
+.graph.domain-math :deep(.philosophy-bar),
+.graph.domain-humanities :deep(.philosophy-bar) {
+  margin-left: var(--philosophy-left, 0px);
+  width: var(--philosophy-width, max-content);
+  min-width: var(--philosophy-width, 0px);
+  flex: 0 0 auto;
   box-sizing: border-box;
 }
 
@@ -1377,40 +1504,76 @@ watch(activeDomain, (domain) => {
 
 .humanities-atlas {
   --gutter-x: 28px;
+  --social-gap: 36px;
   position: relative;
   z-index: 3;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 18px;
+  display: grid;
+  grid-template-columns: repeat(10, max-content);
+  column-gap: var(--social-gap);
+  row-gap: 18px;
+  align-content: center;
+  align-items: start;
   margin-left: var(--humanities-left, 0px);
-  width: max(var(--humanities-width, 0px), max-content);
+  width: max-content;
   min-width: var(--humanities-width, max-content);
   flex: 1 1 auto;
   min-height: 0;
   box-sizing: border-box;
 }
 
-.humanities-atlas #economics {
+.humanities-atlas > .node {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  width: auto;
+  min-width: 0;
+  margin-left: 0;
+  padding: 4px 0 2px;
+  box-sizing: border-box;
+}
+
+.humanities-atlas :deep(.school) {
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-template-rows: auto auto;
+  grid-column: 1 / -1;
+  width: auto;
+  min-width: 0;
+  gap: 3px 0;
+  border-top: none;
+  padding: 0;
+}
+
+.humanities-atlas :deep(.head) {
+  grid-row: 1;
   width: max-content;
+  margin: 0;
+  padding: 2px 2px 0;
+  border-top: 2px solid var(--accent);
+  box-sizing: border-box;
+}
+
+.humanities-atlas :deep(.social-grid) {
+  display: contents;
+}
+
+.humanities-atlas :deep(.card.stacked) {
+  grid-row: 2;
+  justify-self: start;
+}
+
+.humanities-atlas #economics {
+  width: auto;
 }
 
 .humanities-atlas #sociology {
-  width: max-content;
-  min-width: var(--sociology-min-width, 0px);
-  margin-left: var(--sociology-indent, 0px);
-  box-sizing: border-box;
-}
-
-.humanities-atlas #sociology :deep(.school) {
-  width: max-content;
-  min-width: 100%;
+  width: auto;
+  min-width: 0;
 }
 
 .humanities-atlas #politicalScience {
-  width: max-content;
-  margin-left: var(--ps-indent, 0px);
-  box-sizing: border-box;
+  width: auto;
+  margin-left: 0;
 }
 
 .wires {
