@@ -2061,7 +2061,7 @@ export const schools: Record<string, School> = {
     countryIds: ['380', '826', '756', '276', '840'],
     accent: 'var(--c-political)',
   },
-  // Natural science domain: political science (Marx / Weber align with social sciences)
+  // Social sciences: political science (Marx / Weber align with economics / sociology)
   politicalScience: {
     id: 'politicalScience',
     people: [

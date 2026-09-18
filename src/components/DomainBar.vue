@@ -116,8 +116,8 @@ defineEmits<{
 }
 
 .humanities-bar {
-  border: 1px solid rgba(196, 160, 106, 0.42);
-  background: rgba(196, 160, 106, 0.1);
-  color: #e0c49a;
+  border: 1px solid rgba(91, 154, 150, 0.45);
+  background: rgba(91, 154, 150, 0.12);
+  color: #9fd4cf;
 }
 </style>

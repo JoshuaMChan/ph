@@ -39,7 +39,7 @@ export const graphEdges: GraphEdge[] = [
   {
     from: 'greece',
     to: 'humanities-bar',
-    color: 'var(--c-economics)',
+    color: 'var(--c-humanities)',
     fromSide: 'bottom',
     toSide: 'left',
   },
@@ -47,7 +47,7 @@ export const graphEdges: GraphEdge[] = [
   {
     from: 'philosophy-bar',
     to: 'humanities-bar',
-    color: 'var(--c-economics)',
+    color: 'var(--c-humanities)',
     fromSide: 'bottom',
     toSide: 'left',
   },
@@ -82,7 +82,7 @@ export const graphEdges: GraphEdge[] = [
     fromSide: 'top',
     toSide: 'left',
   },
-  // Natural science expanded: political science under the atlas
+  // Social sciences expanded: political science co-forks early with natural science
   {
     from: 'philosophy-bar',
     to: 'politicalScience',
