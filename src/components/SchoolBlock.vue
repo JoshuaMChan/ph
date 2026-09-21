@@ -256,15 +256,11 @@ h2 {
   gap: 8px;
 }
 
-/* Social sciences: flex row; sociology uses wider person gap (~2×). */
+/* Social sciences: same fixed person spacing across all three schools. */
 .school[data-school='economics'] .people,
+.school[data-school='sociology'] .people,
 .school[data-school='politicalScience'] .people {
-  gap: 14px 36px;
-  align-items: flex-start;
-}
-
-.school[data-school='sociology'] .people {
-  gap: 14px 72px;
+  gap: 14px 64px;
   align-items: flex-start;
 }
 
