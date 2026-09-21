@@ -277,6 +277,7 @@ const zh = {
     russell: '这个世界的根本麻烦在于，愚蠢的人自以为是，而聪明的人却满腹疑虑。',
     wittgenstein: '我的语言的界限意味着我的世界的界限。',
     rousseau: '人生而自由，却无往不在枷锁之中。',
+    euclid: 'a = m² − n²，b = 2mn，c = m² + n²',
   },
   place: {
     ephesus: '以弗所',

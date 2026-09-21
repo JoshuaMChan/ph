@@ -131,7 +131,8 @@ function onLeave() {
               <div class="who">
                 <PhilosopherCard
                   :person="asCardPerson(person)"
-                  :quotes="false"
+                  quote-below
+                  plain-quote
                   stacked
                 />
               </div>

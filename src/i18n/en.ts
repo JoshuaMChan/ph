@@ -271,6 +271,7 @@ const en = {
     russell: 'The fundamental cause of the trouble is that in the modern world the stupid are cocksure while the intelligent are full of doubt.',
     wittgenstein: 'The limits of my language mean the limits of my world.',
     rousseau: 'Man is born free; and everywhere he is in chains.',
+    euclid: 'a = m² − n², b = 2mn, c = m² + n²',
   },
   place: {
     ephesus: 'Ephesus',

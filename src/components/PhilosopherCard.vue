@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { Philosopher } from '../types'
 import { formatLifespan } from '../utils/dates'
@@ -7,7 +7,7 @@ import { formatLifespan } from '../utils/dates'
 const props = withDefaults(
   defineProps<{
     person: Philosopher
-    /** Show quote tooltip when available (off in math atlas). */
+    /** Show quote tooltip when a quote key exists for this person. */
     quotes?: boolean
     /** Stack name above dates/country and center under the portrait. */
     stacked?: boolean
@@ -15,8 +15,12 @@ const props = withDefaults(
     place?: boolean
     /** Show lifespan dates (off in political & social sciences). */
     dates?: boolean
+    /** Prefer quote tooltip below the card (e.g. math atlas marks sit above). */
+    quoteBelow?: boolean
+    /** Formula / plain text: no quotation marks around the tooltip. */
+    plainQuote?: boolean
   }>(),
-  { quotes: true, stacked: false, place: true, dates: true },
+  { quotes: true, stacked: false, place: true, dates: true, quoteBelow: false, plainQuote: false },
 )
 
 const { t, te, locale } = useI18n()
@@ -32,6 +36,7 @@ const quote = computed(() => {
 })
 const tooltipId = computed(() => 'quote-' + props.person.id)
 const tooltip = ref({ visible: false, left: 0, top: 0, below: false })
+const tipEl = ref<HTMLElement | null>(null)
 const pinned = ref(false)
 const tooltipStyle = computed(() => ({
   left: tooltip.value.left + 'px',
@@ -47,12 +52,36 @@ function placeQuote(event: Event) {
     Math.max(16, rect.left + rect.width / 2 - width / 2),
     window.innerWidth - width - 16,
   )
-  const below = rect.top < 150
+  const spaceAbove = rect.top
+  const spaceBelow = window.innerHeight - rect.bottom
+  const below =
+    props.quoteBelow || spaceAbove < 150 || spaceBelow > spaceAbove + 40
+  const top = below ? rect.bottom + 12 : rect.top - 12
+
+  if (props.plainQuote) {
+    tooltip.value = {
+      visible: true,
+      left: rect.left + rect.width / 2,
+      top,
+      below,
+    }
+    void nextTick(() => {
+      const el = tipEl.value
+      if (!el) return
+      const half = el.offsetWidth / 2
+      const cx = rect.left + rect.width / 2
+      tooltip.value.left = Math.min(
+        Math.max(16 + half, cx),
+        window.innerWidth - 16 - half,
+      )
+    })
+    return
+  }
 
   tooltip.value = {
     visible: true,
     left,
-    top: below ? rect.bottom + 12 : rect.top - 12,
+    top,
     below,
   }
 }
@@ -141,11 +170,13 @@ onBeforeUnmount(() => {
           v-if="tooltip.visible"
           :id="tooltipId"
           class="quote-tooltip"
-          :class="{ below: tooltip.below }"
+          :class="{ below: tooltip.below, plain: plainQuote }"
           :style="tooltipStyle"
           role="tooltip"
+          ref="tipEl"
         >
-          <span aria-hidden="true">“</span>{{ quote }}<span aria-hidden="true">”</span>
+          <template v-if="plainQuote">{{ quote }}</template>
+          <template v-else><span aria-hidden="true">“</span>{{ quote }}<span aria-hidden="true">”</span></template>
         </aside>
       </Transition>
     </Teleport>
@@ -306,6 +337,21 @@ h3 {
   transform: none;
 }
 
+:global(.quote-tooltip.plain) {
+  width: max-content;
+  max-width: min(520px, calc(100vw - 32px));
+  text-align: center;
+  white-space: nowrap;
+}
+
+:global(.quote-tooltip.plain.below) {
+  transform: translateX(-50%);
+}
+
+:global(.quote-tooltip.plain:not(.below)) {
+  transform: translate(-50%, -100%);
+}
+
 :global(.quote-enter-active),
 :global(.quote-leave-active) {
   transition:
@@ -322,6 +368,16 @@ h3 {
 :global(.quote-tooltip.below.quote-enter-from),
 :global(.quote-tooltip.below.quote-leave-to) {
   transform: translateY(-5px);
+}
+
+:global(.quote-tooltip.plain.below.quote-enter-from),
+:global(.quote-tooltip.plain.below.quote-leave-to) {
+  transform: translate(-50%, -5px);
+}
+
+:global(.quote-tooltip.plain:not(.below).quote-enter-from),
+:global(.quote-tooltip.plain:not(.below).quote-leave-to) {
+  transform: translate(-50%, calc(-100% + 5px));
 }
 
 @media (max-width: 900px) {
