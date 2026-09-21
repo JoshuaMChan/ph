@@ -256,21 +256,22 @@ h2 {
   gap: 8px;
 }
 
-/* Social sciences: same fixed person spacing across all three schools. */
+/* Social sciences: gap is between portraits (card width = portrait, names may overflow). */
 .school[data-school='economics'] .people,
 .school[data-school='sociology'] .people,
 .school[data-school='politicalScience'] .people {
-  gap: 14px 64px;
+  gap: 14px 56px;
   align-items: flex-start;
 }
 
 .school[data-school='economics'] :deep(.card.stacked),
 .school[data-school='sociology'] :deep(.card.stacked),
 .school[data-school='politicalScience'] :deep(.card.stacked) {
-  width: max-content;
+  width: var(--card-w, 70px);
   min-width: var(--card-w, 70px);
-  padding-inline: 6px;
+  padding-inline: 0;
   box-sizing: border-box;
+  overflow: visible;
 }
 
 .life-grid {
