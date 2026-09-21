@@ -260,7 +260,7 @@ h2 {
 .school[data-school='economics'] .people,
 .school[data-school='sociology'] .people,
 .school[data-school='politicalScience'] .people {
-  gap: 14px 56px;
+  gap: 14px 112px;
   align-items: flex-start;
 }
 

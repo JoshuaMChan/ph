@@ -602,42 +602,40 @@ function alignScienceBarToPolitics(rootEl: HTMLElement) {
   return changed
 }
 
-/** Align political-science Marx under economics Marx by shifting the whole row. */
-function layoutPoliticalScience(rootEl: HTMLElement) {
+/** Align one school's Marx portrait to economics Marx via margin-left indent. */
+function alignSchoolMarx(
+  rootEl: HTMLElement,
+  schoolId: string,
+  indentRef: { value: number },
+  opts?: { min?: number },
+) {
   const econMarx = rootEl.querySelector(
     '#economics [data-node="marx"]',
   ) as HTMLElement | null
-  const psMarx = rootEl.querySelector(
-    '#politicalScience [data-node="marx"]',
+  const schoolMarx = rootEl.querySelector(
+    `#${schoolId} [data-node="marx"]`,
   ) as HTMLElement | null
-  if (!econMarx || !psMarx) return false
+  if (!econMarx || !schoolMarx) return false
 
   const delta =
-    econMarx.getBoundingClientRect().left - psMarx.getBoundingClientRect().left
-  const nextIndent = Math.round(psIndent.value + delta)
-  const changed = Math.abs(nextIndent - psIndent.value) > 0.5
-  if (changed) psIndent.value = nextIndent
-  return changed
+    econMarx.getBoundingClientRect().left -
+    schoolMarx.getBoundingClientRect().left
+  let next = Math.round(indentRef.value + delta)
+  if (opts?.min != null) next = Math.max(opts.min, next)
+  if (Math.abs(next - indentRef.value) <= 0.5) return false
+  indentRef.value = next
+  return true
 }
 
-/** Align sociology Marx under economics Marx by shifting the whole row. */
-function layoutSocialMarx(rootEl: HTMLElement) {
-  const econMarx = rootEl.querySelector(
-    '#economics [data-node="marx"]',
-  ) as HTMLElement | null
-  const socMarx = rootEl.querySelector(
-    '#sociology [data-node="marx"]',
-  ) as HTMLElement | null
-  if (!econMarx || !socMarx) return false
+function layoutPoliticalScience(rootEl: HTMLElement) {
+  return alignSchoolMarx(rootEl, 'politicalScience', psIndent)
+}
 
-  const delta =
-    econMarx.getBoundingClientRect().left - socMarx.getBoundingClientRect().left
-  const nextIndent = Math.max(0, Math.round(sociologyIndent.value + delta))
-  const changed = Math.abs(nextIndent - sociologyIndent.value) > 0.5
-  if (changed) {
-    sociologyIndent.value = nextIndent
-    saveSociologyIndent(nextIndent)
-  }
+function layoutSocialMarx(rootEl: HTMLElement) {
+  const changed = alignSchoolMarx(rootEl, 'sociology', sociologyIndent, {
+    min: 0,
+  })
+  if (changed) saveSociologyIndent(sociologyIndent.value)
   return changed
 }
 
@@ -786,20 +784,22 @@ function measure() {
   const rootEl = graph.value
   if (!rootEl) return
   if (activeDomain.value === 'humanities') {
-    const movedSocial = layoutSocialMarx(rootEl)
-    const movedPs = layoutPoliticalScience(rootEl)
-    const movedSci = alignScienceBarToPolitics(rootEl)
-    captureSlotGeom(rootEl)
-    canvas.value = { w: rootEl.offsetWidth, h: rootEl.offsetHeight }
-    if (movedSocial || movedPs || movedSci) {
+    const settle = () => {
+      const movedSocial = layoutSocialMarx(rootEl)
+      const movedPs = layoutPoliticalScience(rootEl)
+      const movedSci = alignScienceBarToPolitics(rootEl)
+      captureSlotGeom(rootEl)
+      canvas.value = { w: rootEl.offsetWidth, h: rootEl.offsetHeight }
+      return movedSocial || movedPs || movedSci
+    }
+    if (settle()) {
       void nextTick(() => {
-        layoutSocialMarx(rootEl)
-        layoutPoliticalScience(rootEl)
-        alignScienceBarToPolitics(rootEl)
-        captureSlotGeom(rootEl)
-        canvas.value = { w: rootEl.offsetWidth, h: rootEl.offsetHeight }
-        measureLinks()
-        if (scrollRestoreActive) scheduleScrollRestore()
+        settle()
+        requestAnimationFrame(() => {
+          settle()
+          measureLinks()
+          if (scrollRestoreActive) scheduleScrollRestore()
+        })
       })
       return
     }
@@ -1309,6 +1309,19 @@ watch(activeDomain, (domain) => {
 
 .graph :deep(.people) {
   gap: 4px 10px;
+}
+
+.graph.domain-humanities :deep(.people) {
+  /* Portrait-to-portrait gap (card width = portrait; names may overflow). */
+  gap: 14px 112px;
+}
+
+.graph.domain-humanities :deep(.card.stacked) {
+  width: var(--card-w, 70px);
+  min-width: var(--card-w, 70px);
+  padding-inline: 0;
+  box-sizing: border-box;
+  overflow: visible;
 }
 
 .graph :deep(.quantum-grid) {
