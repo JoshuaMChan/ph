@@ -92,47 +92,12 @@ const mendel = computed(() => people.value.find((item) => item.id === 'mendel'))
 const crick = computed(() => people.value.find((item) => item.id === 'crick'))
 const watson = computed(() => people.value.find((item) => item.id === 'watson'))
 
-/**
- * Columns relative to each school's own subgrid span in humanities-atlas.
- * Parent tracks still align Marx (politics 5 ≡ economics 2 ≡ sociology 1).
- */
-const socialColumns: Record<string, Record<string, number>> = {
-  politicalScience: {
-    machiavelli: 1,
-    hobbes: 2,
-    locke: 3,
-    montesquieu: 4,
-    marx: 5,
-    weber: 6,
-  },
-  economics: {
-    smith: 1,
-    marx: 2,
-    marshall: 3,
-    keynes: 4,
-    hayek: 5,
-    friedman: 6,
-  },
-  sociology: {
-    marx: 1,
-    simmel: 2,
-    durkheim: 3,
-    weber: 4,
-    foucault: 5,
-    bourdieu: 6,
-  },
-}
-
 const isSocialSchool = computed(
   () =>
     props.schoolId === 'economics' ||
     props.schoolId === 'sociology' ||
     props.schoolId === 'politicalScience',
 )
-
-function socialColumn(personId: string) {
-  return socialColumns[props.schoolId]?.[personId] ?? 1
-}
 </script>
 
 <template>
@@ -188,13 +153,12 @@ function socialColumn(personId: string) {
         <PhilosopherCard v-if="watson" class="slot-watson" :person="watson" />
       </div>
     </div>
-    <div v-else-if="isSocialSchool" class="people social-grid">
+    <div v-else-if="isSocialSchool" class="people social-people">
       <PhilosopherCard
         v-for="item in people"
         :key="item.id"
         :person="item"
         stacked
-        :style="{ gridColumn: socialColumn(item.id) }"
       />
     </div>
     <div
@@ -292,11 +256,15 @@ h2 {
   gap: 8px;
 }
 
-/* Social sciences: person columns come from humanities-atlas subgrid. */
+/* Social sciences: flex row; sociology uses wider person gap (~2×). */
 .school[data-school='economics'] .people,
-.school[data-school='sociology'] .people,
 .school[data-school='politicalScience'] .people {
-  gap: 0;
+  gap: 14px 36px;
+  align-items: flex-start;
+}
+
+.school[data-school='sociology'] .people {
+  gap: 14px 72px;
   align-items: flex-start;
 }
 
@@ -307,11 +275,6 @@ h2 {
   min-width: var(--card-w, 70px);
   padding-inline: 6px;
   box-sizing: border-box;
-  justify-self: start;
-}
-
-.social-grid {
-  display: contents;
 }
 
 .life-grid {

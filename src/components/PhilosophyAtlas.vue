@@ -15,6 +15,7 @@ type Domain = 'philosophy' | 'science' | 'math' | 'humanities'
 const ATLAS_DOMAIN_KEY = 'atlas-domain'
 const ATLAS_SCROLL_X_KEY = 'atlas-scroll-x'
 const ATLAS_SLOT_GEOM_KEY = 'atlas-slot-geom'
+const ATLAS_SOCIOLOGY_KEY = 'atlas-sociology-layout'
 
 type SlotGeom = {
   mathLeft: number
@@ -91,6 +92,25 @@ function saveSlotGeom(geom: SlotGeom) {
   writeCookie(ATLAS_SLOT_GEOM_KEY, JSON.stringify(geom))
 }
 
+function loadSociologyIndent(): number {
+  const raw = readCookie(ATLAS_SOCIOLOGY_KEY)
+  if (!raw) return 0
+  try {
+    const parsed = JSON.parse(raw) as { indent?: unknown }
+    const indent = Number(parsed.indent)
+    return Number.isFinite(indent) && indent > 0 ? Math.round(indent) : 0
+  } catch {
+    return 0
+  }
+}
+
+function saveSociologyIndent(indent: number) {
+  writeCookie(
+    ATLAS_SOCIOLOGY_KEY,
+    JSON.stringify({ indent: Math.max(0, Math.round(indent)) }),
+  )
+}
+
 const activeDomain = ref<Domain>(loadDomain())
 
 function openDomain(domain: Domain) {
@@ -142,6 +162,11 @@ const links = ref<Link[]>([])
 /** On social-sciences view: natural-science bar left-aligns with political science. */
 const scienceBarLeft = ref(0)
 
+/** Shift political science so its Marx sits under economics Marx. */
+const psIndent = ref(0)
+/** Shift sociology so its Marx sits under economics Marx. */
+const sociologyIndent = ref(loadSociologyIndent())
+
 /** Stable domain-slot geometry so expand/collapse keeps the same left edge & width. */
 const slotGeom = ref<SlotGeom>(loadSlotGeom())
 
@@ -170,6 +195,8 @@ const slotVars = computed(() => ({
     scienceBarLeft.value > 0
       ? `${scienceBarLeft.value}px`
       : `${slotGeom.value.scienceLeft}px`,
+  '--sociology-indent': `${sociologyIndent.value}px`,
+  '--ps-indent': `${psIndent.value}px`,
 }))
 
 function setSlotGeom(next: SlotGeom) {
@@ -309,7 +336,7 @@ function captureSlotGeom(rootEl: HTMLElement) {
           : Math.max(0, Math.round(relLeft(economics ?? atlas)))
     const { scienceLeft, humanitiesLeft } = lockSciHum(rawLeft)
 
-    // Sociology content right edge (portraits / title), not the full subgrid track.
+    // Sociology content right edge (portraits / title).
     let sociologyRight = 0
     if (sociology) {
       sociology
@@ -575,6 +602,45 @@ function alignScienceBarToPolitics(rootEl: HTMLElement) {
   return changed
 }
 
+/** Align political-science Marx under economics Marx by shifting the whole row. */
+function layoutPoliticalScience(rootEl: HTMLElement) {
+  const econMarx = rootEl.querySelector(
+    '#economics [data-node="marx"]',
+  ) as HTMLElement | null
+  const psMarx = rootEl.querySelector(
+    '#politicalScience [data-node="marx"]',
+  ) as HTMLElement | null
+  if (!econMarx || !psMarx) return false
+
+  const delta =
+    econMarx.getBoundingClientRect().left - psMarx.getBoundingClientRect().left
+  const nextIndent = Math.round(psIndent.value + delta)
+  const changed = Math.abs(nextIndent - psIndent.value) > 0.5
+  if (changed) psIndent.value = nextIndent
+  return changed
+}
+
+/** Align sociology Marx under economics Marx by shifting the whole row. */
+function layoutSocialMarx(rootEl: HTMLElement) {
+  const econMarx = rootEl.querySelector(
+    '#economics [data-node="marx"]',
+  ) as HTMLElement | null
+  const socMarx = rootEl.querySelector(
+    '#sociology [data-node="marx"]',
+  ) as HTMLElement | null
+  if (!econMarx || !socMarx) return false
+
+  const delta =
+    econMarx.getBoundingClientRect().left - socMarx.getBoundingClientRect().left
+  const nextIndent = Math.max(0, Math.round(sociologyIndent.value + delta))
+  const changed = Math.abs(nextIndent - sociologyIndent.value) > 0.5
+  if (changed) {
+    sociologyIndent.value = nextIndent
+    saveSociologyIndent(nextIndent)
+  }
+  return changed
+}
+
 function measureLinks() {
   const rootEl = graph.value
   if (!rootEl) return
@@ -720,11 +786,15 @@ function measure() {
   const rootEl = graph.value
   if (!rootEl) return
   if (activeDomain.value === 'humanities') {
+    const movedSocial = layoutSocialMarx(rootEl)
+    const movedPs = layoutPoliticalScience(rootEl)
     const movedSci = alignScienceBarToPolitics(rootEl)
     captureSlotGeom(rootEl)
     canvas.value = { w: rootEl.offsetWidth, h: rootEl.offsetHeight }
-    if (movedSci) {
+    if (movedSocial || movedPs || movedSci) {
       void nextTick(() => {
+        layoutSocialMarx(rootEl)
+        layoutPoliticalScience(rootEl)
         alignScienceBarToPolitics(rootEl)
         captureSlotGeom(rootEl)
         canvas.value = { w: rootEl.offsetWidth, h: rootEl.offsetHeight }
@@ -838,6 +908,7 @@ watch(locale, () => {
 watch(activeDomain, (domain) => {
   if (domain !== 'humanities') {
     scienceBarLeft.value = 0
+    psIndent.value = 0
   }
   saveDomain(domain)
   void nextTick(measure)
@@ -1114,18 +1185,18 @@ watch(activeDomain, (domain) => {
             @open="openDomain('philosophy')"
           />
           <div class="humanities-atlas">
-            <article id="sociology" data-node="sociology" class="node">
-              <SchoolBlock school-id="sociology" />
-            </article>
-            <article id="economics" data-node="economics" class="node">
-              <SchoolBlock school-id="economics" />
-            </article>
             <article
               id="politicalScience"
               data-node="politicalScience"
               class="node political-science"
             >
               <SchoolBlock school-id="politicalScience" />
+            </article>
+            <article id="economics" data-node="economics" class="node">
+              <SchoolBlock school-id="economics" />
+            </article>
+            <article id="sociology" data-node="sociology" class="node">
+              <SchoolBlock school-id="sociology" />
             </article>
           </div>
         </template>
@@ -1514,77 +1585,34 @@ watch(activeDomain, (domain) => {
 
 .humanities-atlas {
   --gutter-x: 28px;
-  --social-gap: 36px;
   position: relative;
   z-index: 3;
-  display: grid;
-  grid-template-columns: repeat(10, max-content);
-  column-gap: var(--social-gap);
-  row-gap: 18px;
-  align-content: center;
-  align-items: start;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 18px;
   margin-left: var(--humanities-left, 0px);
-  width: max-content;
+  width: max(var(--humanities-width, 0px), max-content);
   min-width: var(--humanities-width, max-content);
   flex: 1 1 auto;
   min-height: 0;
   box-sizing: border-box;
 }
 
-.humanities-atlas > .node {
-  display: grid;
-  grid-template-columns: subgrid;
-  width: auto;
-  min-width: 0;
-  margin-left: 0;
-  padding: 4px 0 2px;
-  box-sizing: border-box;
-}
-
-/* Each school box only spans its own person columns. */
-.humanities-atlas #politicalScience {
-  grid-column: 1 / 7;
-}
-
 .humanities-atlas #economics {
-  grid-column: 4 / 10;
+  width: max-content;
 }
 
 .humanities-atlas #sociology {
-  grid-column: 5 / 11;
-}
-
-.humanities-atlas :deep(.school) {
-  display: grid;
-  grid-template-columns: subgrid;
-  grid-template-rows: auto auto;
-  grid-column: 1 / -1;
-  width: auto;
-  min-width: 0;
-  gap: 3px 0;
-  border-top: none;
-  padding: 0;
-}
-
-.humanities-atlas :deep(.head) {
-  grid-row: 1;
-  grid-column: 1 / -1;
-  justify-self: stretch;
-  width: auto;
-  min-width: 0;
-  margin: 0;
-  padding: 2px 2px 0;
-  border-top: 2px solid var(--accent);
+  width: max-content;
+  margin-left: var(--sociology-indent, 0px);
   box-sizing: border-box;
 }
 
-.humanities-atlas :deep(.social-grid) {
-  display: contents;
-}
-
-.humanities-atlas :deep(.card.stacked) {
-  grid-row: 2;
-  justify-self: start;
+.humanities-atlas #politicalScience {
+  width: max-content;
+  margin-left: var(--ps-indent, 0px);
+  box-sizing: border-box;
 }
 
 .wires {
