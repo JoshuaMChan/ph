@@ -1185,18 +1185,18 @@ watch(activeDomain, (domain) => {
             @open="openDomain('philosophy')"
           />
           <div class="humanities-atlas">
+            <article id="sociology" data-node="sociology" class="node">
+              <SchoolBlock school-id="sociology" />
+            </article>
+            <article id="economics" data-node="economics" class="node">
+              <SchoolBlock school-id="economics" />
+            </article>
             <article
               id="politicalScience"
               data-node="politicalScience"
               class="node political-science"
             >
               <SchoolBlock school-id="politicalScience" />
-            </article>
-            <article id="economics" data-node="economics" class="node">
-              <SchoolBlock school-id="economics" />
-            </article>
-            <article id="sociology" data-node="sociology" class="node">
-              <SchoolBlock school-id="sociology" />
             </article>
           </div>
         </template>
