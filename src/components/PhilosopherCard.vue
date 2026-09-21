@@ -243,7 +243,8 @@ h3 {
 
 .card.stacked {
   align-items: center;
-  width: var(--card-w, 70px);
+  width: max-content;
+  min-width: var(--card-w, 70px);
   height: auto;
   overflow: visible;
 }

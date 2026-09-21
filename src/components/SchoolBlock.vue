@@ -256,7 +256,7 @@ h2 {
   gap: 8px;
 }
 
-/* Social sciences: gap is between portraits (card width = portrait, names may overflow). */
+/* Social sciences: equal card widths + fixed gap → even person spacing. */
 .school[data-school='economics'] .people,
 .school[data-school='sociology'] .people,
 .school[data-school='politicalScience'] .people {
@@ -267,7 +267,7 @@ h2 {
 .school[data-school='economics'] :deep(.card.stacked),
 .school[data-school='sociology'] :deep(.card.stacked),
 .school[data-school='politicalScience'] :deep(.card.stacked) {
-  width: var(--card-w, 70px);
+  width: var(--social-card-w, max-content);
   min-width: var(--card-w, 70px);
   padding-inline: 0;
   box-sizing: border-box;

@@ -166,6 +166,8 @@ const scienceBarLeft = ref(0)
 const psIndent = ref(0)
 /** Shift sociology so its Marx sits under economics Marx. */
 const sociologyIndent = ref(loadSociologyIndent())
+/** Shared card width so social-science person gaps stay even (fits longest name). */
+const socialCardWidth = ref(0)
 
 /** Stable domain-slot geometry so expand/collapse keeps the same left edge & width. */
 const slotGeom = ref<SlotGeom>(loadSlotGeom())
@@ -197,6 +199,8 @@ const slotVars = computed(() => ({
       : `${slotGeom.value.scienceLeft}px`,
   '--sociology-indent': `${sociologyIndent.value}px`,
   '--ps-indent': `${psIndent.value}px`,
+  '--social-card-w':
+    socialCardWidth.value > 0 ? `${socialCardWidth.value}px` : 'max-content',
 }))
 
 function setSlotGeom(next: SlotGeom) {
@@ -602,6 +606,35 @@ function alignScienceBarToPolitics(rootEl: HTMLElement) {
   return changed
 }
 
+/** Equal card widths (longest name) so person-to-person gaps stay identical. */
+function layoutSocialCardWidths(rootEl: HTMLElement) {
+  const atlas = rootEl.querySelector('.humanities-atlas') as HTMLElement | null
+  if (!atlas) return false
+  const cards = [
+    ...atlas.querySelectorAll<HTMLElement>('.card.stacked'),
+  ]
+  if (!cards.length) return false
+
+  const floor =
+    Number.parseFloat(getComputedStyle(rootEl).getPropertyValue('--card-w')) ||
+    70
+
+  let maxW = floor
+  for (const card of cards) {
+    const prevW = card.style.width
+    const prevMin = card.style.minWidth
+    card.style.width = 'max-content'
+    card.style.minWidth = '0'
+    maxW = Math.max(maxW, Math.ceil(card.getBoundingClientRect().width))
+    card.style.width = prevW
+    card.style.minWidth = prevMin
+  }
+
+  if (Math.abs(socialCardWidth.value - maxW) <= 0.5) return false
+  socialCardWidth.value = maxW
+  return true
+}
+
 /** Align one school's Marx portrait to economics Marx via margin-left indent. */
 function alignSchoolMarx(
   rootEl: HTMLElement,
@@ -785,12 +818,13 @@ function measure() {
   if (!rootEl) return
   if (activeDomain.value === 'humanities') {
     const settle = () => {
+      const movedCards = layoutSocialCardWidths(rootEl)
       const movedSocial = layoutSocialMarx(rootEl)
       const movedPs = layoutPoliticalScience(rootEl)
       const movedSci = alignScienceBarToPolitics(rootEl)
       captureSlotGeom(rootEl)
       canvas.value = { w: rootEl.offsetWidth, h: rootEl.offsetHeight }
-      return movedSocial || movedPs || movedSci
+      return movedCards || movedSocial || movedPs || movedSci
     }
     if (settle()) {
       void nextTick(() => {
@@ -909,6 +943,7 @@ watch(activeDomain, (domain) => {
   if (domain !== 'humanities') {
     scienceBarLeft.value = 0
     psIndent.value = 0
+    socialCardWidth.value = 0
   }
   saveDomain(domain)
   void nextTick(measure)
@@ -1312,12 +1347,12 @@ watch(activeDomain, (domain) => {
 }
 
 .graph.domain-humanities :deep(.people) {
-  /* Portrait-to-portrait gap (card width = portrait; names may overflow). */
+  /* Fixed gap between equal-width cards (width from --social-card-w). */
   gap: 14px 112px;
 }
 
 .graph.domain-humanities :deep(.card.stacked) {
-  width: var(--card-w, 70px);
+  width: var(--social-card-w, max-content);
   min-width: var(--card-w, 70px);
   padding-inline: 0;
   box-sizing: border-box;
